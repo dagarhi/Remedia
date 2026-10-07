@@ -1,0 +1,5 @@
+{
+  "name": "remedia",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"]
+}
