@@ -28,5 +28,15 @@
       "title": "Ajustes",
       "placeholder": "Perfil, apariencia y tipos de registro. Próximamente."
     }
+  },
+  "field": {
+    "release_date": "Fecha de estreno",
+    "director": "Dirección",
+    "runtime": "Duración",
+    "genres": "Géneros",
+    "synopsis": "Sinopsis",
+    "cast": "Reparto",
+    "writers": "Guion",
+    "original_language": "Idioma original"
   }
 }

@@ -2,6 +2,7 @@ export * from "./common";
 export * from "./record";
 export * from "./tag";
 export * from "./template";
+export * from "./builtInTemplates";
 export * from "./effectiveTemplate";
 export * from "./fields";
 export * from "./rating";

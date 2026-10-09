@@ -28,5 +28,15 @@
       "title": "Settings",
       "placeholder": "Profile, appearance and record types. Coming soon."
     }
+  },
+  "field": {
+    "release_date": "Release date",
+    "director": "Director",
+    "runtime": "Runtime",
+    "genres": "Genres",
+    "synopsis": "Synopsis",
+    "cast": "Cast",
+    "writers": "Writers",
+    "original_language": "Original language"
   }
 }
