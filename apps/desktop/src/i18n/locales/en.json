@@ -57,7 +57,10 @@
     "notRated": "Not rated",
     "details": "Details",
     "notes": "Notes",
-    "notFound": "This record does not exist or was deleted."
+    "notFound": "This record does not exist or was deleted.",
+    "edit": "Edit",
+    "editTitle": "Edit: {{title}}",
+    "confirmDelete": "Delete this record? It disappears from your libraries along with its history."
   },
   "status": {
     "default": {
@@ -80,7 +83,8 @@
     "cancel": "Cancel",
     "loading": "Loading…",
     "listHint": "Separate several with commas",
-    "dateHint": "2016, 2016-11 or 2016-11-11"
+    "dateHint": "2016, 2016-11 or 2016-11-11",
+    "delete": "Delete"
   },
   "errors": {
     "required": "This field is required.",

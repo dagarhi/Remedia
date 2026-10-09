@@ -40,7 +40,14 @@ function App() {
           <LibraryScreen status={route.status} onOpenRecord={openRecord} onBack={() => navigate("libraries")} />
         );
       case "record":
-        return <RecordScreen id={route.id} onBack={() => navigate("libraries")} />;
+        return (
+          <RecordScreen
+            key={route.id}
+            id={route.id}
+            onBack={() => navigate("libraries")}
+            onDeleted={() => navigate("libraries")}
+          />
+        );
       default:
         return <PlaceholderScreen screen={route.screen} />;
     }

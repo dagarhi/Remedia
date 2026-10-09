@@ -57,7 +57,10 @@
     "notRated": "Sin valorar",
     "details": "Detalles",
     "notes": "Notas",
-    "notFound": "Este registro no existe o se ha borrado."
+    "notFound": "Este registro no existe o se ha borrado.",
+    "edit": "Editar",
+    "editTitle": "Editar: {{title}}",
+    "confirmDelete": "¿Borrar este registro? Desaparecerá de tus bibliotecas junto con su historial."
   },
   "status": {
     "default": {
@@ -80,7 +83,8 @@
     "cancel": "Cancelar",
     "loading": "Cargando…",
     "listHint": "Separa varios con comas",
-    "dateHint": "2016, 2016-11 o 2016-11-11"
+    "dateHint": "2016, 2016-11 o 2016-11-11",
+    "delete": "Borrar"
   },
   "errors": {
     "required": "Este campo es obligatorio.",

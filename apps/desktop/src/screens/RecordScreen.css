@@ -29,3 +29,10 @@
   white-space: pre-wrap;
   max-width: 720px;
 }
+
+.record-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}

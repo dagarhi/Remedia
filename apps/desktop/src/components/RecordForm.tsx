@@ -4,6 +4,7 @@ import {
   createRecord,
   DataValidationError,
   loadEffectiveTemplate,
+  updateRecord,
   type DataIssue,
   type EffectiveTemplate,
   type FieldValue,
@@ -30,21 +31,30 @@ function toFieldValues(template: EffectiveTemplate, values: FormFields): FormFie
 
 interface RecordFormProps {
   templateId: string;
+  /** The record to edit. Without it, the form creates a new record. */
+  record?: MediaRecord;
   onSaved: (record: MediaRecord) => void;
   onCancel: () => void;
+  /** Shows a Delete button (edit mode only). */
+  onDelete?: () => void;
 }
 
-/** Manual-mode form for a new record. Core validates; the form only collects values and shows errors. */
-export function RecordForm({ templateId, onSaved, onCancel }: RecordFormProps) {
+/**
+ * The record form, used both to add (manual mode) and to edit. Core validates;
+ * the form only collects values and shows errors.
+ */
+export function RecordForm({ templateId, record, onSaved, onCancel, onDelete }: RecordFormProps) {
   const { t } = useTranslation();
 
+  // Initial values: the record's when editing, empty when adding.
   const [template, setTemplate] = useState<EffectiveTemplate | null>(null);
-  const [title, setTitle] = useState("");
-  const [originalTitle, setOriginalTitle] = useState("");
-  const [status, setStatus] = useState<RecordStatus>("planned");
-  const [rating, setRating] = useState<number | null>(null); // stored scale, 1-100
-  const [notes, setNotes] = useState("");
-  const [fields, setFields] = useState<FormFields>({});
+  const [title, setTitle] = useState(record?.title ?? "");
+  const [originalTitle, setOriginalTitle] = useState(record?.original_title ?? "");
+  const [status, setStatus] = useState<RecordStatus>(record?.status ?? "planned");
+  const [rating, setRating] = useState<number | null>(record?.rating ?? null); // stored scale, 1-100
+  const [notes, setNotes] = useState(record?.notes ?? "");
+  // Starts with every stored key, including hidden fields and keys from newer versions, so none is lost.
+  const [fields, setFields] = useState<FormFields>(record?.fields ?? {});
   const [issues, setIssues] = useState<DataIssue[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -63,16 +73,18 @@ export function RecordForm({ templateId, onSaved, onCancel }: RecordFormProps) {
     if (!template) return;
     setSaving(true);
     try {
-      const record = await createRecord(data, {
-        template: templateId,
+      const values = {
         title,
         original_title: originalTitle,
         status,
         rating,
         notes,
         fields: toFieldValues(template, fields),
-      });
-      onSaved(record);
+      };
+      const saved = record
+        ? await updateRecord(data, record.id, values)
+        : await createRecord(data, { template: templateId, ...values });
+      onSaved(saved);
     } catch (error) {
       if (error instanceof DataValidationError) setIssues(error.issues);
       else setIssues([{ path: "form", code: "save_failed" }]);
@@ -136,6 +148,11 @@ export function RecordForm({ templateId, onSaved, onCancel }: RecordFormProps) {
       {errorFor("form") && <p className="form-error">{errorFor("form")}</p>}
 
       <div className="form-actions">
+        {onDelete && (
+          <button type="button" className="button button--danger" onClick={onDelete}>
+            {t("form.delete")}
+          </button>
+        )}
         <button type="button" className="button" onClick={onCancel}>
           {t("form.cancel")}
         </button>

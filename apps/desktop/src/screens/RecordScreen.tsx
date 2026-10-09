@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import {
   buildEffectiveTemplate,
   codeTemplateFor,
+  deleteRecord,
   getRecord,
   updateRecord,
   type MediaRecord,
@@ -13,22 +14,31 @@ import {
 import { useLabel } from "../components/FieldInput";
 import { HistoryList } from "../components/HistoryList";
 import { RatingSelect } from "../components/RatingSelect";
+import { RecordForm } from "../components/RecordForm";
 import { StatusSelect } from "../components/StatusSelect";
 import { data } from "../db/database";
 import "./LibrariesScreen.css";
 import "./RecordScreen.css";
 
+interface RecordScreenProps {
+  id: Uuid;
+  onBack: () => void;
+  /** Called after the record is deleted, to leave its page. */
+  onDeleted: () => void;
+}
+
 /**
  * One record: header with inline status and rating, details, notes and history.
- * Edit mode (all fields) and covers come in later steps.
+ * Edit opens the same page in edit mode (UI Design); covers come in a later step.
  */
-export function RecordScreen({ id, onBack }: { id: Uuid; onBack: () => void }) {
+export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
   const { t } = useTranslation();
   const label = useLabel();
   // undefined = still loading, null = not found
   const [record, setRecord] = useState<MediaRecord | null | undefined>(undefined);
   // Bumped after every save so the history reloads and shows the new event.
   const [version, setVersion] = useState(0);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     getRecord(data, id).then((r) => setRecord(r ?? null));
@@ -40,8 +50,33 @@ export function RecordScreen({ id, onBack }: { id: Uuid; onBack: () => void }) {
     setVersion((v) => v + 1);
   }
 
+  async function handleDelete() {
+    if (!window.confirm(t("record.confirmDelete"))) return;
+    await deleteRecord(data, id);
+    onDeleted();
+  }
+
   if (record === undefined) return <p className="screen-placeholder">{t("form.loading")}</p>;
   if (record === null) return <p className="screen-placeholder">{t("record.notFound")}</p>;
+
+  if (editing) {
+    return (
+      <section className="screen">
+        <h1>{t("record.editTitle", { title: record.title })}</h1>
+        <RecordForm
+          templateId={record.template}
+          record={record}
+          onSaved={(saved) => {
+            setRecord(saved);
+            setVersion((v) => v + 1);
+            setEditing(false);
+          }}
+          onCancel={() => setEditing(false)}
+          onDelete={handleDelete}
+        />
+      </section>
+    );
+  }
 
   // TODO: load user template changes too (loadEffectiveTemplate) when templates become editable.
   const template = buildEffectiveTemplate(codeTemplateFor(record.template), {});
@@ -54,7 +89,12 @@ export function RecordScreen({ id, onBack }: { id: Uuid; onBack: () => void }) {
 
       <header className="record-header">
         <p className="label">{t(`types.${record.template}`)}</p>
-        <h1>{record.title}</h1>
+        <div className="record-title-row">
+          <h1>{record.title}</h1>
+          <button type="button" className="button" onClick={() => setEditing(true)}>
+            <Pencil size={14} aria-hidden /> {t("record.edit")}
+          </button>
+        </div>
         {record.original_title && <p className="screen-placeholder">{record.original_title}</p>}
         <div className="record-inline-edits">
           <StatusSelect templateId={record.template} value={record.status} onChange={(status) => change({ status })} />
