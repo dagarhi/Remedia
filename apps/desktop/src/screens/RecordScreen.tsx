@@ -1,31 +1,44 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ArrowLeft } from "lucide-react";
 import {
   buildEffectiveTemplate,
   codeTemplateFor,
   getRecord,
-  toDisplayRating,
+  updateRecord,
   type MediaRecord,
+  type RecordChanges,
   type Uuid,
 } from "@remedia/core";
 import { useLabel } from "../components/FieldInput";
+import { HistoryList } from "../components/HistoryList";
+import { RatingSelect } from "../components/RatingSelect";
+import { StatusSelect } from "../components/StatusSelect";
 import { data } from "../db/database";
-import { ArrowLeft } from "lucide-react";
-import "./LibrariesScreen.css"
+import "./LibrariesScreen.css";
+import "./RecordScreen.css";
 
 /**
- * Minimal read-only record page, so a saved record can be seen.
- * The full page (header, inline edits, history, edit mode) is the next roadmap step.
+ * One record: header with inline status and rating, details, notes and history.
+ * Edit mode (all fields) and covers come in later steps.
  */
 export function RecordScreen({ id, onBack }: { id: Uuid; onBack: () => void }) {
   const { t } = useTranslation();
   const label = useLabel();
   // undefined = still loading, null = not found
   const [record, setRecord] = useState<MediaRecord | null | undefined>(undefined);
+  // Bumped after every save so the history reloads and shows the new event.
+  const [version, setVersion] = useState(0);
 
   useEffect(() => {
     getRecord(data, id).then((r) => setRecord(r ?? null));
   }, [id]);
+
+  /** Inline edits: save at once; core also writes the history line. */
+  async function change(changes: RecordChanges) {
+    setRecord(await updateRecord(data, id, changes));
+    setVersion((v) => v + 1);
+  }
 
   if (record === undefined) return <p className="screen-placeholder">{t("form.loading")}</p>;
   if (record === null) return <p className="screen-placeholder">{t("record.notFound")}</p>;
@@ -38,13 +51,17 @@ export function RecordScreen({ id, onBack }: { id: Uuid; onBack: () => void }) {
       <button type="button" className="link-button back-button" onClick={onBack}>
         <ArrowLeft size={16} aria-hidden /> {t("libraries.title")}
       </button>
-      <p className="label">{t(`types.${record.template}`)}</p>
-      <h1>{record.title}</h1>
-      {record.original_title && <p className="screen-placeholder">{record.original_title}</p>}
-      <p>
-        {t([`status.${record.template}.${record.status}`, `status.default.${record.status}`])}
-        {record.rating !== null && ` · ${"★".repeat(toDisplayRating(record.rating, "stars_5"))}`}
-      </p>
+
+      <header className="record-header">
+        <p className="label">{t(`types.${record.template}`)}</p>
+        <h1>{record.title}</h1>
+        {record.original_title && <p className="screen-placeholder">{record.original_title}</p>}
+        <div className="record-inline-edits">
+          <StatusSelect templateId={record.template} value={record.status} onChange={(status) => change({ status })} />
+          <RatingSelect value={record.rating} onChange={(rating) => change({ rating })} />
+        </div>
+      </header>
+
       <dl className="record-details">
         {template.fields
           .filter((f) => record.fields[f.key] !== undefined)
@@ -65,7 +82,10 @@ export function RecordScreen({ id, onBack }: { id: Uuid; onBack: () => void }) {
             );
           })}
       </dl>
-      {record.notes && <p>{record.notes}</p>}
+
+      {record.notes && <p className="record-notes">{record.notes}</p>}
+
+      <HistoryList recordId={record.id} version={version} />
     </section>
   );
 }

@@ -109,5 +109,18 @@
       "completed": "Nothing finished yet.",
       "dropped": "Nothing dropped yet."
     }
+  },
+  "history": {
+    "title": "History",
+    "notePlaceholder": "Write a note…",
+    "addNote": "Add note",
+    "empty": "No history yet.",
+    "added": "Added to {{library}}",
+    "moved": "Moved to {{library}}",
+    "rated": "Rated {{stars}}",
+    "ratingRemoved": "Rating removed",
+    "edit": "Edit note",
+    "delete": "Delete",
+    "confirmDelete": "Delete this line from the history?"
   }
 }

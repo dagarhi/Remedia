@@ -109,5 +109,18 @@
       "completed": "Todavía no has terminado nada.",
       "dropped": "Todavía no has abandonado nada."
     }
+  },
+  "history": {
+    "title": "Historial",
+    "notePlaceholder": "Escribe una nota…",
+    "addNote": "Añadir nota",
+    "empty": "Todavía no hay historial.",
+    "added": "Añadido a {{library}}",
+    "moved": "Movido a {{library}}",
+    "rated": "Valorado con {{stars}}",
+    "ratingRemoved": "Valoración quitada",
+    "edit": "Editar nota",
+    "delete": "Borrar",
+    "confirmDelete": "¿Borrar esta línea del historial?"
   }
 }

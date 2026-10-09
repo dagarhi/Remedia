@@ -3,23 +3,18 @@ import { useTranslation } from "react-i18next";
 import {
   createRecord,
   DataValidationError,
-  fromDisplayRating,
   loadEffectiveTemplate,
-  RECORD_STATUSES,
-  ratingScaleSpec,
   type DataIssue,
   type EffectiveTemplate,
   type FieldValue,
   type MediaRecord,
-  type RatingScale,
   type RecordStatus,
 } from "@remedia/core";
 import { data } from "../db/database";
 import { FieldInput } from "./FieldInput";
+import { RatingSelect } from "./RatingSelect";
+import { StatusSelect } from "./StatusSelect";
 import "./RecordForm.css";
-
-// TODO: read from settings (global default + per-type override) once settings are stored.
-const RATING_SCALE: RatingScale = "stars_5";
 
 type FormFields = Record<string, FieldValue | undefined>;
 
@@ -47,7 +42,7 @@ export function RecordForm({ templateId, onSaved, onCancel }: RecordFormProps) {
   const [title, setTitle] = useState("");
   const [originalTitle, setOriginalTitle] = useState("");
   const [status, setStatus] = useState<RecordStatus>("planned");
-  const [rating, setRating] = useState<number | null>(null); // on the display scale
+  const [rating, setRating] = useState<number | null>(null); // stored scale, 1-100
   const [notes, setNotes] = useState("");
   const [fields, setFields] = useState<FormFields>({});
   const [issues, setIssues] = useState<DataIssue[]>([]);
@@ -73,7 +68,7 @@ export function RecordForm({ templateId, onSaved, onCancel }: RecordFormProps) {
         title,
         original_title: originalTitle,
         status,
-        rating: rating === null ? null : fromDisplayRating(rating, RATING_SCALE),
+        rating,
         notes,
         fields: toFieldValues(template, fields),
       });
@@ -87,9 +82,6 @@ export function RecordForm({ templateId, onSaved, onCancel }: RecordFormProps) {
   }
 
   if (!template) return <p className="screen-placeholder">{t("form.loading")}</p>;
-
-  const { max, step } = ratingScaleSpec(RATING_SCALE);
-  const ratingOptions = Array.from({ length: max / step }, (_, i) => (i + 1) * step);
 
   return (
     <form className="record-form" onSubmit={handleSubmit} noValidate>
@@ -108,29 +100,12 @@ export function RecordForm({ templateId, onSaved, onCancel }: RecordFormProps) {
         <div className="form-row">
           <div className="form-field">
             <label htmlFor="status" className="label">{t("record.status")}</label>
-            <select id="status" value={status} onChange={(e) => setStatus(e.target.value as RecordStatus)}>
-              {RECORD_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {t([`status.${templateId}.${s}`, `status.default.${s}`])}
-                </option>
-              ))}
-            </select>
+            <StatusSelect id="status" templateId={templateId} value={status} onChange={setStatus} />
           </div>
 
           <div className="form-field">
             <label htmlFor="rating" className="label">{t("record.rating")}</label>
-            <select
-              id="rating"
-              value={rating ?? ""}
-              onChange={(e) => setRating(e.target.value === "" ? null : Number(e.target.value))}
-            >
-              <option value="">{t("record.notRated")}</option>
-              {ratingOptions.map((r) => (
-                <option key={r} value={r}>
-                  {"★".repeat(r)}
-                </option>
-              ))}
-            </select>
+            <RatingSelect id="rating" value={rating} onChange={setRating} />
             {errorFor("rating") && <p className="form-error">{errorFor("rating")}</p>}
           </div>
         </div>
