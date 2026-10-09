@@ -1,4 +1,5 @@
 import type { SyncTimestamps, Uuid } from "./common";
+import { normalizeText } from "./text";
 
 /** One row of `tags`. Tags are global: any record of any type can use them. */
 export interface Tag extends SyncTimestamps {
@@ -13,4 +14,9 @@ export interface Tag extends SyncTimestamps {
 export interface RecordTag extends SyncTimestamps {
   record_id: Uuid;
   tag_id: Uuid;
+}
+
+/** Value of `tags.normalized_name`: tags with the same normalized name are the same tag. */
+export function normalizeTagName(name: string): string {
+  return normalizeText(name);
 }
