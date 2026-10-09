@@ -40,7 +40,7 @@ function App() {
           <LibraryScreen status={route.status} onOpenRecord={openRecord} onBack={() => navigate("libraries")} />
         );
       case "record":
-        return <RecordScreen id={route.id} />;
+        return <RecordScreen id={route.id} onBack={() => navigate("libraries")} />;
       default:
         return <PlaceholderScreen screen={route.screen} />;
     }

@@ -10,12 +10,14 @@ import {
 } from "@remedia/core";
 import { useLabel } from "../components/FieldInput";
 import { data } from "../db/database";
+import { ArrowLeft } from "lucide-react";
+import "./LibrariesScreen.css"
 
 /**
  * Minimal read-only record page, so a saved record can be seen.
  * The full page (header, inline edits, history, edit mode) is the next roadmap step.
  */
-export function RecordScreen({ id }: { id: Uuid }) {
+export function RecordScreen({ id, onBack }: { id: Uuid; onBack: () => void }) {
   const { t } = useTranslation();
   const label = useLabel();
   // undefined = still loading, null = not found
@@ -33,6 +35,9 @@ export function RecordScreen({ id }: { id: Uuid }) {
 
   return (
     <section className="screen">
+      <button type="button" className="link-button back-button" onClick={onBack}>
+        <ArrowLeft size={16} aria-hidden /> {t("libraries.title")}
+      </button>
       <p className="label">{t(`types.${record.template}`)}</p>
       <h1>{record.title}</h1>
       {record.original_title && <p className="screen-placeholder">{record.original_title}</p>}

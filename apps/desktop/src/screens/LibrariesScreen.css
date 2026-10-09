@@ -54,3 +54,8 @@
 .back-button {
   align-self: flex-start;
 }
+.shelf + .shelf {
+  border-top: var(--border-width) solid var(--border);
+  padding-top: var(--space-6);
+  margin-top: var(--space-2);
+}
