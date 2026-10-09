@@ -12,10 +12,6 @@
     "expand": "Expandir barra lateral"
   },
   "screens": {
-    "add": {
-      "title": "Añadir",
-      "placeholder": "Elige un tipo para añadir un registro. Próximamente."
-    },
     "home": {
       "title": "Inicio",
       "placeholder": "Tu resumen aparecerá aquí cuando añadas algo."
@@ -38,5 +34,68 @@
     "cast": "Reparto",
     "writers": "Guion",
     "original_language": "Idioma original"
+  },
+  "common": {
+    "yes": "Sí",
+    "no": "No"
+  },
+  "add": {
+    "title": "Añadir",
+    "chooseType": "¿Qué quieres añadir?",
+    "newRecord": "Nuevo registro: {{type}}"
+  },
+  "types": {
+    "movie": "Película",
+    "series": "Serie",
+    "book": "Libro",
+    "game": "Videojuego",
+    "anime": "Anime",
+    "manga": "Manga",
+    "custom": "Nuevo tipo"
+  },
+  "record": {
+    "title": "Título",
+    "originalTitle": "Título original",
+    "status": "Estado",
+    "rating": "Valoración",
+    "notRated": "Sin valorar",
+    "details": "Detalles",
+    "notes": "Notas",
+    "notFound": "Este registro no existe o se ha borrado."
+  },
+  "status": {
+    "default": {
+      "planned": "Pendiente",
+      "in_progress": "En curso",
+      "paused": "En pausa",
+      "completed": "Completado",
+      "dropped": "Abandonado"
+    },
+    "movie": {
+      "planned": "Pendiente",
+      "in_progress": "Viendo",
+      "paused": "En pausa",
+      "completed": "Vista",
+      "dropped": "Abandonada"
+    }
+  },
+  "form": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "loading": "Cargando…",
+    "listHint": "Separa varios con comas",
+    "dateHint": "2016, 2016-11 o 2016-11-11"
+  },
+  "errors": {
+    "required": "Este campo es obligatorio.",
+    "out_of_range": "Valor fuera de rango.",
+    "wrong_type": "El valor no tiene el tipo correcto.",
+    "empty": "Este campo está vacío.",
+    "invalid_date": "Usa una fecha como 2016, 2016-11 o 2016-11-11.",
+    "invalid_url": "Usa un enlace completo que empiece por http:// o https://.",
+    "unknown_option": "Elige una de las opciones.",
+    "unknown": "Tipo desconocido.",
+    "not_found": "Este registro ya no existe.",
+    "save_failed": "No se ha podido guardar. Inténtalo de nuevo."
   }
 }

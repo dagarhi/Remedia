@@ -12,10 +12,6 @@
     "expand": "Expand sidebar"
   },
   "screens": {
-    "add": {
-      "title": "Add",
-      "placeholder": "Choose a type to add a record. Coming soon."
-    },
     "home": {
       "title": "Home",
       "placeholder": "Your summary will appear here once you add something."
@@ -38,5 +34,68 @@
     "cast": "Cast",
     "writers": "Writers",
     "original_language": "Original language"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "add": {
+    "title": "Add",
+    "chooseType": "What do you want to add?",
+    "newRecord": "New {{type}}"
+  },
+  "types": {
+    "movie": "Movie",
+    "series": "Series",
+    "book": "Book",
+    "game": "Video game",
+    "anime": "Anime",
+    "manga": "Manga",
+    "custom": "New type"
+  },
+  "record": {
+    "title": "Title",
+    "originalTitle": "Original title",
+    "status": "Status",
+    "rating": "Rating",
+    "notRated": "Not rated",
+    "details": "Details",
+    "notes": "Notes",
+    "notFound": "This record does not exist or was deleted."
+  },
+  "status": {
+    "default": {
+      "planned": "Pending",
+      "in_progress": "In progress",
+      "paused": "Paused",
+      "completed": "Completed",
+      "dropped": "Dropped"
+    },
+    "movie": {
+      "planned": "Pending",
+      "in_progress": "Watching",
+      "paused": "Paused",
+      "completed": "Watched",
+      "dropped": "Dropped"
+    }
+  },
+  "form": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading…",
+    "listHint": "Separate several with commas",
+    "dateHint": "2016, 2016-11 or 2016-11-11"
+  },
+  "errors": {
+    "required": "This field is required.",
+    "out_of_range": "Value out of range.",
+    "wrong_type": "This value has the wrong type.",
+    "empty": "This field is empty.",
+    "invalid_date": "Use a date like 2016, 2016-11 or 2016-11-11.",
+    "invalid_url": "Use a full link starting with http:// or https://.",
+    "unknown_option": "Choose one of the options.",
+    "unknown": "Unknown type.",
+    "not_found": "This record no longer exists.",
+    "save_failed": "Could not save. Please try again."
   }
 }

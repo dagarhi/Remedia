@@ -1,0 +1,118 @@
+.record-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 640px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-section h2 {
+  font-size: var(--text-lg);
+}
+
+.form-row {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.form-row > .form-field {
+  flex: 1;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-field--inline {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.record-form input:not([type="checkbox"]),
+.record-form select,
+.record-form textarea {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+}
+
+.record-form textarea {
+  resize: vertical;
+}
+
+.record-form input::placeholder {
+  color: var(--text-secondary);
+}
+
+.record-form input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 18px;
+  height: 18px;
+}
+
+.field-with-unit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.field-with-unit input {
+  width: 120px;
+}
+
+.field-unit {
+  color: var(--text-secondary);
+}
+
+.form-error {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--danger);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.button {
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: transparent;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--hover);
+}
+
+.button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+.button--primary:hover {
+  background: var(--accent);
+  filter: brightness(1.08);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

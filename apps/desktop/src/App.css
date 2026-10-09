@@ -25,3 +25,14 @@
   margin: 0;
   color: var(--text-secondary);
 }
+
+.record-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.record-details dd {
+  margin: var(--space-1) 0 0;
+}

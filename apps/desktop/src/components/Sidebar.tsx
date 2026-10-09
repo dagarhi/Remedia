@@ -14,7 +14,8 @@ const MAIN_ITEMS: NavItem[] = [
 ];
 
 interface SidebarProps {
-  current: Screen;
+  /** Highlighted entry; null when the content is not a sidebar screen (e.g. a record page). */
+  current: Screen | null;
   collapsed: boolean;
   onNavigate: (screen: Screen) => void;
   onToggleCollapsed: () => void;
