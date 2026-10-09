@@ -1,0 +1,25 @@
+.type-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+
+    width: 160px;
+    padding: var(--space-6);
+
+    background: var(--surface);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-card);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.type-card:hover:not(:disabled) {
+    background: var(--hover)
+}
+
+.type-card:disabled {
+    color: var(--text-disabled);
+    cursor: not-allowed;
+}
