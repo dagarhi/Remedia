@@ -19,6 +19,7 @@ import { StatusSelect } from "../components/StatusSelect";
 import { data } from "../db/database";
 import "./LibrariesScreen.css";
 import "./RecordScreen.css";
+import { ConfirmDialog } from "../components/ConfirmDialog";  
 
 interface RecordScreenProps {
   id: Uuid;
@@ -39,6 +40,7 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
   // Bumped after every save so the history reloads and shows the new event.
   const [version, setVersion] = useState(0);
   const [editing, setEditing] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => {
     getRecord(data, id).then((r) => setRecord(r ?? null));
@@ -51,10 +53,10 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
   }
 
   async function handleDelete() {
-    if (!window.confirm(t("record.confirmDelete"))) return;
     await deleteRecord(data, id);
     onDeleted();
   }
+
 
   if (record === undefined) return <p className="screen-placeholder">{t("form.loading")}</p>;
   if (record === null) return <p className="screen-placeholder">{t("record.notFound")}</p>;
@@ -72,7 +74,16 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
             setEditing(false);
           }}
           onCancel={() => setEditing(false)}
-          onDelete={handleDelete}
+          onDelete={() => setConfirmingDelete(true)}
+        />
+        <ConfirmDialog
+          open={confirmingDelete}
+          title={t("record.deleteTitle")}
+          message={t("record.confirmDelete")}
+          confirmLabel={t("form.delete")}
+          cancelLabel={t("form.cancel")}
+          onConfirm={handleDelete}
+          onCancel={() => setConfirmingDelete(false)}
         />
       </section>
     );

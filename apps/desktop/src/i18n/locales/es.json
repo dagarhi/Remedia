@@ -60,7 +60,9 @@
     "notFound": "Este registro no existe o se ha borrado.",
     "edit": "Editar",
     "editTitle": "Editar: {{title}}",
-    "confirmDelete": "¿Borrar este registro? Desaparecerá de tus bibliotecas junto con su historial."
+    "confirmDelete": "¿Borrar este registro? Desaparecerá de tus bibliotecas junto con su historial.",
+    "deleteTitle": "Borrar registro",
+    "deleteSuccess": "Registro borrado."
   },
   "status": {
     "default": {

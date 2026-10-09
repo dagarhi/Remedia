@@ -60,7 +60,8 @@
     "notFound": "This record does not exist or was deleted.",
     "edit": "Edit",
     "editTitle": "Edit: {{title}}",
-    "confirmDelete": "Delete this record? It disappears from your libraries along with its history."
+    "confirmDelete": "Delete this record? It disappears from your libraries along with its history.",
+    "deleteTitle": "Delete record"
   },
   "status": {
     "default": {

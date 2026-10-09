@@ -1,0 +1,25 @@
+.confirm-dialog {
+  max-width: 420px;                                   /* limited width */
+  padding: var(--space-6);                            /* inner space */
+  background: var(--surface-raised);                  /* raised-surface background */
+  color: var(--text);                                 /* text colour */
+  border: var(--border-width) solid var(--border);    /* border: width, style, colour */
+  border-radius: var(--radius-card);                  /* card corners */
+  box-shadow: var(--shadow-raised);                   /* raised shadow */
+}
+
+/* The dark layer behind the dialog. */
+.confirm-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);                     /* black at 40 % opacity */
+}
+
+.confirm-dialog h2 {
+  font-size: var(--text-lg);
+}
+
+.confirm-dialog-actions {
+  display: flex;                                      /* buttons in a row */
+  justify-content: flex-end;                          /* pushed to the right */
+  gap: var(--space-3);                                /* space between them */
+  margin-top: var(--space-6);                         /* space above */
+}
