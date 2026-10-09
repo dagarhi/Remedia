@@ -1,0 +1,65 @@
+/*
+ * Components only use theme tokens through var(--token). The values are written
+ * on :root by src/theme/applyTheme.ts. Sizes and spacing are not themeable.
+ */
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --text-sm: 13px;
+  --text-md: 15px;
+  --text-lg: 18px;
+  --text-xl: 28px;
+
+  --sidebar-width: 220px;
+  --sidebar-width-collapsed: 64px;
+
+  font-size: var(--text-md);
+  line-height: 1.5;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.label {
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-transform: var(--label-case);
+  color: var(--text-secondary);
+}

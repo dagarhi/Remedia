@@ -1,0 +1,103 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: var(--sidebar-width);
+  height: 100vh;
+  padding: var(--space-4) var(--space-3);
+  background: var(--surface);
+  border-right: var(--border-width) solid var(--border);
+  transition: width 150ms ease;
+}
+
+.sidebar--collapsed {
+  width: var(--sidebar-width-collapsed);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  margin-bottom: var(--space-4);
+}
+
+.sidebar--collapsed .sidebar-header {
+  justify-content: center;
+}
+
+.sidebar-logo {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  padding-left: var(--space-2);
+}
+
+.sidebar-toggle,
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+.sidebar-toggle {
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--text-secondary);
+}
+
+.sidebar-item {
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-secondary);
+  text-align: left;
+}
+
+.sidebar--collapsed .sidebar-item {
+  justify-content: center;
+  padding: var(--space-2);
+}
+
+.sidebar-toggle:hover,
+.sidebar-item:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.sidebar-item:active {
+  background: var(--pressed);
+}
+
+.sidebar-item[aria-current="page"] {
+  background: var(--selected);
+  color: var(--text);
+}
+
+/* Add is the most prominent action. */
+.sidebar-add,
+.sidebar-add:hover,
+.sidebar-add[aria-current="page"] {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+}
+
+.sidebar-add:hover {
+  filter: brightness(1.08);
+}
+
+.sidebar-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}

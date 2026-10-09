@@ -1,0 +1,32 @@
+{
+  "app": {
+    "name": "Remedia",
+    "tagline": "The remedy for scattered media lists."
+  },
+  "nav": {
+    "add": "Add",
+    "home": "Home",
+    "libraries": "Libraries",
+    "settings": "Settings",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
+  },
+  "screens": {
+    "add": {
+      "title": "Add",
+      "placeholder": "Choose a type to add a record. Coming soon."
+    },
+    "home": {
+      "title": "Home",
+      "placeholder": "Your summary will appear here once you add something."
+    },
+    "libraries": {
+      "title": "Libraries",
+      "placeholder": "Your five libraries will appear here as shelves."
+    },
+    "settings": {
+      "title": "Settings",
+      "placeholder": "Profile, appearance and record types. Coming soon."
+    }
+  }
+}

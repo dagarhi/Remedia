@@ -1,0 +1,32 @@
+{
+  "app": {
+    "name": "Remedia",
+    "tagline": "El remedio para tus listas dispersas."
+  },
+  "nav": {
+    "add": "Añadir",
+    "home": "Inicio",
+    "libraries": "Bibliotecas",
+    "settings": "Ajustes",
+    "collapse": "Contraer barra lateral",
+    "expand": "Expandir barra lateral"
+  },
+  "screens": {
+    "add": {
+      "title": "Añadir",
+      "placeholder": "Elige un tipo para añadir un registro. Próximamente."
+    },
+    "home": {
+      "title": "Inicio",
+      "placeholder": "Tu resumen aparecerá aquí cuando añadas algo."
+    },
+    "libraries": {
+      "title": "Bibliotecas",
+      "placeholder": "Tus cinco bibliotecas aparecerán aquí como estanterías."
+    },
+    "settings": {
+      "title": "Ajustes",
+      "placeholder": "Perfil, apariencia y tipos de registro. Próximamente."
+    }
+  }
+}
