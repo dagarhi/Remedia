@@ -1,5 +1,5 @@
 import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { IMAGE_KINDS, RECORD_STATUSES, type RecordFields } from "../record";
+import { HISTORY_KINDS, IMAGE_KINDS, RECORD_STATUSES, type RecordFields } from "../record";
 import type { UserTemplateDefinition } from "../template";
 
 /*
@@ -42,7 +42,10 @@ export const historyEntries = sqliteTable("history_entries", {
   record_id: text("record_id")
     .notNull()
     .references(() => records.id, { onDelete: "cascade" }),
-  text: text("text").notNull(),
+  kind: text("kind", { enum: HISTORY_KINDS }).notNull(),
+  text: text("text"),
+  status: text("status", { enum: RECORD_STATUSES }),
+  rating: integer("rating"),
   ...timestamps,
 });
 

@@ -29,12 +29,25 @@ export interface MediaRecord extends SyncTimestamps {
   fields: RecordFields;
 }
 
-/** One row of `history_entries`: a free-text diary entry, ordered by `created_at`. */
+/** "note": written by the user. "status" / "rating": recorded by the app when they change. */
+export const HISTORY_KINDS = ["note", "status", "rating"] as const;
+
+export type HistoryKind = (typeof HISTORY_KINDS)[number];
+
+/**
+ * One row of `history_entries`, shown newest first. Events store the fact, never a sentence:
+ * the UI builds the text in the current language and rating scale.
+ */
 export interface HistoryEntry extends SyncTimestamps {
   id: Uuid;
   record_id: Uuid;
-  /** Never empty. */
-  text: string;
+  kind: HistoryKind;
+  /** Notes only; never empty. */
+  text: string | null;
+  /** Status events only: the new status. */
+  status: RecordStatus | null;
+  /** Rating events only: the new rating (1-100), or null when it was removed. */
+  rating: number | null;
 }
 
 export const IMAGE_KINDS = ["cover", "gallery"] as const;

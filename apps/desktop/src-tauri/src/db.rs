@@ -13,7 +13,10 @@ use serde::Deserialize;
 use serde_json::{json, Value as Json};
 
 /// Migrations shared with every platform; never edit one that has shipped, add a new file instead.
-const MIGRATIONS: &[&str] = &[include_str!("../../../../packages/core/migrations/0001_initial.sql")];
+const MIGRATIONS: &[&str] = &[
+    include_str!("../../../../packages/core/migrations/0001_initial.sql"),
+    include_str!("../../../../packages/core/migrations/0002_history_events.sql"),
+];
 
 /// One connection behind a mutex: every query runs on the same connection, so
 /// `PRAGMA foreign_keys` always applies and transactions cannot be split across connections.

@@ -112,8 +112,8 @@ describe("deleteRecord", () => {
   it("soft-deletes the record and its children with the same deleted_at", async () => {
     const record = await createRecord(ctx, arrival);
     sqlite.exec(`
-      INSERT INTO history_entries (id, record_id, text, created_at, updated_at)
-        VALUES ('00000000-0000-4000-8000-0000000000a1', '${record.id}', 'Loved it', 1, 1);
+      INSERT INTO history_entries (id, record_id, kind, text, created_at, updated_at)
+        VALUES ('00000000-0000-4000-8000-0000000000a1', '${record.id}', 'note', 'Loved it', 1, 1);
       INSERT INTO external_links (id, record_id, provider, external_id, created_at, updated_at)
         VALUES ('00000000-0000-4000-8000-0000000000a2', '${record.id}', 'tmdb:movie', '329865', 1, 1);
       INSERT INTO tags (id, name, normalized_name, created_at, updated_at)

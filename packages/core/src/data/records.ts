@@ -5,6 +5,7 @@ import { compactFields, validateFields } from "../fields";
 import { isValidStoredRating } from "../rating";
 import type { FieldValue, MediaRecord, RecordStatus } from "../record";
 import { DataValidationError, type DataContext, type DataIssue } from "./context";
+import { historyEvent } from "./history";
 import { loadEffectiveTemplate } from "./templates";
 
 /** What the add form provides. Optional values may be left out. */
@@ -67,7 +68,11 @@ export async function createRecord(ctx: DataContext, input: NewRecord): Promise<
     deleted_at: null,
   };
   await validateRecord(ctx, record);
-  await ctx.db.insert(records).values(record);
+
+  // The record and its first history lines ("Added to Pending", "Rated ★★★★") are saved together.
+  const events = [historyEvent(ctx, record.id, now, { kind: "status", status: record.status })];
+  if (record.rating !== null) events.push(historyEvent(ctx, record.id, now, { kind: "rating", rating: record.rating }));
+  await ctx.db.batch([ctx.db.insert(records).values(record), ctx.db.insert(historyEntries).values(events)]);
   return record;
 }
 
@@ -117,8 +122,19 @@ export async function updateRecord(ctx: DataContext, id: Uuid, changes: RecordCh
   };
   await validateRecord(ctx, updated);
 
+  // A status or rating change is also written to the history, in the same transaction.
+  const events = [];
+  if (updated.status !== current.status) {
+    events.push(historyEvent(ctx, id, updated.updated_at, { kind: "status", status: updated.status }));
+  }
+  if (updated.rating !== current.rating) {
+    events.push(historyEvent(ctx, id, updated.updated_at, { kind: "rating", rating: updated.rating }));
+  }
+
   const { id: _id, created_at: _created, ...values } = updated;
-  await ctx.db.update(records).set(values).where(eq(records.id, id));
+  const updateRow = ctx.db.update(records).set(values).where(eq(records.id, id));
+  if (events.length > 0) await ctx.db.batch([updateRow, ctx.db.insert(historyEntries).values(events)]);
+  else await updateRow;
   return updated;
 }
 

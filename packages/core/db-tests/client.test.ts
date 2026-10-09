@@ -57,7 +57,10 @@ describe("createDatabase", () => {
         db.insert(historyEntries).values({
           id: "not-a-uuid",
           record_id: ID,
+          kind: "note",
           text: "Loved it",
+          status: null,
+          rating: null,
           created_at: 1,
           updated_at: 1,
           deleted_at: null,

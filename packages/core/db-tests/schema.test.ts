@@ -97,7 +97,7 @@ describe("migration 0001", () => {
 
   it("purges children when a record is hard-deleted", () => {
     insertRecord();
-    db.exec(`INSERT INTO history_entries (id, record_id, text, created_at, updated_at) VALUES ('${ID2}', '${ID}', 'Loved it', 1, 1)`);
+    db.exec(`INSERT INTO history_entries (id, record_id, kind, text, created_at, updated_at) VALUES ('${ID2}', '${ID}', 'note', 'Loved it', 1, 1)`);
     db.exec(`DELETE FROM records WHERE id = '${ID}'`);
     expect(db.prepare("SELECT count(*) n FROM history_entries").get()).toEqual({ n: 0 });
   });

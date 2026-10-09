@@ -17,9 +17,12 @@ export function openTestDatabase(): DatabaseSync {
   return db;
 }
 
-/** Applies every migration newer than `PRAGMA user_version`, each in its own transaction. */
-export function runMigrations(db: DatabaseSync): void {
-  const files = readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith(".sql")).sort();
+/**
+ * Applies every migration newer than `PRAGMA user_version`, each in its own transaction.
+ * `upTo` stops after that many migrations (to test a migration on data from older ones).
+ */
+export function runMigrations(db: DatabaseSync, upTo?: number): void {
+  const files = readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith(".sql")).sort().slice(0, upTo);
   const current = (db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version;
   files.slice(current).forEach((file, i) => {
     db.exec("BEGIN");
