@@ -16,10 +16,6 @@
       "title": "Home",
       "placeholder": "Your summary will appear here once you add something."
     },
-    "libraries": {
-      "title": "Libraries",
-      "placeholder": "Your five libraries will appear here as shelves."
-    },
     "settings": {
       "title": "Settings",
       "placeholder": "Profile, appearance and record types. Coming soon."
@@ -97,5 +93,21 @@
     "unknown": "Unknown type.",
     "not_found": "This record no longer exists.",
     "save_failed": "Could not save. Please try again."
+  },
+  "libraries": {
+    "title": "Libraries",
+    "seeAll": "See all",
+    "in_progress": "In progress",
+    "planned": "Pending",
+    "paused": "On hold",
+    "completed": "Finished",
+    "dropped": "Dropped",
+    "empty": {
+      "in_progress": "Nothing in progress yet.",
+      "planned": "Nothing pending yet.",
+      "paused": "Nothing on hold yet.",
+      "completed": "Nothing finished yet.",
+      "dropped": "Nothing dropped yet."
+    }
   }
 }

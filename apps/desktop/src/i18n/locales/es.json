@@ -16,10 +16,6 @@
       "title": "Inicio",
       "placeholder": "Tu resumen aparecerá aquí cuando añadas algo."
     },
-    "libraries": {
-      "title": "Bibliotecas",
-      "placeholder": "Tus cinco bibliotecas aparecerán aquí como estanterías."
-    },
     "settings": {
       "title": "Ajustes",
       "placeholder": "Perfil, apariencia y tipos de registro. Próximamente."
@@ -97,5 +93,21 @@
     "unknown": "Tipo desconocido.",
     "not_found": "Este registro ya no existe.",
     "save_failed": "No se ha podido guardar. Inténtalo de nuevo."
+  },
+  "libraries": {
+    "title": "Bibliotecas",
+    "seeAll": "Ver todo",
+    "in_progress": "En curso",
+    "planned": "Pendientes",
+    "paused": "En pausa",
+    "completed": "Terminados",
+    "dropped": "Abandonados",
+    "empty": {
+      "in_progress": "Todavía no hay nada en curso.",
+      "planned": "Todavía no hay nada pendiente.",
+      "paused": "Todavía no hay nada en pausa.",
+      "completed": "Todavía no has terminado nada.",
+      "dropped": "Todavía no has abandonado nada."
+    }
   }
 }

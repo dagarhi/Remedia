@@ -1,0 +1,56 @@
+.shelf {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.shelf-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.shelf-header h2 {
+  font-size: var(--text-lg);
+}
+
+.shelf-count {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* One row of posters that scrolls sideways when it does not fit. */
+.shelf-items {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 140px);
+  gap: var(--space-6) var(--space-4);
+}
+
+.link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent-text);
+  cursor: pointer;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+.back-button {
+  align-self: flex-start;
+}

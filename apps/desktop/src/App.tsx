@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { PlaceholderScreen } from "./components/PlaceholderScreen";
 import { Sidebar } from "./components/Sidebar";
+import type { MediaRecord } from "@remedia/core";
 import { AddScreen } from "./screens/AddScreen";
+import { LibrariesScreen } from "./screens/LibrariesScreen";
+import { LibraryScreen } from "./screens/LibraryScreen";
 import { RecordScreen } from "./screens/RecordScreen";
-import type { Route, Screen } from "./screens";
+import { sidebarScreenFor, type Route, type Screen } from "./screens";
 import { useTheme } from "./theme/useTheme";
 import "./App.css";
 
@@ -19,15 +22,22 @@ function App() {
     setRoute({ screen });
   }
 
+  const openRecord = (record: MediaRecord) => setRoute({ screen: "record", id: record.id });
+
   function renderContent() {
     switch (route.screen) {
       case "add":
+        return <AddScreen key={addFlowKey} onSaved={openRecord} onCancel={() => navigate("home")} />;
+      case "libraries":
         return (
-          <AddScreen
-            key={addFlowKey}
-            onSaved={(record) => setRoute({ screen: "record", id: record.id })}
-            onCancel={() => navigate("home")}
+          <LibrariesScreen
+            onOpenRecord={openRecord}
+            onSeeAll={(status) => setRoute({ screen: "library", status })}
           />
+        );
+      case "library":
+        return (
+          <LibraryScreen status={route.status} onOpenRecord={openRecord} onBack={() => navigate("libraries")} />
         );
       case "record":
         return <RecordScreen id={route.id} />;
@@ -39,7 +49,7 @@ function App() {
   return (
     <div className="app">
       <Sidebar
-        current={route.screen === "record" ? null : route.screen}
+        current={sidebarScreenFor(route)}
         collapsed={collapsed}
         onNavigate={navigate}
         onToggleCollapsed={() => setCollapsed((c) => !c)}

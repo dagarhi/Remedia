@@ -1,27 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BookImage, BookOpen, Film, Gamepad2, Sparkles, SquarePlus, Tv, type LucideIcon } from "lucide-react";
+import { SquarePlus } from "lucide-react";
 import type { MediaRecord } from "@remedia/core";
 import { RecordForm } from "../components/RecordForm";
 import { TypeCard } from "../components/TypeCard";
+import { RECORD_TYPES } from "../recordTypes";
 import "./AddScreen.css";
-
-interface TypeOption {
-  /** Template id; also the i18n key under `types.` */
-  id: string;
-  icon: LucideIcon;
-  /** Only movies are available in the first roadmap phase. */
-  enabled: boolean;
-}
-
-const TYPES: TypeOption[] = [
-  { id: "movie", icon: Film, enabled: true },
-  { id: "series", icon: Tv, enabled: false },
-  { id: "book", icon: BookOpen, enabled: false },
-  { id: "game", icon: Gamepad2, enabled: false },
-  { id: "anime", icon: Sparkles, enabled: false },
-  { id: "manga", icon: BookImage, enabled: false },
-];
 
 interface AddScreenProps {
   onSaved: (record: MediaRecord) => void;
@@ -48,7 +32,7 @@ export function AddScreen({ onSaved, onCancel }: AddScreenProps) {
       <h1>{t("add.title")}</h1>
       <p className="screen-placeholder">{t("add.chooseType")}</p>
       <div className="type-grid">
-        {TYPES.map((type) => (
+        {RECORD_TYPES.map((type) => (
           <TypeCard
             key={type.id}
             label={t(`types.${type.id}`)}
