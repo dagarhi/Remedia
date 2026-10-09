@@ -42,3 +42,7 @@
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
 }
+.record-card-rating {
+  font-size: var(--text-sm);
+  color: var(--accent-text);
+}

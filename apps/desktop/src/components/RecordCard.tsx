@@ -1,6 +1,7 @@
 import type { MediaRecord } from "@remedia/core";
 import { iconForType } from "../recordTypes";
 import "./RecordCard.css";
+import { stars } from "./RatingSelect";
 
 /** Year from a partial ISO date ("2016-11-11" -> "2016"), if the record has one. */
 function releaseYear(record: MediaRecord): string | null {
@@ -17,6 +18,7 @@ interface RecordCardProps {
 export function RecordCard({ record, onOpen }: RecordCardProps) {
   const Icon = iconForType(record.template);
   const year = releaseYear(record);
+  const rating = record.rating;
 
   return (
     <button type="button" className="record-card" onClick={() => onOpen(record)}>
@@ -26,6 +28,7 @@ export function RecordCard({ record, onOpen }: RecordCardProps) {
       </span>
       <span className="record-card-title">{record.title}</span>
       {year && <span className="record-card-year">{year}</span>}
+      {rating !== null && <span className="record-card-rating">{stars(rating)}</span>}
     </button>
   );
 }
