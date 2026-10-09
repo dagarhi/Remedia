@@ -1,0 +1,9 @@
+{
+  // Database tests run on Node (node:sqlite), so only they get Node types.
+  // The package code in src/ stays platform-agnostic.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["."]
+}

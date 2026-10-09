@@ -8,3 +8,4 @@ export * from "./rating";
 export * from "./settings";
 export * from "./text";
 export * from "./theme";
+export * from "./db";
