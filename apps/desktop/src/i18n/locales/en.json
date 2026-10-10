@@ -11,12 +11,6 @@
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar"
   },
-  "screens": {
-    "home": {
-      "title": "Home",
-      "placeholder": "Your summary will appear here once you add something."
-    }
-  },
   "field": {
     "release_date": "Release date",
     "director": "Director",
@@ -149,6 +143,7 @@
   "settings": {
     "title": "Settings",
     "sections": {
+      "profile": "Profile",
       "appearance": "Appearance",
       "recordTypes": "Record types",
       "about": "About"
@@ -173,6 +168,60 @@
     "ratingHint": "Changing the style never changes your ratings: they are stored precisely and only shown differently.",
     "version": "Version",
     "licence": "Licence",
-    "sourceCode": "Source code on GitHub"
+    "sourceCode": "Source code on GitHub",
+    "name": "Your name",
+    "nameHint": "Used in the greeting on Home. It stays on this device."
+  },
+  "home": {
+    "greeting": "Welcome back",
+    "greetingNamed": "Welcome back, {{name}}",
+    "edit": "Edit home",
+    "doneEditing": "Done",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "librariesShown": "Libraries shown",
+    "emptyMessage": "Your home fills up as you add what you watch. Start with your first movie.",
+    "addFirst": "Add your first movie",
+    "recordCount_one": "{{count}} record",
+    "recordCount_other": "{{count}} records",
+    "blocks": {
+      "libraries": "Your libraries",
+      "random-pick": "What should I watch today?",
+      "recent-activity": "Recent activity"
+    },
+    "randomPick": {
+      "button": "Surprise me",
+      "again": "Another one",
+      "empty": "Nothing pending yet. Add something you want to watch."
+    },
+    "recentActivity": {
+      "empty": "Nothing here yet. Your changes and notes will appear here."
+    },
+    "quotes": [
+      {
+        "text": "A reader lives a thousand lives before he dies. The man who never reads lives only one.",
+        "source": "George R. R. Martin, A Dance with Dragons"
+      },
+      {
+        "text": "We tell ourselves stories in order to live.",
+        "source": "Joan Didion, The White Album"
+      },
+      {
+        "text": "Not all those who wander are lost.",
+        "source": "J. R. R. Tolkien, The Fellowship of the Ring"
+      },
+      {
+        "text": "Life moves pretty fast. If you don't stop and look around once in a while, you could miss it.",
+        "source": "Ferris Bueller's Day Off (1986)"
+      },
+      {
+        "text": "It's dangerous to go alone! Take this.",
+        "source": "The Legend of Zelda (1986)"
+      },
+      {
+        "text": "So many books, so little time.",
+        "source": "Frank Zappa"
+      }
+    ]
   }
 }

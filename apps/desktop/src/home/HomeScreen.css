@@ -1,0 +1,203 @@
+.home {
+  gap: var(--space-8);
+}
+
+.home-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.home-quote {
+  margin: var(--space-3) 0 0;
+  max-width: 560px;
+}
+
+.home-quote p {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.home-quote cite {
+  font-size: var(--text-sm);
+  font-style: normal;
+  color: var(--text-secondary);
+}
+
+.home-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.home-empty p {
+  margin: 0;
+}
+
+.home-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.home-block h2 {
+  font-size: var(--text-lg);
+}
+
+/* Your libraries */
+.library-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.library-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 180px;
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+}
+
+.library-tile:hover {
+  background: var(--hover);
+}
+
+/* 2 x 2 covers. */
+.library-tile-collage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.library-tile-collage .cover {
+  aspect-ratio: auto;
+  height: 100%;
+}
+
+.library-tile-empty {
+  grid-column: 1 / -1;
+  place-self: center;
+  color: var(--text-disabled);
+}
+
+.library-tile-name {
+  font-weight: 600;
+}
+
+.library-tile-count {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* What should I watch today? */
+.random-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+/* Recent activity */
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 720px;
+}
+
+.activity-line {
+  display: grid;
+  grid-template-columns: 110px auto 1fr;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-top: var(--border-width) solid var(--border);
+}
+
+.activity-title {
+  font-weight: 500;
+}
+
+.activity-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-text--event {
+  color: var(--text-secondary);
+}
+
+/* Edit home */
+.home-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  padding: var(--space-4) var(--space-6);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.home-editor-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 280px;
+}
+
+.home-editor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-1) 0;
+}
+
+.home-editor label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.home-editor input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+}
+
+.home-editor-move {
+  display: flex;
+}
+
+.home-editor-move .icon-button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.home-editor-libraries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  border: none;
+}

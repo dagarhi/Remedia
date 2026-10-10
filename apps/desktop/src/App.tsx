@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlaceholderScreen } from "./components/PlaceholderScreen";
+import { HomeScreen } from "./home/HomeScreen";
 import { Sidebar } from "./components/Sidebar";
 import type { MediaRecord } from "@remedia/core";
 import { AddScreen } from "./screens/AddScreen";
@@ -49,8 +49,14 @@ function App() {
         );
       case "settings":
         return <SettingsScreen />;
-      default:
-        return <PlaceholderScreen screen={route.screen} />;
+      case "home":
+        return (
+          <HomeScreen
+            onAdd={() => navigate("add")}
+            onOpenRecord={(id) => setRoute({ screen: "record", id })}
+            onOpenLibrary={(status) => setRoute({ screen: "library", status })}
+          />
+        );
     }
   }
 

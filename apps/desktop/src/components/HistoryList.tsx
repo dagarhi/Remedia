@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pencil, Trash2 } from "lucide-react";
 import { addNote, deleteHistoryEntry, listHistory, updateNote, type HistoryEntry, type Uuid } from "@remedia/core";
 import { data } from "../db/database";
-import { useFormatRating } from "../settings/SettingsContext";
+import { useHistorySentence, useShortDate } from "./historySentence";
 import "./HistoryList.css";
 import { ConfirmDialog } from "./ConfirmDialog";
 
@@ -17,8 +17,7 @@ interface HistoryListProps {
 
 /** A record's history, newest first: the user's notes plus status and rating events. */
 export function HistoryList({ recordId, templateId, version }: HistoryListProps) {
-  const { t, i18n } = useTranslation();
-  const formatRating = useFormatRating();
+  const { t } = useTranslation();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [draft, setDraft] = useState("");
   const [editing, setEditing] = useState<{ id: Uuid; text: string } | null>(null);
@@ -33,21 +32,9 @@ export function HistoryList({ recordId, templateId, version }: HistoryListProps)
   // The oldest status line is the one created with the record: "Added to", not "Moved to".
   const firstStatusId = [...entries].reverse().find((e) => e.kind === "status")?.id;
 
-  /** Events store the fact; the sentence is built here, in the current language and scale. */
-  function sentence(entry: HistoryEntry): string {
-    switch (entry.kind) {
-      case "note":
-        return entry.text ?? "";
-      case "status": {
-        const library = t(`libraries.${entry.status}`);
-        return t(entry.id === firstStatusId ? "history.added" : "history.moved", { library });
-      }
-      case "rating":
-        return entry.rating === null ? t("history.ratingRemoved") : t("history.rated", { stars: formatRating(entry.rating, templateId) });
-    }
-  }
-
-  const date = (ms: number) => new Intl.DateTimeFormat(i18n.language, { dateStyle: "medium" }).format(ms);
+  const buildSentence = useHistorySentence();
+  const sentence = (entry: HistoryEntry) => buildSentence(entry, entry.id === firstStatusId, templateId);
+  const date = useShortDate();
 
   async function handleAdd(event: FormEvent) {
     event.preventDefault();

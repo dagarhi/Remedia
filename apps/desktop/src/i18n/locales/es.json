@@ -11,12 +11,6 @@
     "collapse": "Contraer barra lateral",
     "expand": "Expandir barra lateral"
   },
-  "screens": {
-    "home": {
-      "title": "Inicio",
-      "placeholder": "Tu resumen aparecerá aquí cuando añadas algo."
-    }
-  },
   "field": {
     "release_date": "Fecha de estreno",
     "director": "Dirección",
@@ -150,6 +144,7 @@
   "settings": {
     "title": "Ajustes",
     "sections": {
+      "profile": "Perfil",
       "appearance": "Apariencia",
       "recordTypes": "Tipos de registro",
       "about": "Acerca de"
@@ -174,6 +169,60 @@
     "ratingHint": "Cambiar el estilo nunca cambia tus valoraciones: se guardan con precisión y solo se muestran de otra forma.",
     "version": "Versión",
     "licence": "Licencia",
-    "sourceCode": "Código fuente en GitHub"
+    "sourceCode": "Código fuente en GitHub",
+    "name": "Tu nombre",
+    "nameHint": "Se usa en el saludo de Inicio. Se queda en este dispositivo."
+  },
+  "home": {
+    "greeting": "Hola de nuevo",
+    "greetingNamed": "Hola de nuevo, {{name}}",
+    "edit": "Editar inicio",
+    "doneEditing": "Listo",
+    "moveUp": "Subir",
+    "moveDown": "Bajar",
+    "librariesShown": "Bibliotecas que se muestran",
+    "emptyMessage": "Tu inicio se irá llenando a medida que añadas lo que ves. Empieza por tu primera película.",
+    "addFirst": "Añadir tu primera película",
+    "recordCount_one": "{{count}} registro",
+    "recordCount_other": "{{count}} registros",
+    "blocks": {
+      "libraries": "Tus bibliotecas",
+      "random-pick": "¿Qué veo hoy?",
+      "recent-activity": "Actividad reciente"
+    },
+    "randomPick": {
+      "button": "Sorpréndeme",
+      "again": "Otra",
+      "empty": "Todavía no hay nada pendiente. Añade algo que quieras ver."
+    },
+    "recentActivity": {
+      "empty": "Aquí todavía no hay nada. Tus cambios y notas aparecerán aquí."
+    },
+    "quotes": [
+      {
+        "text": "Un lector vive mil vidas antes de morir. El que nunca lee vive solo una.",
+        "source": "George R. R. Martin, Danza de dragones"
+      },
+      {
+        "text": "Nos contamos historias para poder vivir.",
+        "source": "Joan Didion, El álbum blanco"
+      },
+      {
+        "text": "No todos los que vagan están perdidos.",
+        "source": "J. R. R. Tolkien, La Comunidad del Anillo"
+      },
+      {
+        "text": "La vida pasa muy deprisa. Si no te paras a mirar de vez en cuando, te la puedes perder.",
+        "source": "Todo en un día (1986)"
+      },
+      {
+        "text": "¡Es peligroso ir solo! Toma esto.",
+        "source": "The Legend of Zelda (1986)"
+      },
+      {
+        "text": "Tantos libros, tan poco tiempo.",
+        "source": "Frank Zappa"
+      }
+    ]
   }
 }

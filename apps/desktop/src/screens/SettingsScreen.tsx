@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getVersion } from "@tauri-apps/api/app";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { LANGUAGES, RATING_SCALES, THEME_MODES, type Language, type RatingScale, type ThemeMode } from "@remedia/core";
+import { LANGUAGES, PROFILE_NAME_MAX_LENGTH, RATING_SCALES, THEME_MODES, type Language, type RatingScale, type ThemeMode } from "@remedia/core";
 import { Select } from "../components/Select";
 import { RECORD_TYPES } from "../recordTypes";
 import { useSettings } from "../settings/SettingsContext";
 import "./LibrariesScreen.css";
 import "./SettingsScreen.css";
 
-const SECTIONS = ["appearance", "recordTypes", "about"] as const;
+const SECTIONS = ["profile", "appearance", "recordTypes", "about"] as const;
 type Section = (typeof SECTIONS)[number];
 
 const REPOSITORY_URL = "https://github.com/dagarhi/Remedia";
@@ -20,7 +20,7 @@ const LANGUAGE_NAMES: Record<Language, string> = { en: "English", es: "Español"
 /** Standard desktop settings: section menu on the left, content on the right, changes apply at once. */
 export function SettingsScreen() {
   const { t } = useTranslation();
-  const [section, setSection] = useState<Section>("appearance");
+  const [section, setSection] = useState<Section>("profile");
 
   return (
     <section className="screen">
@@ -40,12 +40,37 @@ export function SettingsScreen() {
           ))}
         </nav>
         <div className="settings-content">
+          {section === "profile" && <ProfileSettings />}
           {section === "appearance" && <AppearanceSettings />}
           {section === "recordTypes" && <RecordTypeSettings />}
           {section === "about" && <AboutSettings />}
         </div>
       </div>
     </section>
+  );
+}
+
+function ProfileSettings() {
+  const { t } = useTranslation();
+  const { settings, update } = useSettings();
+  // Typed locally and saved when the field loses focus, not on every key press.
+  const [name, setName] = useState(settings["profile.name"]);
+
+  return (
+    <div className="settings-section">
+      <div className="settings-row">
+        <label htmlFor="profile-name" className="label">{t("settings.name")}</label>
+        <input
+          id="profile-name"
+          className="settings-input"
+          value={name}
+          maxLength={PROFILE_NAME_MAX_LENGTH}
+          onChange={(e) => setName(e.target.value)}
+          onBlur={() => update("profile.name", name.trim())}
+        />
+      </div>
+      <p className="screen-placeholder">{t("settings.nameHint")}</p>
+    </div>
   );
 }
 
