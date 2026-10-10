@@ -5,6 +5,7 @@ import { addNote, deleteHistoryEntry, listHistory, updateNote, type HistoryEntry
 import { data } from "../db/database";
 import { stars } from "./RatingSelect";
 import "./HistoryList.css";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 interface HistoryListProps {
   recordId: Uuid;
@@ -18,6 +19,7 @@ export function HistoryList({ recordId, version }: HistoryListProps) {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [draft, setDraft] = useState("");
   const [editing, setEditing] = useState<{ id: Uuid; text: string } | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState<{ entry: HistoryEntry } | null>(null);
 
   const reload = () => listHistory(data, recordId).then(setEntries);
 
@@ -60,8 +62,8 @@ export function HistoryList({ recordId, version }: HistoryListProps) {
   }
 
   async function handleDelete(entry: HistoryEntry) {
-    if (!window.confirm(t("history.confirmDelete"))) return;
     await deleteHistoryEntry(data, entry.id);
+    setConfirmingDelete(null);
     reload();
   }
 
@@ -128,7 +130,9 @@ export function HistoryList({ recordId, version }: HistoryListProps) {
                   className="icon-button"
                   title={t("history.delete")}
                   aria-label={t("history.delete")}
-                  onClick={() => handleDelete(entry)}
+                  onClick={() => 
+                    setConfirmingDelete({ entry })
+                  }
                 >
                   <Trash2 size={14} aria-hidden />
                 </button>
@@ -136,7 +140,19 @@ export function HistoryList({ recordId, version }: HistoryListProps) {
             </li>
           ))}
         </ol>
+        
       )}
+      <ConfirmDialog
+        open={confirmingDelete !== null}
+        title={t("history.deleteTitle")}
+        message={t("history.confirmDelete")}
+        confirmLabel={t("form.delete")}
+        cancelLabel={t("form.cancel")}
+        onConfirm={() => handleDelete(confirmingDelete!.entry)}
+        onCancel={() => {
+          setConfirmingDelete(null);
+        }}
+      />
     </section>
   );
 }

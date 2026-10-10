@@ -126,6 +126,7 @@
     "ratingRemoved": "Rating removed",
     "edit": "Edit note",
     "delete": "Delete",
-    "confirmDelete": "Delete this line from the history?"
+    "confirmDelete": "Delete this line from the history?",
+    "deleteTitle": "Delete history line"
   }
 }

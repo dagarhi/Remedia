@@ -127,6 +127,7 @@
     "ratingRemoved": "Valoración quitada",
     "edit": "Editar nota",
     "delete": "Borrar",
-    "confirmDelete": "¿Borrar esta línea del historial?"
+    "confirmDelete": "¿Borrar esta línea del historial?",
+    "deleteTitle": "Borrar línea del historial"
   }
 }
