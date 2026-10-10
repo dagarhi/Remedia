@@ -15,10 +15,6 @@
     "home": {
       "title": "Inicio",
       "placeholder": "Tu resumen aparecerá aquí cuando añadas algo."
-    },
-    "settings": {
-      "title": "Ajustes",
-      "placeholder": "Perfil, apariencia y tipos de registro. Próximamente."
     }
   },
   "field": {
@@ -150,5 +146,34 @@
       "Para volver a ver",
       "Reconfortante"
     ]
+  },
+  "settings": {
+    "title": "Ajustes",
+    "sections": {
+      "appearance": "Apariencia",
+      "recordTypes": "Tipos de registro",
+      "about": "Acerca de"
+    },
+    "language": "Idioma",
+    "theme": "Tema",
+    "followSystem": "Como el sistema",
+    "themeModes": {
+      "system": "Como el sistema",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "ratingDefault": "Estilo de valoración por defecto",
+    "perType": "Por tipo",
+    "useDefault": "Usar el de por defecto",
+    "ratingScales": {
+      "stars_5": "5 estrellas",
+      "stars_5_half": "5 estrellas con medias",
+      "out_of_10": "Sobre 10",
+      "out_of_100": "Sobre 100"
+    },
+    "ratingHint": "Cambiar el estilo nunca cambia tus valoraciones: se guardan con precisión y solo se muestran de otra forma.",
+    "version": "Versión",
+    "licence": "Licencia",
+    "sourceCode": "Código fuente en GitHub"
   }
 }

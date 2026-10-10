@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { BUILT_IN_THEMES, resolveTheme, type ThemeAppearance } from "@remedia/core";
+import { BUILT_IN_THEMES, resolveTheme, type ThemeAppearance, type ThemeMode } from "@remedia/core";
 import { applyTheme } from "./applyTheme";
-
-export type ThemeMode = "system" | ThemeAppearance;
 
 const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -20,8 +18,8 @@ function useSystemAppearance(): ThemeAppearance {
 }
 
 /**
- * Applies the built-in theme for the current mode.
- * TODO: read the mode and the chosen light/dark themes from settings once settings are stored.
+ * Applies the built-in theme for the mode chosen in Settings ("system" follows the OS).
+ * TODO: let the user pick which light and dark themes to use, once there are more themes.
  */
 export function useTheme(mode: ThemeMode = "system"): ThemeAppearance {
   const system = useSystemAppearance();

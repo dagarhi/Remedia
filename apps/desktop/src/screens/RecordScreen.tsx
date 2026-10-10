@@ -127,7 +127,7 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
           {record.original_title && <p className="screen-placeholder">{record.original_title}</p>}
           <div className="record-inline-edits">
             <StatusSelect templateId={record.template} value={record.status} onChange={(status) => change({ status })} />
-            <RatingSelect value={record.rating} onChange={(rating) => change({ rating })} />
+            <RatingSelect templateId={record.template} value={record.rating} onChange={(rating) => change({ rating })} />
           </div>
 
           {tags.length > 0 && (
@@ -166,7 +166,7 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
 
       {record.notes && <p className="record-notes">{record.notes}</p>}
 
-      <HistoryList recordId={record.id} version={version} />
+      <HistoryList recordId={record.id} templateId={record.template} version={version} />
     </section>
   );
 }

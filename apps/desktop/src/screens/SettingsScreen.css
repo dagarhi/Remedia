@@ -1,0 +1,78 @@
+.settings {
+  display: flex;
+  gap: var(--space-8);
+  align-items: flex-start;
+}
+
+.settings-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.settings-menu-item {
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-secondary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.settings-menu-item:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.settings-menu-item[aria-current="page"] {
+  background: var(--selected);
+  color: var(--text);
+}
+
+.settings-content {
+  flex: 1;
+  min-width: 0;
+  max-width: 560px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.settings-section h2 {
+  font-size: var(--text-lg);
+  margin-top: var(--space-4);
+}
+
+.settings-section p {
+  margin: 0;
+}
+
+/* Label on the left, control on the right. */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.settings-row select {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+  min-width: 220px;
+}
+
+.settings-app-name {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 600;
+}

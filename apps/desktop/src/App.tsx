@@ -6,12 +6,11 @@ import { AddScreen } from "./screens/AddScreen";
 import { LibrariesScreen } from "./screens/LibrariesScreen";
 import { LibraryScreen } from "./screens/LibraryScreen";
 import { RecordScreen } from "./screens/RecordScreen";
+import { SettingsScreen } from "./screens/SettingsScreen";
 import { sidebarScreenFor, type Route, type Screen } from "./screens";
-import { useTheme } from "./theme/useTheme";
 import "./App.css";
 
 function App() {
-  useTheme();
   const [route, setRoute] = useState<Route>({ screen: "home" });
   const [collapsed, setCollapsed] = useState(false);
   // Changing a component's `key` makes React start it fresh: pressing Add always restarts the flow.
@@ -48,6 +47,8 @@ function App() {
             onDeleted={() => navigate("libraries")}
           />
         );
+      case "settings":
+        return <SettingsScreen />;
       default:
         return <PlaceholderScreen screen={route.screen} />;
     }

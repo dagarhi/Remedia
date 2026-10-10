@@ -15,10 +15,6 @@
     "home": {
       "title": "Home",
       "placeholder": "Your summary will appear here once you add something."
-    },
-    "settings": {
-      "title": "Settings",
-      "placeholder": "Profile, appearance and record types. Coming soon."
     }
   },
   "field": {
@@ -149,5 +145,34 @@
       "Rewatch",
       "Comfort"
     ]
+  },
+  "settings": {
+    "title": "Settings",
+    "sections": {
+      "appearance": "Appearance",
+      "recordTypes": "Record types",
+      "about": "About"
+    },
+    "language": "Language",
+    "theme": "Theme",
+    "followSystem": "Follow system",
+    "themeModes": {
+      "system": "Follow system",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "ratingDefault": "Default rating style",
+    "perType": "Per type",
+    "useDefault": "Use the default",
+    "ratingScales": {
+      "stars_5": "5 stars",
+      "stars_5_half": "5 stars with halves",
+      "out_of_10": "Out of 10",
+      "out_of_100": "Out of 100"
+    },
+    "ratingHint": "Changing the style never changes your ratings: they are stored precisely and only shown differently.",
+    "version": "Version",
+    "licence": "Licence",
+    "sourceCode": "Source code on GitHub"
   }
 }

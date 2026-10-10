@@ -141,7 +141,7 @@ export function RecordForm({
 
           <div className="form-field">
             <label htmlFor="rating" className="label">{t("record.rating")}</label>
-            <RatingSelect id="rating" value={rating} onChange={setRating} />
+            <RatingSelect id="rating" templateId={templateId} value={rating} onChange={setRating} />
             {errorFor("rating") && <p className="form-error">{errorFor("rating")}</p>}
           </div>
         </div>
