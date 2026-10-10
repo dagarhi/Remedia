@@ -139,7 +139,15 @@
   },
   "tags": {
     "label": "Tags",
-    "placeholder": "Add a tag and press Enter",
-    "remove": "Remove tag {{name}}"
+    "placeholder": "e.g. favourites, to watch with family… (Enter to add)",
+    "remove": "Remove tag {{name}}",
+    "examples": [
+      "Favourites",
+      "To watch with family",
+      "Recommended by a friend",
+      "Classic",
+      "Rewatch",
+      "Comfort"
+    ]
   }
 }

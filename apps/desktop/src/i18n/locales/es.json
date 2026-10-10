@@ -140,7 +140,15 @@
   },
   "tags": {
     "label": "Etiquetas",
-    "placeholder": "Escribe una etiqueta y pulsa Enter",
-    "remove": "Quitar la etiqueta {{name}}"
+    "placeholder": "Ej.: favoritos, para ver en familia… (Enter para añadir)",
+    "remove": "Quitar la etiqueta {{name}}",
+    "examples": [
+      "Favoritos",
+      "Para ver en familia",
+      "Recomendada por un amigo",
+      "Clásico",
+      "Para volver a ver",
+      "Reconfortante"
+    ]
   }
 }

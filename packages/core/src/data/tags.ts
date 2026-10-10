@@ -90,6 +90,16 @@ export async function tagChanges(
   return steps;
 }
 
+/** How many live tags exist, e.g. to keep showing example tags while the user has few. */
+export async function countTags(ctx: DataContext): Promise<number> {
+  const row = await ctx.db
+    .select({ n: sql<number>`count(*)` })
+    .from(tags)
+    .where(isNull(tags.deleted_at))
+    .get();
+  return Number(row?.n ?? 0);
+}
+
 export interface TagSuggestion {
   tag: Tag;
   /** Live records of the given template using this tag. */

@@ -1,9 +1,12 @@
 import { useEffect, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
-import { normalizeTagName, suggestTags, type TagSuggestion } from "@remedia/core";
+import { countTags, normalizeTagName, suggestTags, type TagSuggestion } from "@remedia/core";
 import { data } from "../db/database";
 import "./TagInput.css";
+
+/** Example tags are shown until the user has this many tags of their own. */
+const SHOW_EXAMPLES_BELOW = 5;
 
 interface TagInputProps {
   /** Template of the record, so tags used on the same type are suggested first. */
@@ -21,6 +24,11 @@ export function TagInput({ templateId, value, onChange }: TagInputProps) {
   const [draft, setDraft] = useState("");
   const [suggestions, setSuggestions] = useState<TagSuggestion[]>([]);
   const [focused, setFocused] = useState(false);
+  const [tagCount, setTagCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    countTags(data).then(setTagCount);
+  }, []);
 
   // Ask core for suggestions whenever the typed text or the chosen tags change.
   useEffect(() => {
@@ -32,6 +40,14 @@ export function TagInput({ templateId, value, onChange }: TagInputProps) {
       cancelled = true;
     };
   }, [templateId, draft, value]);
+
+  // Examples are interface text (translated), not data: they only become tags when picked.
+  const taken = new Set([...value, ...suggestions.map((s) => s.tag.name)].map(normalizeTagName));
+  const examples =
+    tagCount !== null && tagCount < SHOW_EXAMPLES_BELOW && draft === ""
+      ? (t("tags.examples", { returnObjects: true }) as string[]).filter((e) => !taken.has(normalizeTagName(e)))
+      : [];
+  const realSuggestions = focused ? suggestions : [];
 
   function add(name: string) {
     const clean = name.trim();
@@ -81,11 +97,16 @@ export function TagInput({ templateId, value, onChange }: TagInputProps) {
         />
       </div>
 
-      {focused && suggestions.length > 0 && (
+      {(realSuggestions.length > 0 || examples.length > 0) && (
         <div className="tag-suggestions">
-          {suggestions.map((s) => (
+          {realSuggestions.map((s) => (
             <button key={s.tag.id} type="button" className="tag tag--suggestion" onClick={() => add(s.tag.name)}>
               {s.tag.name}
+            </button>
+          ))}
+          {examples.map((name) => (
+            <button key={name} type="button" className="tag tag--suggestion" onClick={() => add(name)}>
+              {name}
             </button>
           ))}
         </div>

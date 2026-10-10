@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { createDatabase } from "../src/db/client";
 import type { DataContext } from "../src/data/context";
 import { createRecord, deleteRecord, updateRecord } from "../src/data/records";
-import { cleanTagNames, listRecordTags, suggestTags } from "../src/data/tags";
+import { cleanTagNames, countTags, listRecordTags, suggestTags } from "../src/data/tags";
 import { nodeBatchExecutor, nodeExecutor, openTestDatabase } from "./nodeSqlite";
 
 let sqlite: DatabaseSync;
@@ -56,6 +56,12 @@ describe("record tags", () => {
     await updateRecord(ctx, dune.id, { tags: ["Sci-fi", "favoritos"] });
     expect(await names(dune.id)).toEqual(["Favoritos", "Sci-fi"]);
     expect(sqlite.prepare("SELECT count(*) n FROM record_tags").get()).toEqual({ n: 2 });
+  });
+
+  it("counts live tags", async () => {
+    expect(await countTags(ctx)).toBe(0);
+    await createRecord(ctx, { template: "movie", title: "Dune", tags: ["Favoritos", "Sci-fi"] });
+    expect(await countTags(ctx)).toBe(2);
   });
 
   it("leaves tags untouched when an edit does not mention them", async () => {
