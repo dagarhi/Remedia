@@ -1,4 +1,5 @@
 import { and, desc, eq, inArray, isNull } from "drizzle-orm";
+import type { BatchItem } from "drizzle-orm/batch";
 import type { Uuid } from "../common";
 import { externalLinks, historyEntries, recordImages, records, recordTags } from "../db/schema";
 import { compactFields, validateFields } from "../fields";
@@ -6,6 +7,7 @@ import { isValidStoredRating } from "../rating";
 import type { FieldValue, MediaRecord, RecordStatus } from "../record";
 import { DataValidationError, type DataContext, type DataIssue } from "./context";
 import { historyEvent } from "./history";
+import { coverRow, getCover, isRelativeImagePath } from "./images";
 import { loadEffectiveTemplate } from "./templates";
 
 /** What the add form provides. Optional values may be left out. */
@@ -19,6 +21,16 @@ export interface NewRecord {
   notes?: string | null;
   /** Raw form values; empty ones are dropped before saving. */
   fields?: Record<string, FieldValue | null | undefined>;
+  /** Cover image path relative to the images folder ("covers/….jpg"); null removes it. */
+  cover?: string | null;
+}
+
+type Batch = [BatchItem<"sqlite">, ...BatchItem<"sqlite">[]];
+
+function checkCover(cover: string | null | undefined): void {
+  if (cover != null && !isRelativeImagePath(cover)) {
+    throw new DataValidationError([{ path: "cover", code: "invalid_path" }]);
+  }
 }
 
 /** What an edit may change. Only the given keys are updated; `null` clears a value. */
@@ -68,11 +80,14 @@ export async function createRecord(ctx: DataContext, input: NewRecord): Promise<
     deleted_at: null,
   };
   await validateRecord(ctx, record);
+  checkCover(input.cover);
 
-  // The record and its first history lines ("Added to Pending", "Rated ★★★★") are saved together.
+  // The record, its first history lines ("Added to Pending", "Rated ★★★★") and its cover are saved together.
   const events = [historyEvent(ctx, record.id, now, { kind: "status", status: record.status })];
   if (record.rating !== null) events.push(historyEvent(ctx, record.id, now, { kind: "rating", rating: record.rating }));
-  await ctx.db.batch([ctx.db.insert(records).values(record), ctx.db.insert(historyEntries).values(events)]);
+  const batch: Batch = [ctx.db.insert(records).values(record), ctx.db.insert(historyEntries).values(events)];
+  if (input.cover) batch.push(ctx.db.insert(recordImages).values(coverRow(ctx, record.id, input.cover, now)));
+  await ctx.db.batch(batch);
   return record;
 }
 
@@ -121,20 +136,30 @@ export async function updateRecord(ctx: DataContext, id: Uuid, changes: RecordCh
     updated_at: ctx.now(),
   };
   await validateRecord(ctx, updated);
+  checkCover(changes.cover);
+
+  const { id: _id, created_at: _created, ...values } = updated;
+  const batch: Batch = [ctx.db.update(records).set(values).where(eq(records.id, id))];
+  const now = updated.updated_at;
 
   // A status or rating change is also written to the history, in the same transaction.
   const events = [];
-  if (updated.status !== current.status) {
-    events.push(historyEvent(ctx, id, updated.updated_at, { kind: "status", status: updated.status }));
-  }
-  if (updated.rating !== current.rating) {
-    events.push(historyEvent(ctx, id, updated.updated_at, { kind: "rating", rating: updated.rating }));
+  if (updated.status !== current.status) events.push(historyEvent(ctx, id, now, { kind: "status", status: updated.status }));
+  if (updated.rating !== current.rating) events.push(historyEvent(ctx, id, now, { kind: "rating", rating: updated.rating }));
+  if (events.length > 0) batch.push(ctx.db.insert(historyEntries).values(events));
+
+  // A new cover replaces the old one: the old row is soft-deleted (at most one live cover).
+  if ("cover" in changes && (changes.cover ?? null) !== (await getCover(ctx, id))) {
+    batch.push(
+      ctx.db
+        .update(recordImages)
+        .set({ deleted_at: now, updated_at: now })
+        .where(and(eq(recordImages.record_id, id), eq(recordImages.kind, "cover"), isNull(recordImages.deleted_at))),
+    );
+    if (changes.cover) batch.push(ctx.db.insert(recordImages).values(coverRow(ctx, id, changes.cover, now)));
   }
 
-  const { id: _id, created_at: _created, ...values } = updated;
-  const updateRow = ctx.db.update(records).set(values).where(eq(records.id, id));
-  if (events.length > 0) await ctx.db.batch([updateRow, ctx.db.insert(historyEntries).values(events)]);
-  else await updateRow;
+  await ctx.db.batch(batch);
   return updated;
 }
 

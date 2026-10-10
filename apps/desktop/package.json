@@ -15,6 +15,7 @@
     "@fontsource-variable/literata": "^5.3.0",
     "@remedia/core": "*",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2.8.1",
     "@tauri-apps/plugin-opener": "^2",
     "drizzle-orm": "^0.45.4",
     "i18next": "^26.4.2",
