@@ -16,6 +16,7 @@ import { CoverPicker } from "./CoverPicker";
 import { FieldInput } from "./FieldInput";
 import { RatingSelect } from "./RatingSelect";
 import { StatusSelect } from "./StatusSelect";
+import { TagInput } from "./TagInput";
 import "./RecordForm.css";
 
 type FormFields = Record<string, FieldValue | undefined>;
@@ -36,6 +37,8 @@ interface RecordFormProps {
   record?: MediaRecord;
   /** The record's current cover, when editing. */
   cover?: string | null;
+  /** The record's current tag names, when editing. */
+  tags?: string[];
   onSaved: (record: MediaRecord) => void;
   onCancel: () => void;
   /** Shows a Delete button (edit mode only). */
@@ -46,7 +49,15 @@ interface RecordFormProps {
  * The record form, used both to add (manual mode) and to edit. Core validates;
  * the form only collects values and shows errors.
  */
-export function RecordForm({ templateId, record, cover: initialCover, onSaved, onCancel, onDelete }: RecordFormProps) {
+export function RecordForm({
+  templateId,
+  record,
+  cover: initialCover,
+  tags: initialTags,
+  onSaved,
+  onCancel,
+  onDelete,
+}: RecordFormProps) {
   const { t } = useTranslation();
 
   // Initial values: the record's when editing, empty when adding.
@@ -57,6 +68,7 @@ export function RecordForm({ templateId, record, cover: initialCover, onSaved, o
   const [rating, setRating] = useState<number | null>(record?.rating ?? null); // stored scale, 1-100
   const [notes, setNotes] = useState(record?.notes ?? "");
   const [cover, setCover] = useState<string | null>(initialCover ?? null);
+  const [tags, setTags] = useState<string[]>(initialTags ?? []);
   // Starts with every stored key, including hidden fields and keys from newer versions, so none is lost.
   const [fields, setFields] = useState<FormFields>(record?.fields ?? {});
   const [issues, setIssues] = useState<DataIssue[]>([]);
@@ -85,6 +97,7 @@ export function RecordForm({ templateId, record, cover: initialCover, onSaved, o
         notes,
         fields: toFieldValues(template, fields),
         cover,
+        tags,
       };
       const saved = record
         ? await updateRecord(data, record.id, values)
@@ -131,6 +144,11 @@ export function RecordForm({ templateId, record, cover: initialCover, onSaved, o
             <RatingSelect id="rating" value={rating} onChange={setRating} />
             {errorFor("rating") && <p className="form-error">{errorFor("rating")}</p>}
           </div>
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="tags" className="label">{t("tags.label")}</label>
+          <TagInput templateId={templateId} value={tags} onChange={setTags} />
         </div>
       </div>
 

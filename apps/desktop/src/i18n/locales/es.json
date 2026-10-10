@@ -137,5 +137,10 @@
     "change": "Cambiar imagen",
     "remove": "Quitar",
     "importFailed": "No se ha podido importar esa imagen."
+  },
+  "tags": {
+    "label": "Etiquetas",
+    "placeholder": "Escribe una etiqueta y pulsa Enter",
+    "remove": "Quitar la etiqueta {{name}}"
   }
 }

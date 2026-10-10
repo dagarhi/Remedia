@@ -136,5 +136,10 @@
     "change": "Change image",
     "remove": "Remove",
     "importFailed": "Could not import that image."
+  },
+  "tags": {
+    "label": "Tags",
+    "placeholder": "Add a tag and press Enter",
+    "remove": "Remove tag {{name}}"
   }
 }

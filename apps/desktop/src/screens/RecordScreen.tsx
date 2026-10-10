@@ -7,6 +7,7 @@ import {
   deleteRecord,
   getCover,
   getRecord,
+  listRecordTags,
   updateRecord,
   type MediaRecord,
   type RecordChanges,
@@ -20,6 +21,7 @@ import { RecordForm } from "../components/RecordForm";
 import { StatusSelect } from "../components/StatusSelect";
 import { data } from "../db/database";
 import "./LibrariesScreen.css";
+import "../components/TagInput.css";
 import "./RecordScreen.css";
 import { ConfirmDialog } from "../components/ConfirmDialog";  
 
@@ -44,10 +46,17 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
   const [editing, setEditing] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [cover, setCover] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+
+  /** Cover and tags live in their own tables, so they load separately from the record. */
+  function loadExtras() {
+    getCover(data, id).then(setCover);
+    listRecordTags(data, id).then((list) => setTags(list.map((tag) => tag.name)));
+  }
 
   useEffect(() => {
     getRecord(data, id).then((r) => setRecord(r ?? null));
-    getCover(data, id).then(setCover);
+    loadExtras();
   }, [id]);
 
   /** Inline edits: save at once; core also writes the history line. */
@@ -73,9 +82,10 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
           templateId={record.template}
           record={record}
           cover={cover}
+          tags={tags}
           onSaved={(saved) => {
             setRecord(saved);
-            getCover(data, id).then(setCover);
+            loadExtras();
             setVersion((v) => v + 1);
             setEditing(false);
           }}
@@ -119,6 +129,16 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
             <StatusSelect templateId={record.template} value={record.status} onChange={(status) => change({ status })} />
             <RatingSelect value={record.rating} onChange={(rating) => change({ rating })} />
           </div>
+
+          {tags.length > 0 && (
+            <div className="tag-list">
+              {tags.map((name) => (
+                <span key={name} className="tag">
+                  {name}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Details sit beside the cover, so the space next to it is not left empty. */}
           <dl className="record-details">

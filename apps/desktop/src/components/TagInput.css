@@ -1,0 +1,80 @@
+.tag-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Looks like a text field, with the pills inside it. */
+.tag-input-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-control);
+}
+
+.tag-input-box:focus-within {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* The inner text box has no frame of its own: the box above is the frame. */
+.record-form .tag-input-box input:not([type="checkbox"]) {
+  flex: 1;
+  min-width: 120px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-3);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-tag);
+  background: var(--selected);
+  color: var(--text);
+  font-size: var(--text-sm);
+}
+
+.tag-remove {
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.tag-remove:hover {
+  color: var(--text);
+}
+
+.tag-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tag--suggestion {
+  background: transparent;
+  border-style: dashed;
+  cursor: pointer;
+}
+
+.tag--suggestion:hover {
+  background: var(--hover);
+}
+
+/* Read-only tags, e.g. in the record header. */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
