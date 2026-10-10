@@ -1,7 +1,21 @@
+/* Cover on the left (if any), everything else on the right. */
 .record-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.record-header-cover {
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.record-header-main {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
 }
 
 .record-header .label,

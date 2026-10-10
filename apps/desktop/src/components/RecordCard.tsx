@@ -1,5 +1,5 @@
 import type { MediaRecord } from "@remedia/core";
-import { iconForType } from "../recordTypes";
+import { Cover } from "./Cover";
 import "./RecordCard.css";
 import { stars } from "./RatingSelect";
 
@@ -11,21 +11,19 @@ function releaseYear(record: MediaRecord): string | null {
 
 interface RecordCardProps {
   record: MediaRecord;
+  /** Relative path of its cover, if it has one. */
+  cover?: string | null;
   onOpen: (record: MediaRecord) => void;
 }
 
 /** A poster with title and year, as shelves and grids show records. */
-export function RecordCard({ record, onOpen }: RecordCardProps) {
-  const Icon = iconForType(record.template);
+export function RecordCard({ record, cover, onOpen }: RecordCardProps) {
   const year = releaseYear(record);
   const rating = record.rating;
 
   return (
     <button type="button" className="record-card" onClick={() => onOpen(record)}>
-      {/* Covers come with images (roadmap step 5); until then, the type icon. */}
-      <span className="record-card-cover" aria-hidden>
-        <Icon size={36} />
-      </span>
+      <Cover path={cover} templateId={record.template} className="record-card-cover" />
       <span className="record-card-title">{record.title}</span>
       {year && <span className="record-card-year">{year}</span>}
       {rating !== null && <span className="record-card-rating">{stars(rating)}</span>}

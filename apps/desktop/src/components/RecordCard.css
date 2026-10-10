@@ -11,21 +11,15 @@
   cursor: pointer;
 }
 
+/* The frame itself comes from Cover.css. */
 .record-card-cover {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Posters are 2:3. */
-  aspect-ratio: 2 / 3;
   margin-bottom: var(--space-1);
-  background: var(--surface);
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius-cover);
-  color: var(--text-disabled);
+  transition: filter 120ms ease;
 }
 
 .record-card:hover .record-card-cover {
   background: var(--hover);
+  filter: brightness(1.05);
 }
 
 .record-card-title {

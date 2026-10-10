@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowLeft } from "lucide-react";
 import type { MediaRecord, RecordStatus } from "@remedia/core";
 import { RecordCard } from "../components/RecordCard";
+import { useCovers } from "../images";
 import { useRecords } from "../useRecords";
 import "./LibrariesScreen.css";
 
@@ -18,6 +19,7 @@ interface LibraryScreenProps {
 export function LibraryScreen({ status, onOpenRecord, onBack }: LibraryScreenProps) {
   const { t } = useTranslation();
   const records = useRecords({ status });
+  const covers = useCovers();
 
   return (
     <section className="screen">
@@ -34,7 +36,7 @@ export function LibraryScreen({ status, onOpenRecord, onBack }: LibraryScreenPro
       ) : (
         <div className="library-grid">
           {records.map((record) => (
-            <RecordCard key={record.id} record={record} onOpen={onOpenRecord} />
+            <RecordCard key={record.id} record={record} cover={covers.get(record.id)} onOpen={onOpenRecord} />
           ))}
         </div>
       )}

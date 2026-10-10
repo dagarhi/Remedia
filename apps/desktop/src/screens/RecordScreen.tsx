@@ -5,12 +5,14 @@ import {
   buildEffectiveTemplate,
   codeTemplateFor,
   deleteRecord,
+  getCover,
   getRecord,
   updateRecord,
   type MediaRecord,
   type RecordChanges,
   type Uuid,
 } from "@remedia/core";
+import { Cover } from "../components/Cover";
 import { useLabel } from "../components/FieldInput";
 import { HistoryList } from "../components/HistoryList";
 import { RatingSelect } from "../components/RatingSelect";
@@ -29,8 +31,8 @@ interface RecordScreenProps {
 }
 
 /**
- * One record: header with inline status and rating, details, notes and history.
- * Edit opens the same page in edit mode (UI Design); covers come in a later step.
+ * One record: header with cover, inline status and rating, details, notes and history.
+ * Edit opens the same page in edit mode (UI Design).
  */
 export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
   const { t } = useTranslation();
@@ -41,9 +43,11 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
   const [version, setVersion] = useState(0);
   const [editing, setEditing] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [cover, setCover] = useState<string | null>(null);
 
   useEffect(() => {
     getRecord(data, id).then((r) => setRecord(r ?? null));
+    getCover(data, id).then(setCover);
   }, [id]);
 
   /** Inline edits: save at once; core also writes the history line. */
@@ -68,8 +72,10 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
         <RecordForm
           templateId={record.template}
           record={record}
+          cover={cover}
           onSaved={(saved) => {
             setRecord(saved);
+            getCover(data, id).then(setCover);
             setVersion((v) => v + 1);
             setEditing(false);
           }}
@@ -99,17 +105,20 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
       </button>
 
       <header className="record-header">
-        <p className="label">{t(`types.${record.template}`)}</p>
-        <div className="record-title-row">
-          <h1>{record.title}</h1>
-          <button type="button" className="button" onClick={() => setEditing(true)}>
-            <Pencil size={14} aria-hidden /> {t("record.edit")}
-          </button>
-        </div>
-        {record.original_title && <p className="screen-placeholder">{record.original_title}</p>}
-        <div className="record-inline-edits">
-          <StatusSelect templateId={record.template} value={record.status} onChange={(status) => change({ status })} />
-          <RatingSelect value={record.rating} onChange={(rating) => change({ rating })} />
+        {cover && <Cover path={cover} templateId={record.template} className="record-header-cover" />}
+        <div className="record-header-main">
+          <p className="label">{t(`types.${record.template}`)}</p>
+          <div className="record-title-row">
+            <h1>{record.title}</h1>
+            <button type="button" className="button" onClick={() => setEditing(true)}>
+              <Pencil size={14} aria-hidden /> {t("record.edit")}
+            </button>
+          </div>
+          {record.original_title && <p className="screen-placeholder">{record.original_title}</p>}
+          <div className="record-inline-edits">
+            <StatusSelect templateId={record.template} value={record.status} onChange={(status) => change({ status })} />
+            <RatingSelect value={record.rating} onChange={(rating) => change({ rating })} />
+          </div>
         </div>
       </header>
 

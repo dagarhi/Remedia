@@ -98,7 +98,8 @@
     "unknown_option": "Elige una de las opciones.",
     "unknown": "Tipo desconocido.",
     "not_found": "Este registro ya no existe.",
-    "save_failed": "No se ha podido guardar. Inténtalo de nuevo."
+    "save_failed": "No se ha podido guardar. Inténtalo de nuevo.",
+    "invalid_path": "Ruta de imagen no válida."
   },
   "libraries": {
     "title": "Bibliotecas",
@@ -129,5 +130,12 @@
     "delete": "Borrar",
     "confirmDelete": "¿Borrar esta línea del historial?",
     "deleteTitle": "Borrar línea del historial"
+  },
+  "cover": {
+    "label": "Portada",
+    "choose": "Elegir imagen",
+    "change": "Cambiar imagen",
+    "remove": "Quitar",
+    "importFailed": "No se ha podido importar esa imagen."
   }
 }

@@ -1,0 +1,19 @@
+.cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Posters are 2:3. */
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-cover);
+  color: var(--text-disabled);
+}
+
+.cover img {
+  width: 100%;
+  height: 100%;
+  /* Fill the frame without stretching; crops the edges if the ratio differs. */
+  object-fit: cover;
+}

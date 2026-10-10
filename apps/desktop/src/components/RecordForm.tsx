@@ -12,6 +12,7 @@ import {
   type RecordStatus,
 } from "@remedia/core";
 import { data } from "../db/database";
+import { CoverPicker } from "./CoverPicker";
 import { FieldInput } from "./FieldInput";
 import { RatingSelect } from "./RatingSelect";
 import { StatusSelect } from "./StatusSelect";
@@ -33,6 +34,8 @@ interface RecordFormProps {
   templateId: string;
   /** The record to edit. Without it, the form creates a new record. */
   record?: MediaRecord;
+  /** The record's current cover, when editing. */
+  cover?: string | null;
   onSaved: (record: MediaRecord) => void;
   onCancel: () => void;
   /** Shows a Delete button (edit mode only). */
@@ -43,7 +46,7 @@ interface RecordFormProps {
  * The record form, used both to add (manual mode) and to edit. Core validates;
  * the form only collects values and shows errors.
  */
-export function RecordForm({ templateId, record, onSaved, onCancel, onDelete }: RecordFormProps) {
+export function RecordForm({ templateId, record, cover: initialCover, onSaved, onCancel, onDelete }: RecordFormProps) {
   const { t } = useTranslation();
 
   // Initial values: the record's when editing, empty when adding.
@@ -53,6 +56,7 @@ export function RecordForm({ templateId, record, onSaved, onCancel, onDelete }: 
   const [status, setStatus] = useState<RecordStatus>(record?.status ?? "planned");
   const [rating, setRating] = useState<number | null>(record?.rating ?? null); // stored scale, 1-100
   const [notes, setNotes] = useState(record?.notes ?? "");
+  const [cover, setCover] = useState<string | null>(initialCover ?? null);
   // Starts with every stored key, including hidden fields and keys from newer versions, so none is lost.
   const [fields, setFields] = useState<FormFields>(record?.fields ?? {});
   const [issues, setIssues] = useState<DataIssue[]>([]);
@@ -80,6 +84,7 @@ export function RecordForm({ templateId, record, onSaved, onCancel, onDelete }: 
         rating,
         notes,
         fields: toFieldValues(template, fields),
+        cover,
       };
       const saved = record
         ? await updateRecord(data, record.id, values)
@@ -97,6 +102,12 @@ export function RecordForm({ templateId, record, onSaved, onCancel, onDelete }: 
 
   return (
     <form className="record-form" onSubmit={handleSubmit} noValidate>
+      <div className="form-section">
+        <span className="label">{t("cover.label")}</span>
+        <CoverPicker templateId={templateId} value={cover} onChange={setCover} />
+        {errorFor("cover") && <p className="form-error">{errorFor("cover")}</p>}
+      </div>
+
       <div className="form-section">
         <div className="form-field">
           <label htmlFor="title" className="label">{t("record.title")} *</label>

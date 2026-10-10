@@ -97,7 +97,8 @@
     "unknown_option": "Choose one of the options.",
     "unknown": "Unknown type.",
     "not_found": "This record no longer exists.",
-    "save_failed": "Could not save. Please try again."
+    "save_failed": "Could not save. Please try again.",
+    "invalid_path": "Invalid image path."
   },
   "libraries": {
     "title": "Libraries",
@@ -128,5 +129,12 @@
     "delete": "Delete",
     "confirmDelete": "Delete this line from the history?",
     "deleteTitle": "Delete history line"
+  },
+  "cover": {
+    "label": "Cover",
+    "choose": "Choose image",
+    "change": "Change image",
+    "remove": "Remove",
+    "importFailed": "Could not import that image."
   }
 }
