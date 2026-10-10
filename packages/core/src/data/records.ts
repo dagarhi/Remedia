@@ -8,6 +8,7 @@ import type { FieldValue, MediaRecord, RecordStatus } from "../record";
 import { DataValidationError, type DataContext, type DataIssue } from "./context";
 import { historyEvent } from "./history";
 import { coverRow, getCover, isRelativeImagePath } from "./images";
+import { tagChanges } from "./tags";
 import { loadEffectiveTemplate } from "./templates";
 
 /** What the add form provides. Optional values may be left out. */
@@ -23,6 +24,8 @@ export interface NewRecord {
   fields?: Record<string, FieldValue | null | undefined>;
   /** Cover image path relative to the images folder ("covers/….jpg"); null removes it. */
   cover?: string | null;
+  /** Tag names as typed. When editing, the record ends up with exactly these tags. */
+  tags?: string[];
 }
 
 type Batch = [BatchItem<"sqlite">, ...BatchItem<"sqlite">[]];
@@ -87,6 +90,7 @@ export async function createRecord(ctx: DataContext, input: NewRecord): Promise<
   if (record.rating !== null) events.push(historyEvent(ctx, record.id, now, { kind: "rating", rating: record.rating }));
   const batch: Batch = [ctx.db.insert(records).values(record), ctx.db.insert(historyEntries).values(events)];
   if (input.cover) batch.push(ctx.db.insert(recordImages).values(coverRow(ctx, record.id, input.cover, now)));
+  if (input.tags) batch.push(...(await tagChanges(ctx, record.id, input.tags, now)));
   await ctx.db.batch(batch);
   return record;
 }
@@ -158,6 +162,8 @@ export async function updateRecord(ctx: DataContext, id: Uuid, changes: RecordCh
     );
     if (changes.cover) batch.push(ctx.db.insert(recordImages).values(coverRow(ctx, id, changes.cover, now)));
   }
+
+  if (changes.tags) batch.push(...(await tagChanges(ctx, id, changes.tags, now)));
 
   await ctx.db.batch(batch);
   return updated;
