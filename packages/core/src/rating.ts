@@ -49,3 +49,17 @@ export function fromDisplayRating(display: number, scale: RatingScale): number {
   }
   return Math.round((display / max) * RATING_MAX);
 }
+
+/** A value on a display scale as text: "★★★★", "★★★½", "7/10", "73/100". */
+export function formatDisplayRating(display: number, scale: RatingScale): string {
+  if (scale === "stars_5" || scale === "stars_5_half") {
+    const whole = Math.floor(display);
+    return "★".repeat(whole) + (display > whole ? "½" : "");
+  }
+  return `${display}/${SCALES[scale].max}`;
+}
+
+/** A stored rating (1-100) as text on a display scale. */
+export function formatRating(stored: number, scale: RatingScale): string {
+  return formatDisplayRating(toDisplayRating(stored, scale), scale);
+}
