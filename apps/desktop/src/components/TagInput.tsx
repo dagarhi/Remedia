@@ -1,7 +1,12 @@
 import { useEffect, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
-import { countTags, normalizeTagName, suggestTags, type TagSuggestion } from "@remedia/core";
+import {
+  countTags,
+  normalizeTagName,
+  suggestTags,
+  type TagSuggestion,
+} from "@remedia/core";
 import { data } from "../db/database";
 import "./TagInput.css";
 
@@ -33,7 +38,12 @@ export function TagInput({ templateId, value, onChange }: TagInputProps) {
   // Ask core for suggestions whenever the typed text or the chosen tags change.
   useEffect(() => {
     let cancelled = false;
-    suggestTags(data, { template: templateId, query: draft, exclude: value, limit: 6 }).then((s) => {
+    suggestTags(data, {
+      template: templateId,
+      query: draft,
+      exclude: value,
+      limit: 6,
+    }).then((s) => {
       if (!cancelled) setSuggestions(s);
     });
     return () => {
@@ -42,17 +52,22 @@ export function TagInput({ templateId, value, onChange }: TagInputProps) {
   }, [templateId, draft, value]);
 
   // Examples are interface text (translated), not data: they only become tags when picked.
-  const taken = new Set([...value, ...suggestions.map((s) => s.tag.name)].map(normalizeTagName));
+  const taken = new Set(
+    [...value, ...suggestions.map((s) => s.tag.name)].map(normalizeTagName),
+  );
   const examples =
     tagCount !== null && tagCount < SHOW_EXAMPLES_BELOW && draft === ""
-      ? (t("tags.examples", { returnObjects: true }) as string[]).filter((e) => !taken.has(normalizeTagName(e)))
+      ? (t("tags.examples", { returnObjects: true }) as string[]).filter(
+          (e) => !taken.has(normalizeTagName(e)),
+        )
       : [];
   const realSuggestions = focused ? suggestions : [];
 
   function add(name: string) {
     const clean = name.trim();
     const key = normalizeTagName(clean);
-    if (key !== "" && !value.some((v) => normalizeTagName(v) === key)) onChange([...value, clean]);
+    if (key !== "" && !value.some((v) => normalizeTagName(v) === key))
+      onChange([...value, clean]);
     setDraft("");
   }
 
@@ -66,6 +81,8 @@ export function TagInput({ templateId, value, onChange }: TagInputProps) {
       add(draft);
     } else if (event.key === "Backspace" && draft === "" && value.length > 0) {
       remove(value[value.length - 1]);
+    } else if (event.key === "Escape") {
+      setDraft("");
     }
   }
 
@@ -100,12 +117,22 @@ export function TagInput({ templateId, value, onChange }: TagInputProps) {
       {(realSuggestions.length > 0 || examples.length > 0) && (
         <div className="tag-suggestions">
           {realSuggestions.map((s) => (
-            <button key={s.tag.id} type="button" className="tag tag--suggestion" onClick={() => add(s.tag.name)}>
+            <button
+              key={s.tag.id}
+              type="button"
+              className="tag tag--suggestion"
+              onClick={() => add(s.tag.name)}
+            >
               {s.tag.name}
             </button>
           ))}
           {examples.map((name) => (
-            <button key={name} type="button" className="tag tag--suggestion" onClick={() => add(name)}>
+            <button
+              key={name}
+              type="button"
+              className="tag tag--suggestion"
+              onClick={() => add(name)}
+            >
               {name}
             </button>
           ))}
