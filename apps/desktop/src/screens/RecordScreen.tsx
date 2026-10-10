@@ -119,29 +119,30 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
             <StatusSelect templateId={record.template} value={record.status} onChange={(status) => change({ status })} />
             <RatingSelect value={record.rating} onChange={(rating) => change({ rating })} />
           </div>
+
+          {/* Details sit beside the cover, so the space next to it is not left empty. */}
+          <dl className="record-details">
+            {template.fields
+              .filter((f) => record.fields[f.key] !== undefined)
+              .map((f) => {
+                const value = record.fields[f.key];
+                return (
+                  <div key={f.key}>
+                    <dt className="label">{label(f.label)}</dt>
+                    <dd>
+                      {Array.isArray(value)
+                        ? value.join(", ")
+                        : typeof value === "boolean"
+                          ? t(value ? "common.yes" : "common.no")
+                          : String(value)}
+                      {f.unit && ` ${f.unit}`}
+                    </dd>
+                  </div>
+                );
+              })}
+          </dl>
         </div>
       </header>
-
-      <dl className="record-details">
-        {template.fields
-          .filter((f) => record.fields[f.key] !== undefined)
-          .map((f) => {
-            const value = record.fields[f.key];
-            return (
-              <div key={f.key}>
-                <dt className="label">{label(f.label)}</dt>
-                <dd>
-                  {Array.isArray(value)
-                    ? value.join(", ")
-                    : typeof value === "boolean"
-                      ? t(value ? "common.yes" : "common.no")
-                      : String(value)}
-                  {f.unit && ` ${f.unit}`}
-                </dd>
-              </div>
-            );
-          })}
-      </dl>
 
       {record.notes && <p className="record-notes">{record.notes}</p>}
 

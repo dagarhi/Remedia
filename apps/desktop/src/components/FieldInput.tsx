@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { EffectiveField, FieldValue, Label } from "@remedia/core";
+import { Select } from "./Select";
 
 /** Built-in labels are i18n keys; user labels are shown as typed. */
 export function useLabel() {
@@ -65,14 +66,14 @@ export function FieldInput({ field, value, onChange, error }: FieldInputProps) {
         );
       case "select":
         return (
-          <select id={id} value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
+          <Select id={id} value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value || undefined)}>
             <option value="">—</option>
             {field.options?.map((o) => (
               <option key={o.key} value={o.key}>
                 {label(o.label)}
               </option>
             ))}
-          </select>
+          </Select>
         );
       case "boolean":
         return <input id={id} type="checkbox" checked={value === true} onChange={(e) => onChange(e.target.checked)} />;

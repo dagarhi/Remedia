@@ -50,3 +50,7 @@
   justify-content: space-between;
   gap: var(--space-4);
 }
+
+.record-header-main .record-details {
+  margin-top: var(--space-4);
+}

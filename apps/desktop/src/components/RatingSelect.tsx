@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { fromDisplayRating, ratingScaleSpec, toDisplayRating } from "@remedia/core";
 import { RATING_SCALE } from "../preferences";
+import { Select } from "./Select";
 
 /** A stored rating (1-100) as stars on the current display scale. */
 export function stars(stored: number): string {
@@ -22,7 +23,7 @@ export function RatingSelect({ id, value, onChange }: RatingSelectProps) {
   const shown = value === null ? "" : toDisplayRating(value, RATING_SCALE);
 
   return (
-    <select
+    <Select
       id={id}
       value={shown}
       onChange={(e) => onChange(e.target.value === "" ? null : fromDisplayRating(Number(e.target.value), RATING_SCALE))}
@@ -33,6 +34,6 @@ export function RatingSelect({ id, value, onChange }: RatingSelectProps) {
           {"★".repeat(r)}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }

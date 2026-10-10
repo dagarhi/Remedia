@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { RECORD_STATUSES, type RecordStatus } from "@remedia/core";
+import { Select } from "./Select";
 
 /** Status label for a record type ("Watching" for movies), falling back to the generic one. */
 export function useStatusLabel() {
@@ -17,12 +18,12 @@ interface StatusSelectProps {
 export function StatusSelect({ id, templateId, value, onChange }: StatusSelectProps) {
   const statusLabel = useStatusLabel();
   return (
-    <select id={id} value={value} onChange={(e) => onChange(e.target.value as RecordStatus)}>
+    <Select id={id} value={value} onChange={(e) => onChange(e.target.value as RecordStatus)}>
       {RECORD_STATUSES.map((s) => (
         <option key={s} value={s}>
           {statusLabel(templateId, s)}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }

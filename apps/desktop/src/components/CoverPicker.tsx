@@ -31,7 +31,9 @@ export function CoverPicker({ templateId, value, onChange }: CoverPickerProps) {
 
   return (
     <div className="cover-picker">
-      <Cover path={value} templateId={templateId} className="cover-picker-preview" />
+      <button type="button" className="cover-picker-preview-button" aria-label={t(value ? "cover.change" : "cover.choose")} onClick={choose}>
+        <Cover path={value} templateId={templateId} className="cover-picker-preview" />
+      </button>
       <div className="cover-picker-actions">
         <button type="button" className="button" onClick={choose}>
           <ImagePlus size={16} aria-hidden /> {t(value ? "cover.change" : "cover.choose")}

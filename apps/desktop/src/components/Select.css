@@ -1,0 +1,23 @@
+/* The wrapper is the positioning reference for the arrow. */
+.select {
+  position: relative;
+  display: inline-flex;
+}
+
+/* `span.` makes this win over screen rules such as `.record-inline-edits select`. */
+span.select > select {
+  flex: 1;
+  /* Hide the browser's arrow and leave room for ours. */
+  appearance: none;
+  padding-right: var(--space-8);
+}
+
+.select-arrow {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  /* Clicks go through the icon to the <select> underneath. */
+  pointer-events: none;
+}
