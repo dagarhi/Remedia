@@ -13,6 +13,13 @@ describe("isValidSettingValue", () => {
     ["rating_display.default", "default", false],
     ["rating_display.movie", "default", true],
     ["rating_display.movie", "stars_5_half", true],
+    ["profile.name", "David", true],
+    ["profile.name", "x".repeat(41), false],
+    ["home.blocks", ["recent-activity", "libraries"], true],
+    ["home.blocks", ["libraries", "libraries"], false],
+    ["home.blocks", ["weather"], false],
+    ["home.libraries", ["planned"], true],
+    ["home.libraries", "planned", false],
     ["unknown.key", "x", false],
   ])("%s = %s is %s", (key, value, valid) => {
     expect(isValidSettingValue(key, value)).toBe(valid);

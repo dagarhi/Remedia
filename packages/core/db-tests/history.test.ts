@@ -2,8 +2,8 @@ import { DatabaseSync } from "node:sqlite";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createDatabase } from "../src/db/client";
 import { DataValidationError, type DataContext } from "../src/data/context";
-import { addNote, deleteHistoryEntry, listHistory, updateNote } from "../src/data/history";
-import { createRecord, updateRecord } from "../src/data/records";
+import { addNote, deleteHistoryEntry, listHistory, listRecentHistory, updateNote } from "../src/data/history";
+import { createRecord, deleteRecord, updateRecord } from "../src/data/records";
 import { nodeBatchExecutor, nodeExecutor, openTestDatabase, runMigrations } from "./nodeSqlite";
 
 let sqlite: DatabaseSync;
@@ -134,5 +134,34 @@ describe("migration 0002", () => {
     expect(() => insert("note", "NULL", "NULL")).toThrow(/CHECK/);
     expect(() => insert("status", "'hi'", "'completed'")).toThrow(/CHECK/);
     expect(() => insert("status", "NULL", "NULL")).toThrow(/CHECK/);
+  });
+});
+
+describe("listRecentHistory", () => {
+  it("lists lines from every live record, newest first, marking each record's first status", async () => {
+    const dune = await createRecord(ctx, { template: "movie", title: "Dune" });
+    clock = 2000;
+    const heat = await createRecord(ctx, { template: "movie", title: "Heat" });
+    clock = 3000;
+    await updateRecord(ctx, dune.id, { status: "completed" });
+    clock = 4000;
+    await addNote(ctx, heat.id, "Great");
+
+    const recent = await listRecentHistory(ctx);
+    expect(recent.map((r) => [r.record.title, r.entry.kind, r.firstStatus])).toEqual([
+      ["Heat", "note", false],
+      ["Dune", "status", false],
+      ["Heat", "status", true],
+      ["Dune", "status", true],
+    ]);
+  });
+
+  it("skips deleted records and respects the limit", async () => {
+    const dune = await createRecord(ctx, { template: "movie", title: "Dune" });
+    await createRecord(ctx, { template: "movie", title: "Heat" });
+    await deleteRecord(ctx, dune.id);
+
+    expect((await listRecentHistory(ctx)).map((r) => r.record.title)).toEqual(["Heat"]);
+    expect(await listRecentHistory(ctx, 0)).toEqual([]);
   });
 });

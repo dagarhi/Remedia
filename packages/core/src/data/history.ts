@@ -1,6 +1,6 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import type { Timestamp, Uuid } from "../common";
-import { historyEntries } from "../db/schema";
+import { historyEntries, records } from "../db/schema";
 import type { HistoryEntry, RecordStatus } from "../record";
 import { DataValidationError, type DataContext } from "./context";
 
@@ -19,6 +19,33 @@ export function historyEvent(ctx: DataContext, recordId: Uuid, at: Timestamp, ev
     updated_at: at,
     deleted_at: null,
   };
+}
+
+export interface RecentHistoryEntry {
+  entry: HistoryEntry;
+  record: { id: Uuid; title: string; template: string };
+  /** True for the status line written when the record was created ("Added to…", not "Moved to…"). */
+  firstStatus: boolean;
+}
+
+/** The latest history lines across all live records, newest first (Home's "Recent activity"). */
+export async function listRecentHistory(ctx: DataContext, limit = 8): Promise<RecentHistoryEntry[]> {
+  const rows = await ctx.db
+    .select({
+      entry: historyEntries,
+      record: { id: records.id, title: records.title, template: records.template },
+      // No earlier live status line for the same record means this one is the first.
+      firstStatus: sql<number>`not exists (
+        select 1 from history_entries earlier
+        where earlier.record_id = ${historyEntries.record_id} and earlier.kind = 'status'
+          and earlier.deleted_at is null and earlier.created_at < ${historyEntries.created_at})`,
+    })
+    .from(historyEntries)
+    .innerJoin(records, eq(records.id, historyEntries.record_id))
+    .where(and(isNull(historyEntries.deleted_at), isNull(records.deleted_at)))
+    .orderBy(desc(historyEntries.created_at))
+    .limit(limit);
+  return rows.map((r) => ({ ...r, firstStatus: r.entry.kind === "status" && Boolean(r.firstStatus) }));
 }
 
 /** A record's live history, newest first. */
