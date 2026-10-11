@@ -19,10 +19,22 @@
           "url": "https://openlibrary.org/*"
         },
         {
+          "url": "https://www.googleapis.com/books/*"
+        },
+        {
           "url": "https://graphql.anilist.co"
         },
         {
           "url": "https://graphql.anilist.co/*"
+        },
+        {
+          "url": "https://api.jikan.moe/*"
+        },
+        {
+          "url": "https://api.tvmaze.com/*"
+        },
+        {
+          "url": "https://api.rawg.io/*"
         },
         {
           "url": "https://api.igdb.com/*"

@@ -6,6 +6,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
 import {
   ADD_MODES,
+  isConfigured,
   PROVIDERS,
   LANGUAGES,
   PROFILE_NAME_MAX_LENGTH,
@@ -192,32 +193,43 @@ function RecordTypeSettings() {
   );
 }
 
-/** External services (UI Design): one row per provider, its types, status and key. */
+/** External services (UI Design): one row per provider with its types and status, then the keys. */
 function ServicesSettings() {
   const { t } = useTranslation();
+  // What is saved, and what is being typed: { section: { field: value } }.
   const [credentials, setCreds] = useState<ProviderCredentials | null>(null);
+  const [draft, setDraft] = useState<ProviderCredentials>({});
   const [error, setError] = useState<string | null>(null);
-  const [tmdbDraft, setTmdbDraft] = useState("");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     getCredentials()
       .then((c) => {
         setCreds(c);
-        setTmdbDraft(c.tmdb.token);
+        setDraft(c);
       })
       .catch((e) => setError(String(e)));
   }, []);
 
-  async function saveTmdb() {
-    const next: ProviderCredentials = {
-      tmdb: { token: tmdbDraft.trim() },
-      igdb: credentials?.igdb ?? { client_id: "", client_secret: "" },
-    };
-    await setCredentials(next);
-    setCreds(next);
+  const value = (section: string, field: string) => draft[section]?.[field] ?? "";
+
+  function edit(section: string, field: string, text: string) {
+    setDraft((current) => ({ ...current, [section]: { ...current[section], [field]: text } }));
+    setSaved(false);
+  }
+
+  async function save() {
+    // Trimmed values only; the file is rewritten with its explanatory comments.
+    const clean: ProviderCredentials = {};
+    for (const [section, fields] of Object.entries(draft)) {
+      clean[section] = Object.fromEntries(Object.entries(fields ?? {}).map(([k, v]) => [k, v.trim()]));
+    }
+    await setCredentials(clean);
+    setCreds(clean);
     setSaved(true);
   }
+
+  const withKeys = PROVIDERS.filter((p) => p.credentials);
 
   return (
     <div className="settings-section">
@@ -225,7 +237,7 @@ function ServicesSettings() {
       {error && <p className="form-error">{t("settings.services.malformed", { error })}</p>}
 
       {PROVIDERS.map((provider) => {
-        const configured = credentials ? provider.isConfigured(credentials) : false;
+        const configured = credentials ? isConfigured(provider, credentials) : !provider.credentials;
         return (
           <div key={provider.id} className="service-row">
             <div className="service-info">
@@ -236,7 +248,7 @@ function ServicesSettings() {
             </div>
             <span className={configured ? "tag" : "tag tag--suggestion"}>
               {t(
-                !provider.needsCredentials
+                !provider.credentials
                   ? "settings.services.noKeyNeeded"
                   : configured
                     ? "settings.services.ready"
@@ -247,24 +259,35 @@ function ServicesSettings() {
         );
       })}
 
-      <h2>{t("providers.tmdb.name")}</h2>
-      <p className="screen-placeholder">{t("settings.services.tmdbHelp")}</p>
-      <div className="settings-row">
-        <label htmlFor="tmdb-token" className="label">{t("settings.services.tmdbToken")}</label>
-        <input
-          id="tmdb-token"
-          type="password"
-          className="settings-input"
-          value={tmdbDraft}
-          autoComplete="off"
-          onChange={(e) => {
-            setTmdbDraft(e.target.value);
-            setSaved(false);
-          }}
-        />
-      </div>
+      <h2>{t("settings.services.keys")}</h2>
+      {withKeys.map((provider) => {
+        const { section, fields } = provider.credentials!;
+        return (
+          <div key={provider.id} className="service-keys">
+            <span className="service-name">{t(`providers.${provider.id}.name`)}</span>
+            <p className="screen-placeholder">{t(`providers.${provider.id}.help`)}</p>
+            {fields.map((field) => {
+              const id = `${section}-${field}`;
+              return (
+                <div key={field} className="settings-row">
+                  <label htmlFor={id} className="label">{t(`settings.services.fields.${field}`)}</label>
+                  <input
+                    id={id}
+                    type="password"
+                    className="settings-input"
+                    autoComplete="off"
+                    value={value(section, field)}
+                    onChange={(e) => edit(section, field, e.target.value)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
+
       <div className="settings-actions">
-        <button type="button" className="button button--primary" onClick={saveTmdb}>
+        <button type="button" className="button button--primary" onClick={save}>
           {t("form.save")}
         </button>
         {saved && <span className="screen-placeholder">{t("settings.services.saved")}</span>}

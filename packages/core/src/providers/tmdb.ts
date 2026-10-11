@@ -1,4 +1,5 @@
 import {
+  credential,
   isoDate,
   queryString,
   languageName,
@@ -19,7 +20,7 @@ type Json = Record<string, any>;
 
 /** Read Access Tokens are JWTs ("eyJ…") and go in a header; v3 API keys go in the URL. */
 function request(ctx: ProviderContext, path: string, params: Record<string, string> = {}) {
-  const token = ctx.credentials.tmdb.token.trim();
+  const token = credential(ctx.credentials, "tmdb", "token");
   const isBearer = token.startsWith("eyJ");
   const query = queryString({
     language: ctx.language === "es" ? "es-ES" : "en-US",
@@ -105,8 +106,7 @@ function mapSeries(ctx: ProviderContext, s: Json): ProviderRecord {
 export const tmdb: Provider = {
   id: "tmdb",
   templates: ["movie", "series"],
-  needsCredentials: true,
-  isConfigured: (c) => c.tmdb.token.trim() !== "",
+  credentials: { section: "tmdb", fields: ["token"] },
 
   async search(ctx, template, query) {
     const isMovie = template === "movie";

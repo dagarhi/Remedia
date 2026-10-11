@@ -24,7 +24,7 @@ function fakeHttp(answers: Record<string, unknown>) {
 const ctx = (http: HttpClient, token = "v3key"): ProviderContext => ({
   http,
   language: "es",
-  credentials: { tmdb: { token }, igdb: { client_id: "", client_secret: "" } },
+  credentials: { tmdb: { token } },
 });
 
 describe("tmdb", () => {
@@ -169,6 +169,10 @@ describe("openLibrary", () => {
       synopsis: "Set on the desert planet Arrakis…",
     });
     expect(record.posterUrl).toBe("https://covers.openlibrary.org/b/id/11481354-L.jpg");
+    expect(record.links).toEqual([
+      { provider: "openlibrary", external_id: "OL893415W" },
+      { provider: "isbn", external_id: "9780441172719" },
+    ]);
   });
 });
 
@@ -218,7 +222,10 @@ describe("aniList", () => {
 describe("providersFor", () => {
   it("returns the providers linked to a type, or all for custom templates", () => {
     expect(providersFor("movie").map((p) => p.id)).toEqual(["tmdb"]);
-    expect(providersFor("book").map((p) => p.id)).toEqual(["openlibrary"]);
+    expect(providersFor("series").map((p) => p.id)).toEqual(["tmdb", "tvmaze"]);
+    expect(providersFor("book").map((p) => p.id)).toEqual(["openlibrary", "googlebooks"]);
+    expect(providersFor("game").map((p) => p.id)).toEqual(["rawg", "igdb"]);
+    expect(providersFor("anime").map((p) => p.id)).toEqual(["anilist", "jikan"]);
     expect(providersFor("00000000-0000-4000-8000-000000000001").length).toBeGreaterThan(1);
   });
 });

@@ -53,8 +53,7 @@ const titleOf = (m: Json) => m.title?.english || m.title?.romaji || m.title?.nat
 export const aniList: Provider = {
   id: "anilist",
   templates: ["anime"],
-  needsCredentials: false,
-  isConfigured: () => true,
+  credentials: null,
 
   async search(ctx, _template, search) {
     const data = await query(ctx, SEARCH, { search });

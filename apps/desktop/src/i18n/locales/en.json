@@ -265,11 +265,16 @@
       "ready": "Ready",
       "needsKey": "Needs a key",
       "malformed": "credentials.toml could not be read: {{error}}",
-      "tmdbHelp": "Paste your TMDB API key (v3) or API Read Access Token, from themoviedb.org › Settings › API.",
-      "tmdbToken": "TMDB key",
       "saved": "Saved.",
       "openFolder": "Open configuration folder",
-      "privacy": "Keys are stored only on this device, in credentials.toml. They are never included in backups or exports."
+      "privacy": "Keys are stored only on this device, in credentials.toml. They are never included in backups or exports.",
+      "fields": {
+        "token": "Key or token",
+        "key": "API key",
+        "client_id": "Client ID",
+        "client_secret": "Client Secret"
+      },
+      "keys": "Keys"
     }
   },
   "home": {
@@ -382,20 +387,37 @@
       "unauthorized": "The service rejected your key. Check it in Settings › External services.",
       "failed": "The search failed. Check your connection and try again.",
       "details": "Could not fetch the details. Try again or fill it in manually."
-    }
+    },
+    "partialFailure": "Could not reach {{services}}; showing results from the other services."
   },
   "providers": {
     "tmdb": {
-      "name": "TMDB"
+      "name": "TMDB",
+      "help": "API key (v3) or API Read Access Token, from themoviedb.org › Settings › API."
+    },
+    "tvmaze": {
+      "name": "TVmaze"
     },
     "openlibrary": {
       "name": "Open Library"
     },
+    "googlebooks": {
+      "name": "Google Books",
+      "help": "API key from console.cloud.google.com, with the Books API enabled."
+    },
+    "rawg": {
+      "name": "RAWG",
+      "help": "API key from rawg.io/apidocs (free account)."
+    },
+    "igdb": {
+      "name": "IGDB",
+      "help": "Client ID and Client Secret of an application created at dev.twitch.tv/console/apps."
+    },
     "anilist": {
       "name": "AniList"
     },
-    "igdb": {
-      "name": "IGDB"
+    "jikan": {
+      "name": "MyAnimeList (Jikan)"
     }
   }
 }

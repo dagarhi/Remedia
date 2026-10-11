@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react";
 import {
+  isConfigured,
   linkedExternalIds,
   providersFor,
   type Provider,
@@ -39,11 +40,14 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
   const [results, setResults] = useState<{ provider: Provider; result: SearchResult }[]>([]);
   const [existing, setExisting] = useState<Map<string, Uuid>>(new Map());
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  // Services that failed in the last search while others answered.
+  const [failed, setFailed] = useState<Provider[]>([]);
 
   useEffect(() => {
     getCredentials()
-      .then((credentials) => providersFor(templateId).filter((p) => p.isConfigured(credentials)))
-      .catch(() => providersFor(templateId).filter((p) => !p.needsCredentials))
+      .then((credentials) => providersFor(templateId).filter((p) => isConfigured(p, credentials)))
+      // A malformed credentials file never blocks searching with the keyless providers.
+      .catch(() => providersFor(templateId).filter((p) => !p.credentials))
       .then((list) => {
         setUsable(list);
         setSelected(new Set(list.map((p) => p.id)));
@@ -57,12 +61,19 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
     try {
       const ctx = await providerContext(language);
       const chosen = usable.filter((p) => selected.has(p.id));
-      const lists = await Promise.all(
+      // Each service answers on its own: one that is down never hides the others' results.
+      const outcomes = await Promise.allSettled(
         chosen.map(async (provider) =>
           (await provider.search(ctx, templateId, query.trim())).map((result) => ({ provider, result })),
         ),
       );
-      const all = lists.flat();
+      const failedProviders = chosen.filter((_, i) => outcomes[i].status === "rejected");
+      if (failedProviders.length === chosen.length) {
+        // Every service failed: report it like a single failure.
+        throw (outcomes[0] as PromiseRejectedResult).reason;
+      }
+      setFailed(failedProviders);
+      const all = outcomes.flatMap((o) => (o.status === "fulfilled" ? o.value : []));
       // Results already in the library are marked (same external link, data model).
       const found = new Map<string, Uuid>();
       for (const linkProvider of new Set(all.map((r) => r.result.linkProvider))) {
@@ -133,6 +144,11 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
       </form>
 
       {status.kind === "error" && <p className="form-error">{t(`search.errors.${status.code}`)}</p>}
+      {status.kind === "done" && failed.length > 0 && (
+        <p className="screen-placeholder">
+          {t("search.partialFailure", { services: failed.map((p) => t(`providers.${p.id}.name`)).join(", ") })}
+        </p>
+      )}
 
       {status.kind === "done" && results.length === 0 && <p className="screen-placeholder">{t("search.noResults")}</p>}
 

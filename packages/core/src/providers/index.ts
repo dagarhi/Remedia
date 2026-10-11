@@ -1,13 +1,19 @@
 import { aniList } from "./anilist";
+import { googleBooks } from "./googlebooks";
+import { igdb } from "./igdb";
+import { jikan } from "./jikan";
 import { openLibrary } from "./openlibrary";
+import { rawg } from "./rawg";
 import { tmdb } from "./tmdb";
+import { tvmaze } from "./tvmaze";
 import type { Provider, ProviderId } from "./types";
 
 export * from "./types";
-export { aniList, openLibrary, tmdb };
+export { resetIgdbToken } from "./igdb";
+export { aniList, googleBooks, igdb, jikan, openLibrary, rawg, tmdb, tvmaze };
 
-/** Every provider the app knows. IGDB (video games) is added later. */
-export const PROVIDERS: Provider[] = [tmdb, openLibrary, aniList];
+/** Every provider the app knows, in the order their chips appear. */
+export const PROVIDERS: Provider[] = [tmdb, tvmaze, openLibrary, googleBooks, rawg, igdb, aniList, jikan];
 
 export function providerById(id: ProviderId): Provider | undefined {
   return PROVIDERS.find((p) => p.id === id);

@@ -266,11 +266,16 @@
       "ready": "Listo",
       "needsKey": "Necesita clave",
       "malformed": "No se ha podido leer credentials.toml: {{error}}",
-      "tmdbHelp": "Pega tu clave de API de TMDB (v3) o tu API Read Access Token, de themoviedb.org › Ajustes › API.",
-      "tmdbToken": "Clave de TMDB",
       "saved": "Guardada.",
       "openFolder": "Abrir carpeta de configuración",
-      "privacy": "Las claves se guardan solo en este dispositivo, en credentials.toml. Nunca se incluyen en copias de seguridad ni exportaciones."
+      "privacy": "Las claves se guardan solo en este dispositivo, en credentials.toml. Nunca se incluyen en copias de seguridad ni exportaciones.",
+      "fields": {
+        "token": "Clave o token",
+        "key": "Clave de API",
+        "client_id": "Client ID",
+        "client_secret": "Client Secret"
+      },
+      "keys": "Claves"
     }
   },
   "home": {
@@ -383,20 +388,37 @@
       "unauthorized": "El servicio ha rechazado tu clave. Revísala en Ajustes › Servicios externos.",
       "failed": "La búsqueda ha fallado. Comprueba tu conexión y vuelve a intentarlo.",
       "details": "No se han podido obtener los datos. Vuelve a intentarlo o rellénalo a mano."
-    }
+    },
+    "partialFailure": "No se ha podido contactar con {{services}}; se muestran los resultados de los demás servicios."
   },
   "providers": {
     "tmdb": {
-      "name": "TMDB"
+      "name": "TMDB",
+      "help": "Clave de API (v3) o API Read Access Token, de themoviedb.org › Ajustes › API."
+    },
+    "tvmaze": {
+      "name": "TVmaze"
     },
     "openlibrary": {
       "name": "Open Library"
     },
+    "googlebooks": {
+      "name": "Google Books",
+      "help": "Clave de API de console.cloud.google.com, con la Books API activada."
+    },
+    "rawg": {
+      "name": "RAWG",
+      "help": "Clave de API de rawg.io/apidocs (cuenta gratuita)."
+    },
+    "igdb": {
+      "name": "IGDB",
+      "help": "Client ID y Client Secret de una aplicación creada en dev.twitch.tv/console/apps."
+    },
     "anilist": {
       "name": "AniList"
     },
-    "igdb": {
-      "name": "IGDB"
+    "jikan": {
+      "name": "MyAnimeList (Jikan)"
     }
   }
 }

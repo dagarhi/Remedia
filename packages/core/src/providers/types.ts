@@ -7,7 +7,7 @@ import type { Language } from "../settings";
  * mapping stays plain TypeScript and is tested with saved sample responses.
  */
 
-export const PROVIDER_IDS = ["tmdb", "openlibrary", "anilist", "igdb"] as const;
+export const PROVIDER_IDS = ["tmdb", "tvmaze", "openlibrary", "googlebooks", "rawg", "igdb", "anilist", "jikan"] as const;
 export type ProviderId = (typeof PROVIDER_IDS)[number];
 
 /** Minimal HTTP the adapters need; desktop implements it with the Tauri HTTP plugin. */
@@ -17,10 +17,12 @@ export interface HttpClient {
   postText(url: string, body: string, headers?: Record<string, string>): Promise<unknown>;
 }
 
-/** Personal keys from credentials.toml (empty strings when not configured). */
-export interface ProviderCredentials {
-  tmdb: { token: string };
-  igdb: { client_id: string; client_secret: string };
+/** Personal keys from credentials.toml: `{ section: { field: value } }`. Missing = not configured. */
+export type ProviderCredentials = Record<string, Record<string, string> | undefined>;
+
+/** One field of a provider section, trimmed; "" when missing. */
+export function credential(credentials: ProviderCredentials, section: string, field: string): string {
+  return credentials[section]?.[field]?.trim() ?? "";
 }
 
 export interface ProviderContext {
@@ -73,11 +75,16 @@ export interface Provider {
   id: ProviderId;
   /** Templates it can fill. */
   templates: string[];
-  /** True when it needs a personal key in credentials.toml. */
-  needsCredentials: boolean;
-  isConfigured(credentials: ProviderCredentials): boolean;
+  /** Its section and fields in credentials.toml; null when it needs no key. */
+  credentials: { section: string; fields: string[] } | null;
   search(ctx: ProviderContext, template: string, query: string): Promise<SearchResult[]>;
   details(ctx: ProviderContext, template: string, result: SearchResult): Promise<ProviderRecord>;
+}
+
+/** True when the provider needs no key, or every field of its key is filled in. */
+export function isConfigured(provider: Provider, credentials: ProviderCredentials): boolean {
+  const spec = provider.credentials;
+  return !spec || spec.fields.every((field) => credential(credentials, spec.section, field) !== "");
 }
 
 /** Year from a date string ("2016-11-11" -> "2016"), if any. */
@@ -112,4 +119,20 @@ export function queryString(params: Record<string, string>): string {
   return Object.entries(params)
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     .join("&");
+}
+
+/** Plain text from provider HTML ("<p>A<br>B</p>" -> "A\nB"); undefined when empty. */
+export function stripHtml(html: string | null | undefined): string | undefined {
+  if (!html) return undefined;
+  const text = html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>\s*<p>/gi, "\n\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  return text || undefined;
 }

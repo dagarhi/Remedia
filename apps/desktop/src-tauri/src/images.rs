@@ -35,7 +35,16 @@ pub fn import(app: &AppHandle, source: &Path, folder: &str) -> Result<String, St
 }
 
 /// Image hosts of the supported providers. Posters are only downloaded from these.
-const ALLOWED_IMAGE_HOSTS: &[&str] = &["image.tmdb.org", "covers.openlibrary.org", "s4.anilist.co", "images.igdb.com"];
+const ALLOWED_IMAGE_HOSTS: &[&str] = &[
+    "image.tmdb.org",
+    "covers.openlibrary.org",
+    "books.google.com",
+    "s4.anilist.co",
+    "cdn.myanimelist.net",
+    "static.tvmaze.com",
+    "media.rawg.io",
+    "images.igdb.com",
+];
 
 fn extension_for(content_type: &str) -> Option<&'static str> {
     match content_type.split(';').next()?.trim() {

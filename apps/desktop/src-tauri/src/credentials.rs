@@ -1,32 +1,30 @@
 //! Provider credentials in `credentials.toml` (UI Design, token storage): a human-readable
-//! file in the app config folder, separate from the database. Never exported, backed up or
-//! synced. It is read on every request, so hand edits apply at once.
+//! file in the device's local app folder, separate from the database. Never exported, backed
+//! up or synced. It is read on every request, so hand edits apply at once.
 
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-#[derive(Default, Serialize, Deserialize, Clone)]
-#[serde(default)]
-pub struct Tmdb {
-    /// API key (v3) or API Read Access Token.
-    pub token: String,
-}
+/// `[provider] field = "value"`. Generic, so a new provider only needs an entry in KNOWN.
+pub type Credentials = BTreeMap<String, BTreeMap<String, String>>;
 
-#[derive(Default, Serialize, Deserialize, Clone)]
-#[serde(default)]
-pub struct Igdb {
-    pub client_id: String,
-    pub client_secret: String,
-}
-
-#[derive(Default, Serialize, Deserialize, Clone)]
-#[serde(default)]
-pub struct Credentials {
-    pub tmdb: Tmdb,
-    pub igdb: Igdb,
-}
+/// Providers that take keys, with their fields and the help comment written above them.
+const KNOWN: &[(&str, &[&str], &str)] = &[
+    (
+        "tmdb",
+        &["token"],
+        "Movies and series. API key (v3) or API Read Access Token from\n# https://www.themoviedb.org/settings/api",
+    ),
+    ("google_books", &["key"], "Books. API key from https://console.cloud.google.com (Books API enabled)"),
+    ("rawg", &["key"], "Video games. API key from https://rawg.io/apidocs"),
+    (
+        "igdb",
+        &["client_id", "client_secret"],
+        "Video games. Client ID and secret of a Twitch application from\n# https://dev.twitch.tv/console/apps",
+    ),
+];
 
 /// The device's local app folder (%LOCALAPPDATA%\<app> on Windows): separate from the data
 /// folder that holds the database and images, and never roamed to other machines.
@@ -57,10 +55,14 @@ pub fn load(app: &AppHandle) -> Result<Credentials, String> {
     let path = path(app)?;
     move_from_old_location(app, &path);
     match std::fs::read_to_string(&path) {
-        Ok(text) => toml::from_str(&text).map_err(|e| format!("malformed_credentials: {e}")),
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Credentials::default()),
+        Ok(text) => parse(&text),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Credentials::new()),
         Err(e) => Err(e.to_string()),
     }
+}
+
+fn parse(text: &str) -> Result<Credentials, String> {
+    toml::from_str(text).map_err(|e| format!("malformed_credentials: {e}"))
 }
 
 /// Writes the whole file with explanatory comments, so it can be edited by hand.
@@ -77,26 +79,22 @@ fn quoted(value: &str) -> String {
     toml::Value::String(value.to_owned()).to_string()
 }
 
-fn render(c: &Credentials) -> String {
-    format!(
+fn render(credentials: &Credentials) -> String {
+    let mut out = String::from(
         "# Remedia credentials for external services.\n\
          # Personal keys stay on this device: they are never exported, backed up or synced.\n\
-         # You can edit this file by hand; Remedia reads it again on every search.\n\
-         \n\
-         [tmdb]\n\
-         # Movies and series. API key (v3) or API Read Access Token from\n\
-         # https://www.themoviedb.org/settings/api\n\
-         token = {}\n\
-         \n\
-         [igdb]\n\
-         # Video games. Client ID and secret of a Twitch application from\n\
-         # https://dev.twitch.tv/console/apps\n\
-         client_id = {}\n\
-         client_secret = {}\n",
-        quoted(&c.tmdb.token),
-        quoted(&c.igdb.client_id),
-        quoted(&c.igdb.client_secret),
-    )
+         # You can edit this file by hand; Remedia reads it again on every search.\n",
+    );
+    let empty = BTreeMap::new();
+    for (provider, fields, help) in KNOWN {
+        let values = credentials.get(*provider).unwrap_or(&empty);
+        out.push_str(&format!("\n[{provider}]\n# {help}\n"));
+        for field in *fields {
+            let value = values.get(*field).map(String::as_str).unwrap_or("");
+            out.push_str(&format!("{field} = {}\n", quoted(value)));
+        }
+    }
+    out
 }
 
 #[cfg(test)]
@@ -105,19 +103,24 @@ mod tests {
 
     #[test]
     fn rendered_file_reads_back_the_same_values() {
-        let mut c = Credentials::default();
-        c.tmdb.token = "abc\"123".into();
-        c.igdb.client_id = "id".into();
-        let parsed: Credentials = toml::from_str(&render(&c)).unwrap();
-        assert_eq!(parsed.tmdb.token, "abc\"123");
-        assert_eq!(parsed.igdb.client_id, "id");
-        assert_eq!(parsed.igdb.client_secret, "");
+        let mut c = Credentials::new();
+        c.entry("tmdb".into()).or_default().insert("token".into(), "abc\"123".into());
+        c.entry("igdb".into()).or_default().insert("client_id".into(), "id".into());
+        let parsed = parse(&render(&c)).unwrap();
+        assert_eq!(parsed["tmdb"]["token"], "abc\"123");
+        assert_eq!(parsed["igdb"]["client_id"], "id");
+        assert_eq!(parsed["igdb"]["client_secret"], "");
+        assert_eq!(parsed["rawg"]["key"], "");
     }
 
     #[test]
-    fn missing_sections_use_defaults() {
-        let parsed: Credentials = toml::from_str("[tmdb]\ntoken = \"x\"\n").unwrap();
-        assert_eq!(parsed.tmdb.token, "x");
-        assert_eq!(parsed.igdb.client_id, "");
+    fn older_files_still_parse() {
+        let parsed = parse("[tmdb]\ntoken = \"x\"\n").unwrap();
+        assert_eq!(parsed["tmdb"]["token"], "x");
+    }
+
+    #[test]
+    fn malformed_files_report_an_error() {
+        assert!(parse("[tmdb\ntoken = ").unwrap_err().starts_with("malformed_credentials"));
     }
 }

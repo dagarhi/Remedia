@@ -25,8 +25,7 @@ const text = (value: unknown): string | undefined =>
 export const openLibrary: Provider = {
   id: "openlibrary",
   templates: ["book"],
-  needsCredentials: false,
-  isConfigured: () => true,
+  credentials: null,
 
   async search(ctx, _template, query) {
     const data = (await ctx.http.getJson(
@@ -64,7 +63,11 @@ export const openLibrary: Provider = {
           synopsis: text(work.description),
         },
       },
-      links: [{ provider: "openlibrary", external_id: result.externalId }],
+      // The ISBN links the same edition found in Google Books (data model, duplicates).
+      links: [
+        { provider: "openlibrary", external_id: result.externalId },
+        ...(unique(hit.isbn ?? [], 1)[0] ? [{ provider: "isbn", external_id: unique(hit.isbn ?? [], 1)[0] }] : []),
+      ],
       posterUrl: work.covers?.[0] ? `${COVERS}/${work.covers[0]}-L.jpg` : result.posterUrl,
     };
   },
