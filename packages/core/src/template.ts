@@ -1,7 +1,7 @@
 import type { SyncTimestamps } from "./common";
 
 /** Built-in templates, defined in code. `season` is internal: only used as a child of `series`. */
-export const BUILT_IN_TEMPLATE_IDS = ["movie", "series", "book", "game", "season"] as const;
+export const BUILT_IN_TEMPLATE_IDS = ["movie", "series", "book", "game", "anime", "season"] as const;
 
 export type BuiltInTemplateId = (typeof BUILT_IN_TEMPLATE_IDS)[number];
 

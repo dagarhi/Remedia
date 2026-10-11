@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, isNull } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import type { Uuid } from "../common";
 import { externalLinks, historyEntries, recordImages, records, recordTags } from "../db/schema";
@@ -26,6 +26,8 @@ export interface NewRecord {
   cover?: string | null;
   /** Tag names as typed. When editing, the record ends up with exactly these tags. */
   tags?: string[];
+  /** Seasons only: the series they belong to. */
+  parent_id?: Uuid | null;
 }
 
 type Batch = [BatchItem<"sqlite">, ...BatchItem<"sqlite">[]];
@@ -37,7 +39,24 @@ function checkCover(cover: string | null | undefined): void {
 }
 
 /** What an edit may change. Only the given keys are updated; `null` clears a value. */
-export type RecordChanges = Partial<Omit<NewRecord, "template">>;
+export type RecordChanges = Partial<Omit<NewRecord, "template" | "parent_id">>;
+
+/** The only parent/child pair the data model allows: seasons belong to a series. */
+const PARENT_TEMPLATE: Record<string, string> = { season: "series" };
+
+/** Parent rules: a season needs a live series and a season number unique among its siblings. */
+async function parentIssues(ctx: DataContext, record: MediaRecord): Promise<DataIssue[]> {
+  const parentTemplate = PARENT_TEMPLATE[record.template];
+  if (!parentTemplate) return record.parent_id === null ? [] : [{ path: "parent_id", code: "not_allowed" }];
+
+  const parent = record.parent_id ? await getRecord(ctx, record.parent_id) : undefined;
+  if (!parent || parent.template !== parentTemplate) return [{ path: "parent_id", code: "required" }];
+
+  const number = record.fields.season_number;
+  const siblings = await listChildren(ctx, parent.id);
+  const taken = siblings.some((s) => s.id !== record.id && s.fields.season_number === number);
+  return taken ? [{ path: "fields.season_number", code: "duplicate" }] : [];
+}
 
 /** Trims optional text; an empty string becomes null (empty values are not stored). */
 function optionalText(value: string | null | undefined): string | null {
@@ -61,17 +80,18 @@ async function validateRecord(ctx: DataContext, record: MediaRecord): Promise<vo
       issues.push({ path: `fields.${error.key}`, code: error.code });
     }
   }
+  issues.push(...(await parentIssues(ctx, record)));
 
   if (issues.length > 0) throw new DataValidationError(issues);
 }
 
-/** Creates a top-level record (not a season). Returns the saved record. */
+/** Creates a record (a season when `parent_id` points to its series). Returns the saved record. */
 export async function createRecord(ctx: DataContext, input: NewRecord): Promise<MediaRecord> {
   const now = ctx.now();
   const record: MediaRecord = {
     id: ctx.newId(),
     template: input.template,
-    parent_id: null,
+    parent_id: input.parent_id ?? null,
     title: input.title.trim(),
     original_title: optionalText(input.original_title),
     status: input.status ?? "planned",
@@ -102,6 +122,27 @@ export async function getRecord(ctx: DataContext, id: Uuid): Promise<MediaRecord
     .from(records)
     .where(and(eq(records.id, id), isNull(records.deleted_at)))
     .get();
+}
+
+/** Live child records of a series (its seasons), by season number. */
+export async function listChildren(ctx: DataContext, parentId: Uuid): Promise<MediaRecord[]> {
+  const rows = await ctx.db
+    .select()
+    .from(records)
+    .where(and(eq(records.parent_id, parentId), isNull(records.deleted_at)));
+  const number = (r: MediaRecord) => (typeof r.fields.season_number === "number" ? r.fields.season_number : 0);
+  return rows.sort((a, b) => number(a) - number(b));
+}
+
+/** Every live season, grouped by series id: one query for a whole library's progress. */
+export async function listChildrenByParent(ctx: DataContext): Promise<Map<Uuid, MediaRecord[]>> {
+  const rows = await ctx.db
+    .select()
+    .from(records)
+    .where(and(isNotNull(records.parent_id), isNull(records.deleted_at)));
+  const map = new Map<Uuid, MediaRecord[]>();
+  for (const row of rows) map.set(row.parent_id!, [...(map.get(row.parent_id!) ?? []), row]);
+  return map;
 }
 
 export interface RecordFilter {

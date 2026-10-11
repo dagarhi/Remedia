@@ -16,6 +16,7 @@ use serde_json::{json, Value as Json};
 const MIGRATIONS: &[&str] = &[
     include_str!("../../../../packages/core/migrations/0001_initial.sql"),
     include_str!("../../../../packages/core/migrations/0002_history_events.sql"),
+    include_str!("../../../../packages/core/migrations/0003_anime_template.sql"),
 ];
 
 /// One connection behind a mutex: every query runs on the same connection, so
@@ -140,7 +141,7 @@ mod tests {
     fn migrates_and_seeds_built_in_templates() {
         let db = Database::open_in_memory().unwrap();
         let result = db.execute(&query("SELECT count(*) FROM templates", vec![], "get")).unwrap();
-        assert_eq!(result, json!({ "rows": [5] }));
+        assert_eq!(result, json!({ "rows": [6] }));
     }
 
     #[test]
