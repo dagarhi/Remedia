@@ -12,7 +12,7 @@ import {
 } from "@remedia/core";
 import { iconForType } from "../recordTypes";
 import { data } from "../db/database";
-import { getCredentials, providerContext, ProviderHttpError } from "../providers";
+import { getCredentials, isCompatible, providerContext, ProviderHttpError } from "../providers";
 import { useSettings } from "../settings/SettingsContext";
 import { systemLanguage } from "../i18n";
 
@@ -44,14 +44,20 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
   const [failed, setFailed] = useState<Provider[]>([]);
 
   useEffect(() => {
-    getCredentials()
-      .then((credentials) => providersFor(templateId).filter((p) => isConfigured(p, credentials)))
-      // A malformed credentials file never blocks searching with the keyless providers.
-      .catch(() => providersFor(templateId).filter((p) => !p.credentials))
-      .then((list) => {
-        setUsable(list);
-        setSelected(new Set(list.map((p) => p.id)));
-      });
+    async function load() {
+      const candidates = providersFor(templateId);
+      // Incompatible packages (newer contract or app) are skipped, never fatal.
+      const compatible = (await Promise.all(candidates.map(isCompatible))).map((ok, i) => (ok ? candidates[i] : null));
+      const credentials = await getCredentials().catch(() => null);
+      return compatible.filter((p): p is Provider =>
+        // A malformed credentials file never blocks searching with the keyless providers.
+        p !== null && (credentials ? isConfigured(p, credentials) : !p.manifest.settings),
+      );
+    }
+    load().then((list) => {
+      setUsable(list);
+      setSelected(new Set(list.map((p) => p.id)));
+    });
   }, [templateId]);
 
   async function search(event: FormEvent) {

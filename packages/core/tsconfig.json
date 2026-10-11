@@ -12,6 +12,8 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
+    /* Provider manifests are JSON files imported by their package. */
+    "resolveJsonModule": true,
 
     /* Linting */
     "strict": true,

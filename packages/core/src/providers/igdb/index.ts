@@ -1,4 +1,6 @@
-import { credential, queryString, unique, type Provider, type ProviderContext, type SearchResult } from "./types";
+import { parseProviderManifest } from "../manifest";
+import manifest from "./manifest.json";
+import { credential, queryString, unique, type Provider, type ProviderContext, type SearchResult } from "../types";
 
 /*
  * IGDB: video games, through Twitch. Needs a Twitch application's client ID and secret,
@@ -41,8 +43,7 @@ const companies = (game: Json, role: "developer" | "publisher") =>
 
 export const igdb: Provider = {
   id: "igdb",
-  templates: ["game"],
-  credentials: { section: "igdb", fields: ["client_id", "client_secret"] },
+  manifest: parseProviderManifest(manifest),
 
   async search(ctx, _template, query) {
     const clientId = credential(ctx.credentials, "igdb", "client_id");

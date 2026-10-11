@@ -1,0 +1,29 @@
+{
+  "$schema": "../provider-manifest.schema.json",
+  "id": "remedia.provider.rawg",
+  "kind": "provider",
+  "name": "RAWG",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "minAppVersion": "0.1.0",
+  "author": "Remedia",
+  "homepage": "https://rawg.io",
+  "recordTypes": [
+    "game"
+  ],
+  "capabilities": [
+    "metadata.search",
+    "metadata.details",
+    "images"
+  ],
+  "settings": {
+    "section": "rawg",
+    "fields": [
+      {
+        "key": "key",
+        "type": "secret",
+        "required": true
+      }
+    ]
+  }
+}

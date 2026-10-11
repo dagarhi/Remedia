@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+    },
+    "kind": {
+      "type": "string",
+      "const": "provider"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "apiVersion": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "maximum": 9007199254740991
+    },
+    "minAppVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri"
+    },
+    "recordTypes": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "capabilities": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "metadata.search",
+          "metadata.details",
+          "images",
+          "seasons",
+          "quotes"
+        ]
+      }
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "fields": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "secret",
+                  "text"
+                ]
+              },
+              "required": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "key",
+              "type",
+              "required"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "section",
+        "fields"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "name",
+    "version",
+    "apiVersion",
+    "minAppVersion",
+    "author",
+    "recordTypes",
+    "capabilities"
+  ],
+  "additionalProperties": false
+}

@@ -1,3 +1,5 @@
+import { parseProviderManifest } from "../manifest";
+import manifest from "./manifest.json";
 import {
   credential,
   isoDate,
@@ -9,7 +11,7 @@ import {
   type ProviderContext,
   type ProviderRecord,
   type SearchResult,
-} from "./types";
+} from "../types";
 
 /* The Movie Database: movies and series. Needs the user's API key or Read Access Token. */
 
@@ -105,8 +107,7 @@ function mapSeries(ctx: ProviderContext, s: Json): ProviderRecord {
 
 export const tmdb: Provider = {
   id: "tmdb",
-  templates: ["movie", "series"],
-  credentials: { section: "tmdb", fields: ["token"] },
+  manifest: parseProviderManifest(manifest),
 
   async search(ctx, template, query) {
     const isMovie = template === "movie";

@@ -1,4 +1,6 @@
-import { isoDate, stripHtml, unique, yearOf, type Provider, type SearchResult } from "./types";
+import { parseProviderManifest } from "../manifest";
+import manifest from "./manifest.json";
+import { isoDate, stripHtml, unique, yearOf, type Provider, type SearchResult } from "../types";
 
 /* TVmaze: series, with seasons. No key needed; data is in English. */
 
@@ -15,8 +17,7 @@ const SHOW_STATUS: Record<string, string> = {
 
 export const tvmaze: Provider = {
   id: "tvmaze",
-  templates: ["series"],
-  credentials: null,
+  manifest: parseProviderManifest(manifest),
 
   async search(ctx, _template, query) {
     const hits = (await ctx.http.getJson(`${API}/search/shows?q=${encodeURIComponent(query)}`)) as Json[];

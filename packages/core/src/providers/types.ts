@@ -1,3 +1,4 @@
+import type { ProviderCapability, ProviderManifest } from "./manifest";
 import type { NewRecord } from "../data/records";
 import type { Language } from "../settings";
 
@@ -71,20 +72,29 @@ export interface ProviderRecord {
   seasons?: SeasonInput[];
 }
 
+/**
+ * A provider package (first-party-packages.md): its manifest (what it is and can do) plus
+ * the code of the provider contract.
+ */
 export interface Provider {
+  /** Short id used by the UI and translations ("tmdb"). */
   id: ProviderId;
-  /** Templates it can fill. */
-  templates: string[];
-  /** Its section and fields in credentials.toml; null when it needs no key. */
-  credentials: { section: string; fields: string[] } | null;
+  manifest: ProviderManifest;
   search(ctx: ProviderContext, template: string, query: string): Promise<SearchResult[]>;
   details(ctx: ProviderContext, template: string, result: SearchResult): Promise<ProviderRecord>;
 }
 
-/** True when the provider needs no key, or every field of its key is filled in. */
+/** True when the provider needs no key, or every required field of its key is filled in. */
 export function isConfigured(provider: Provider, credentials: ProviderCredentials): boolean {
-  const spec = provider.credentials;
-  return !spec || spec.fields.every((field) => credential(credentials, spec.section, field) !== "");
+  const settings = provider.manifest.settings;
+  return (
+    !settings ||
+    settings.fields.every((field) => !field.required || credential(credentials, settings.section, field.key) !== "")
+  );
+}
+
+export function hasCapability(provider: Provider, capability: ProviderCapability): boolean {
+  return provider.manifest.capabilities.includes(capability);
 }
 
 /** Year from a date string ("2016-11-11" -> "2016"), if any. */

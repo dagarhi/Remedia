@@ -1,4 +1,6 @@
-import { credential, isoDate, queryString, unique, yearOf, type Provider, type SearchResult } from "./types";
+import { parseProviderManifest } from "../manifest";
+import manifest from "./manifest.json";
+import { credential, isoDate, queryString, unique, yearOf, type Provider, type SearchResult } from "../types";
 
 /* RAWG: video games. Needs a free API key. Its images are wide screenshots, not boxes. */
 
@@ -10,8 +12,7 @@ const platforms = (game: Json) => unique((game.platforms ?? []).map((p: Json) =>
 
 export const rawg: Provider = {
   id: "rawg",
-  templates: ["game"],
-  credentials: { section: "rawg", fields: ["key"] },
+  manifest: parseProviderManifest(manifest),
 
   async search(ctx, _template, query) {
     const key = credential(ctx.credentials, "rawg", "key");

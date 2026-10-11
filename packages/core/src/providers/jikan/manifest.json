@@ -1,0 +1,19 @@
+{
+  "$schema": "../provider-manifest.schema.json",
+  "id": "remedia.provider.jikan",
+  "kind": "provider",
+  "name": "Jikan (MyAnimeList)",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "minAppVersion": "0.1.0",
+  "author": "Remedia",
+  "homepage": "https://jikan.moe",
+  "recordTypes": [
+    "anime"
+  ],
+  "capabilities": [
+    "metadata.search",
+    "metadata.details",
+    "images"
+  ]
+}

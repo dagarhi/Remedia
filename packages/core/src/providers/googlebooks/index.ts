@@ -1,3 +1,5 @@
+import { parseProviderManifest } from "../manifest";
+import manifest from "./manifest.json";
 import {
   credential,
   isoDate,
@@ -8,7 +10,7 @@ import {
   yearOf,
   type Provider,
   type SearchResult,
-} from "./types";
+} from "../types";
 
 /* Google Books: books, often with better Spanish editions. Needs a free API key. */
 
@@ -27,8 +29,7 @@ const isbn13 = (info: Json) =>
 
 export const googleBooks: Provider = {
   id: "googlebooks",
-  templates: ["book"],
-  credentials: { section: "google_books", fields: ["key"] },
+  manifest: parseProviderManifest(manifest),
 
   async search(ctx, _template, query) {
     const key = credential(ctx.credentials, "google_books", "key");

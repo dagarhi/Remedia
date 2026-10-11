@@ -229,7 +229,7 @@ function ServicesSettings() {
     setSaved(true);
   }
 
-  const withKeys = PROVIDERS.filter((p) => p.credentials);
+  const withKeys = PROVIDERS.filter((p) => p.manifest.settings);
 
   return (
     <div className="settings-section">
@@ -237,18 +237,18 @@ function ServicesSettings() {
       {error && <p className="form-error">{t("settings.services.malformed", { error })}</p>}
 
       {PROVIDERS.map((provider) => {
-        const configured = credentials ? isConfigured(provider, credentials) : !provider.credentials;
+        const configured = credentials ? isConfigured(provider, credentials) : !provider.manifest.settings;
         return (
           <div key={provider.id} className="service-row">
             <div className="service-info">
               <span className="service-name">{t(`providers.${provider.id}.name`)}</span>
               <span className="screen-placeholder">
-                {provider.templates.map((tpl) => t(`types.${tpl}`)).join(", ")}
+                {provider.manifest.recordTypes.map((tpl) => t(`types.${tpl}`)).join(", ")}
               </span>
             </div>
             <span className={configured ? "tag" : "tag tag--suggestion"}>
               {t(
-                !provider.credentials
+                !provider.manifest.settings
                   ? "settings.services.noKeyNeeded"
                   : configured
                     ? "settings.services.ready"
@@ -261,19 +261,20 @@ function ServicesSettings() {
 
       <h2>{t("settings.services.keys")}</h2>
       {withKeys.map((provider) => {
-        const { section, fields } = provider.credentials!;
+        const { section, fields } = provider.manifest.settings!;
         return (
           <div key={provider.id} className="service-keys">
             <span className="service-name">{t(`providers.${provider.id}.name`)}</span>
             <p className="screen-placeholder">{t(`providers.${provider.id}.help`)}</p>
-            {fields.map((field) => {
+            {fields.map(({ key: field, type }) => {
               const id = `${section}-${field}`;
               return (
                 <div key={field} className="settings-row">
                   <label htmlFor={id} className="label">{t(`settings.services.fields.${field}`)}</label>
                   <input
                     id={id}
-                    type="password"
+                    // Secrets are hidden as they are typed; plain ids (like a Twitch Client ID) are not.
+                    type={type === "secret" ? "password" : "text"}
                     className="settings-input"
                     autoComplete="off"
                     value={value(section, field)}

@@ -1,6 +1,14 @@
+import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { fetch } from "@tauri-apps/plugin-http";
-import type { HttpClient, Language, ProviderContext, ProviderCredentials } from "@remedia/core";
+import {
+  checkCompatibility,
+  type HttpClient,
+  type Language,
+  type Provider,
+  type ProviderContext,
+  type ProviderCredentials,
+} from "@remedia/core";
 
 /** A provider answered with an HTTP error, e.g. 401 when the TMDB key is wrong. */
 export class ProviderHttpError extends Error {
@@ -47,6 +55,14 @@ export function credentialsPath(): Promise<string> {
 /** Everything an adapter needs for one search or lookup. */
 export async function providerContext(language: Language): Promise<ProviderContext> {
   return { http, language, credentials: await getCredentials() };
+}
+
+// The app version never changes while running: ask once.
+const appVersion = getVersion();
+
+/** True when this app can run the provider package (manifest apiVersion and minAppVersion). */
+export async function isCompatible(provider: Provider): Promise<boolean> {
+  return checkCompatibility(provider.manifest, await appVersion).ok;
 }
 
 /** Downloads a provider poster into the images folder; returns the relative path to store. */

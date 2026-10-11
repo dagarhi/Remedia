@@ -1,4 +1,6 @@
-import { queryString, unique, type Provider, type SearchResult } from "./types";
+import { parseProviderManifest } from "../manifest";
+import manifest from "./manifest.json";
+import { queryString, unique, type Provider, type SearchResult } from "../types";
 
 /* Open Library: books. No key needed. */
 
@@ -24,8 +26,7 @@ const text = (value: unknown): string | undefined =>
 
 export const openLibrary: Provider = {
   id: "openlibrary",
-  templates: ["book"],
-  credentials: null,
+  manifest: parseProviderManifest(manifest),
 
   async search(ctx, _template, query) {
     const data = (await ctx.http.getJson(

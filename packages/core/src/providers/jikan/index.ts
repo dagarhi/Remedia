@@ -1,4 +1,6 @@
-import { isoDate, queryString, unique, type Provider, type SearchResult } from "./types";
+import { parseProviderManifest } from "../manifest";
+import manifest from "./manifest.json";
+import { isoDate, queryString, unique, type Provider, type SearchResult } from "../types";
 
 /* Jikan: MyAnimeList data for anime. No key needed (rate limited: a few requests per second). */
 
@@ -21,8 +23,7 @@ const synopsis = (text: string | null | undefined) =>
 
 export const jikan: Provider = {
   id: "jikan",
-  templates: ["anime"],
-  credentials: null,
+  manifest: parseProviderManifest(manifest),
 
   async search(ctx, _template, query) {
     const data = (await ctx.http.getJson(`${API}/anime?${queryString({ q: query, limit: "20", sfw: "true" })}`)) as Json;

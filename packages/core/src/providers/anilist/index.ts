@@ -1,4 +1,6 @@
-import { unique, type Provider, type ProviderContext, type SearchResult } from "./types";
+import { parseProviderManifest } from "../manifest";
+import manifest from "./manifest.json";
+import { unique, type Provider, type ProviderContext, type SearchResult } from "../types";
 
 /* AniList: anime, through its GraphQL API. No key needed. */
 
@@ -52,8 +54,7 @@ const titleOf = (m: Json) => m.title?.english || m.title?.romaji || m.title?.nat
 
 export const aniList: Provider = {
   id: "anilist",
-  templates: ["anime"],
-  credentials: null,
+  manifest: parseProviderManifest(manifest),
 
   async search(ctx, _template, search) {
     const data = await query(ctx, SEARCH, { search });
