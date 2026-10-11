@@ -8,6 +8,7 @@ import type { FieldValue, MediaRecord, RecordStatus } from "../record";
 import { DataValidationError, type DataContext, type DataIssue } from "./context";
 import { historyEvent } from "./history";
 import { coverRow, getCover, isRelativeImagePath } from "./images";
+import { findLinkedRecord, linkRows, type LinkInput } from "./links";
 import { tagChanges } from "./tags";
 import { loadEffectiveTemplate } from "./templates";
 
@@ -28,6 +29,8 @@ export interface NewRecord {
   tags?: string[];
   /** Seasons only: the series they belong to. */
   parent_id?: Uuid | null;
+  /** Provider items this record corresponds to (automatic mode), e.g. TMDB and IMDb ids. */
+  links?: LinkInput[];
 }
 
 type Batch = [BatchItem<"sqlite">, ...BatchItem<"sqlite">[]];
@@ -39,7 +42,7 @@ function checkCover(cover: string | null | undefined): void {
 }
 
 /** What an edit may change. Only the given keys are updated; `null` clears a value. */
-export type RecordChanges = Partial<Omit<NewRecord, "template" | "parent_id">>;
+export type RecordChanges = Partial<Omit<NewRecord, "template" | "parent_id" | "links">>;
 
 /** The only parent/child pair the data model allows: seasons belong to a series. */
 const PARENT_TEMPLATE: Record<string, string> = { season: "series" };
@@ -104,6 +107,10 @@ export async function createRecord(ctx: DataContext, input: NewRecord): Promise<
   };
   await validateRecord(ctx, record);
   checkCover(input.cover);
+  // The same provider item cannot be linked to two live records (data model, duplicate detection).
+  if (input.links && (await findLinkedRecord(ctx, input.links))) {
+    throw new DataValidationError([{ path: "links", code: "already_in_library" }]);
+  }
 
   // The record, its first history lines ("Added to Pending", "Rated ★★★★") and its cover are saved together.
   const events = [historyEvent(ctx, record.id, now, { kind: "status", status: record.status })];
@@ -111,6 +118,7 @@ export async function createRecord(ctx: DataContext, input: NewRecord): Promise<
   const batch: Batch = [ctx.db.insert(records).values(record), ctx.db.insert(historyEntries).values(events)];
   if (input.cover) batch.push(ctx.db.insert(recordImages).values(coverRow(ctx, record.id, input.cover, now)));
   if (input.tags) batch.push(...(await tagChanges(ctx, record.id, input.tags, now)));
+  if (input.links?.length) batch.push(ctx.db.insert(externalLinks).values(linkRows(ctx, record.id, input.links, now)));
   await ctx.db.batch(batch);
   return record;
 }

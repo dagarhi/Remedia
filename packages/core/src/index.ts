@@ -12,3 +12,4 @@ export * from "./text";
 export * from "./theme";
 export * from "./db";
 export * from "./data";
+export * from "./providers";

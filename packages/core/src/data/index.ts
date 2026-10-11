@@ -5,3 +5,4 @@ export * from "./history";
 export * from "./images";
 export * from "./tags";
 export * from "./settings";
+export * from "./links";

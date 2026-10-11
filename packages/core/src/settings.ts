@@ -23,6 +23,10 @@ export type HomeBlock = (typeof HOME_BLOCKS)[number];
 
 export const PROFILE_NAME_MAX_LENGTH = 40;
 
+/** How a type is added: ask each time, always search a provider, or always the empty form. */
+export const ADD_MODES = ["ask", "automatic", "manual"] as const;
+export type AddMode = (typeof ADD_MODES)[number];
+
 /** Every setting the app knows, with its type. Keys are stable: never rename one. */
 export interface Settings {
   /** "system" follows the operating system language. */
@@ -38,6 +42,8 @@ export interface Settings {
   "rating_display.default": RatingScale;
   /** Per-type override, e.g. "rating_display.movie"; "default" or absent = use the global default. */
   [perType: `rating_display.${string}`]: RatingScale | "default" | undefined;
+  /** Per-type add mode, e.g. "add_mode.movie"; absent = "ask". */
+  [addMode: `add_mode.${string}`]: AddMode | undefined;
 }
 
 export const SETTING_DEFAULTS: Settings = {
@@ -66,6 +72,7 @@ export function isValidSettingValue(key: string, value: unknown): boolean {
   if (key === "profile.name") return typeof value === "string" && value.length <= PROFILE_NAME_MAX_LENGTH;
   if (key === "home.blocks") return isUniqueListOf(HOME_BLOCKS)(value);
   if (key === "home.libraries") return isUniqueListOf(RECORD_STATUSES)(value);
+  if (key.startsWith("add_mode.")) return isOneOf(ADD_MODES)(value);
   if (key === "rating_display.default") return isOneOf(RATING_SCALES)(value);
   if (key.startsWith("rating_display.")) return value === "default" || isOneOf(RATING_SCALES)(value);
   return false;
