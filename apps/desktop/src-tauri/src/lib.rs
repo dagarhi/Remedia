@@ -1,4 +1,5 @@
 mod backup;
+mod credentials;
 mod db;
 mod images;
 
@@ -32,6 +33,29 @@ fn import_image(app: AppHandle, source: PathBuf, folder: String) -> Result<Strin
     images::import(&app, &source, &folder)
 }
 
+/// Downloads a provider poster into the images folder; returns the relative path to store.
+#[tauri::command]
+async fn import_image_url(app: AppHandle, url: String, folder: String) -> Result<String, String> {
+    images::download(&app, &url, &folder).await
+}
+
+/// Provider credentials from credentials.toml (read fresh every time, so hand edits apply at once).
+#[tauri::command]
+fn get_credentials(app: AppHandle) -> Result<credentials::Credentials, String> {
+    credentials::load(&app)
+}
+
+#[tauri::command]
+fn set_credentials(app: AppHandle, credentials: credentials::Credentials) -> Result<(), String> {
+    credentials::save(&app, &credentials)
+}
+
+/// Absolute path of credentials.toml, for "Open configuration folder".
+#[tauri::command]
+fn credentials_path(app: AppHandle) -> Result<String, String> {
+    Ok(credentials::path(&app)?.to_string_lossy().into_owned())
+}
+
 /// Copies the database and all images into a new folder `name` inside `parent`.
 #[tauri::command]
 fn create_backup(app: AppHandle, db: State<Database>, parent: PathBuf, name: String) -> Result<String, String> {
@@ -43,6 +67,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_http::init())
         .setup(|app| {
             // The database lives in the app data folder, e.g. %APPDATA%\io.github.dagarhi.remedia on Windows.
             let dir = app.path().app_data_dir()?;
@@ -51,7 +76,17 @@ pub fn run() {
             app.manage(database);
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![db_execute, db_batch, images_dir, import_image, create_backup])
+        .invoke_handler(tauri::generate_handler![
+            db_execute,
+            db_batch,
+            images_dir,
+            import_image,
+            import_image_url,
+            get_credentials,
+            set_credentials,
+            credentials_path,
+            create_backup
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

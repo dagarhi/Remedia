@@ -34,9 +34,58 @@ pub fn import(app: &AppHandle, source: &Path, folder: &str) -> Result<String, St
     Ok(format!("{folder}/{file_name}"))
 }
 
+/// Image hosts of the supported providers. Posters are only downloaded from these.
+const ALLOWED_IMAGE_HOSTS: &[&str] = &["image.tmdb.org", "covers.openlibrary.org", "s4.anilist.co", "images.igdb.com"];
+
+fn extension_for(content_type: &str) -> Option<&'static str> {
+    match content_type.split(';').next()?.trim() {
+        "image/jpeg" => Some("jpg"),
+        "image/png" => Some("png"),
+        "image/webp" => Some("webp"),
+        "image/gif" => Some("gif"),
+        "image/avif" => Some("avif"),
+        _ => None,
+    }
+}
+
+/// Downloads a provider's poster into `images/<folder>/` and returns the relative path.
+/// Images are always stored locally; the remote URL is never used for display (data model).
+pub async fn download(app: &AppHandle, url: &str, folder: &str) -> Result<String, String> {
+    let parsed = tauri::Url::parse(url).map_err(|e| e.to_string())?;
+    if parsed.scheme() != "https" || !ALLOWED_IMAGE_HOSTS.contains(&parsed.host_str().unwrap_or("")) {
+        return Err("image_host_not_allowed".into());
+    }
+
+    let response = tauri_plugin_http::reqwest::get(parsed).await.map_err(|e| e.to_string())?;
+    if !response.status().is_success() {
+        return Err(format!("download_failed: {}", response.status()));
+    }
+    let content_type = response
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("")
+        .to_owned();
+    let extension = extension_for(&content_type).ok_or("unsupported_image")?;
+    let bytes = response.bytes().await.map_err(|e| e.to_string())?;
+
+    let file_name = format!("{}.{}", uuid::Uuid::new_v4(), extension);
+    let target_dir = images_dir(app)?.join(folder);
+    std::fs::create_dir_all(&target_dir).map_err(|e| e.to_string())?;
+    std::fs::write(target_dir.join(&file_name), &bytes).map_err(|e| e.to_string())?;
+    Ok(format!("{folder}/{file_name}"))
+}
+
 #[cfg(test)]
 mod tests {
-    use super::ALLOWED_EXTENSIONS;
+    use super::{extension_for, ALLOWED_EXTENSIONS};
+
+    #[test]
+    fn maps_image_content_types() {
+        assert_eq!(extension_for("image/jpeg"), Some("jpg"));
+        assert_eq!(extension_for("image/png; charset=binary"), Some("png"));
+        assert_eq!(extension_for("text/html"), None);
+    }
 
     #[test]
     fn accepts_common_image_types_only() {
