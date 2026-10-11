@@ -45,6 +45,7 @@ function App() {
             id={route.id}
             onBack={() => navigate("libraries")}
             onDeleted={() => navigate("libraries")}
+            onOpenRecord={(id) => setRoute({ screen: "record", id })}
           />
         );
       case "settings":

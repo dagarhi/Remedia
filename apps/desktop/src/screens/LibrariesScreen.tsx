@@ -3,6 +3,7 @@ import type { MediaRecord, RecordStatus } from "@remedia/core";
 import { RecordCard } from "../components/RecordCard";
 import { LIBRARY_ORDER } from "../recordTypes";
 import { useCovers } from "../images";
+import { useSeasonsByParent } from "../progress";
 import { useRecords } from "../useRecords";
 import "./LibrariesScreen.css";
 
@@ -16,6 +17,7 @@ export function LibrariesScreen({ onOpenRecord, onSeeAll }: LibrariesScreenProps
   const { t } = useTranslation();
   const records = useRecords();
   const covers = useCovers();
+  const seasons = useSeasonsByParent();
 
   if (!records) return <p className="screen-placeholder">{t("form.loading")}</p>;
 
@@ -42,7 +44,7 @@ export function LibrariesScreen({ onOpenRecord, onSeeAll }: LibrariesScreenProps
             ) : (
               <div className="shelf-items">
                 {shelf.map((record) => (
-                  <RecordCard key={record.id} record={record} cover={covers.get(record.id)} onOpen={onOpenRecord} />
+                  <RecordCard key={record.id} record={record} cover={covers.get(record.id)} seasons={seasons.get(record.id)} onOpen={onOpenRecord} />
                 ))}
               </div>
             )}

@@ -19,7 +19,31 @@
     "synopsis": "Sinopsis",
     "cast": "Reparto",
     "writers": "Guion",
-    "original_language": "Idioma original"
+    "original_language": "Idioma original",
+    "first_air_date": "Primera emisión",
+    "creators": "Creada por",
+    "network": "Cadena / plataforma",
+    "show_status": "Estado de la serie",
+    "season_number": "Número de temporada",
+    "episode_count": "Episodios",
+    "episodes_watched": "Episodios vistos",
+    "air_date": "Emisión",
+    "author": "Autoría",
+    "publication_date": "Publicación",
+    "pages": "Páginas",
+    "current_page": "Página actual",
+    "format": "Formato",
+    "saga": "Saga / serie",
+    "saga_number": "Número en la saga",
+    "publisher": "Editorial",
+    "isbn": "ISBN",
+    "developers": "Desarrolladoras",
+    "publishers": "Distribuidoras",
+    "platforms": "Plataformas",
+    "hours_played": "Horas jugadas",
+    "studios": "Estudios",
+    "anime_format": "Formato",
+    "original_title_romaji": "Título en romaji"
   },
   "common": {
     "yes": "Sí",
@@ -37,7 +61,8 @@
     "game": "Videojuego",
     "anime": "Anime",
     "manga": "Manga",
-    "custom": "Nuevo tipo"
+    "custom": "Nuevo tipo",
+    "season": "Temporada"
   },
   "record": {
     "title": "Título",
@@ -68,6 +93,41 @@
       "paused": "En pausa",
       "completed": "Vista",
       "dropped": "Abandonada"
+    },
+    "series": {
+      "planned": "Pendiente",
+      "in_progress": "Viendo",
+      "paused": "En pausa",
+      "completed": "Vista",
+      "dropped": "Abandonada"
+    },
+    "season": {
+      "planned": "Pendiente",
+      "in_progress": "Viendo",
+      "paused": "En pausa",
+      "completed": "Vista",
+      "dropped": "Abandonada"
+    },
+    "book": {
+      "planned": "Pendiente",
+      "in_progress": "Leyendo",
+      "paused": "En pausa",
+      "completed": "Leído",
+      "dropped": "Abandonado"
+    },
+    "game": {
+      "planned": "Pendiente",
+      "in_progress": "Jugando",
+      "paused": "En pausa",
+      "completed": "Terminado",
+      "dropped": "Abandonado"
+    },
+    "anime": {
+      "planned": "Pendiente",
+      "in_progress": "Viendo",
+      "paused": "En pausa",
+      "completed": "Visto",
+      "dropped": "Abandonado"
     }
   },
   "form": {
@@ -89,7 +149,9 @@
     "unknown": "Tipo desconocido.",
     "not_found": "Este registro ya no existe.",
     "save_failed": "No se ha podido guardar. Inténtalo de nuevo.",
-    "invalid_path": "Ruta de imagen no válida."
+    "invalid_path": "Ruta de imagen no válida.",
+    "duplicate": "Otra temporada ya tiene este número.",
+    "not_allowed": "Este tipo no puede pertenecer a otro registro."
   },
   "libraries": {
     "title": "Bibliotecas",
@@ -224,5 +286,46 @@
         "source": "Frank Zappa"
       }
     ]
+  },
+  "option": {
+    "returning": "En emisión",
+    "ended": "Finalizada",
+    "cancelled": "Cancelada",
+    "paperback": "Tapa blanda",
+    "hardcover": "Tapa dura",
+    "ebook": "Ebook",
+    "audiobook": "Audiolibro",
+    "tv": "TV",
+    "movie_format": "Película",
+    "ova": "OVA",
+    "ona": "ONA",
+    "special": "Especial"
+  },
+  "unit": {
+    "min": "min",
+    "pages": "páginas",
+    "episodes": "episodios",
+    "hours": "h"
+  },
+  "progress": {
+    "pages": "p. {{current}} / {{total}}",
+    "pagesOnly": "p. {{current}}",
+    "episodes": "Ep. {{current}} / {{total}}",
+    "episodesOnly": "Ep. {{current}}",
+    "hours": "{{current}} h",
+    "series": "T{{season}} · E{{episode}}",
+    "generic": "{{current}} / {{total}}",
+    "genericOnly": "{{current}}",
+    "percent": "{{percent}} %",
+    "label": "Progreso",
+    "addOne": "+1"
+  },
+  "season": {
+    "title": "Temporada {{number}}",
+    "section": "Temporadas",
+    "add": "Añadir temporada",
+    "empty": "Todavía no hay temporadas. Añade la primera.",
+    "ofSeries": "Temporada de {{title}}",
+    "back": "Volver a {{title}}"
   }
 }

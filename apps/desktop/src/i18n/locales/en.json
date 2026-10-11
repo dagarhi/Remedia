@@ -19,7 +19,31 @@
     "synopsis": "Synopsis",
     "cast": "Cast",
     "writers": "Writers",
-    "original_language": "Original language"
+    "original_language": "Original language",
+    "first_air_date": "First aired",
+    "creators": "Created by",
+    "network": "Network / platform",
+    "show_status": "Show status",
+    "season_number": "Season number",
+    "episode_count": "Episodes",
+    "episodes_watched": "Episodes watched",
+    "air_date": "Aired",
+    "author": "Author",
+    "publication_date": "Published",
+    "pages": "Pages",
+    "current_page": "Current page",
+    "format": "Format",
+    "saga": "Series / saga",
+    "saga_number": "Number in series",
+    "publisher": "Publisher",
+    "isbn": "ISBN",
+    "developers": "Developers",
+    "publishers": "Publishers",
+    "platforms": "Platforms",
+    "hours_played": "Hours played",
+    "studios": "Studios",
+    "anime_format": "Format",
+    "original_title_romaji": "Romaji title"
   },
   "common": {
     "yes": "Yes",
@@ -37,7 +61,8 @@
     "game": "Video game",
     "anime": "Anime",
     "manga": "Manga",
-    "custom": "New type"
+    "custom": "New type",
+    "season": "Season"
   },
   "record": {
     "title": "Title",
@@ -67,6 +92,41 @@
       "paused": "Paused",
       "completed": "Watched",
       "dropped": "Dropped"
+    },
+    "series": {
+      "planned": "Pending",
+      "in_progress": "Watching",
+      "paused": "Paused",
+      "completed": "Watched",
+      "dropped": "Dropped"
+    },
+    "season": {
+      "planned": "Pending",
+      "in_progress": "Watching",
+      "paused": "Paused",
+      "completed": "Watched",
+      "dropped": "Dropped"
+    },
+    "book": {
+      "planned": "Pending",
+      "in_progress": "Reading",
+      "paused": "Paused",
+      "completed": "Read",
+      "dropped": "Dropped"
+    },
+    "game": {
+      "planned": "Pending",
+      "in_progress": "Playing",
+      "paused": "Paused",
+      "completed": "Finished",
+      "dropped": "Dropped"
+    },
+    "anime": {
+      "planned": "Pending",
+      "in_progress": "Watching",
+      "paused": "Paused",
+      "completed": "Watched",
+      "dropped": "Dropped"
     }
   },
   "form": {
@@ -88,7 +148,9 @@
     "unknown": "Unknown type.",
     "not_found": "This record no longer exists.",
     "save_failed": "Could not save. Please try again.",
-    "invalid_path": "Invalid image path."
+    "invalid_path": "Invalid image path.",
+    "duplicate": "Another season already has this number.",
+    "not_allowed": "This type cannot belong to another record."
   },
   "libraries": {
     "title": "Libraries",
@@ -223,5 +285,46 @@
         "source": "Frank Zappa"
       }
     ]
+  },
+  "option": {
+    "returning": "Ongoing",
+    "ended": "Ended",
+    "cancelled": "Cancelled",
+    "paperback": "Paperback",
+    "hardcover": "Hardcover",
+    "ebook": "Ebook",
+    "audiobook": "Audiobook",
+    "tv": "TV",
+    "movie_format": "Movie",
+    "ova": "OVA",
+    "ona": "ONA",
+    "special": "Special"
+  },
+  "unit": {
+    "min": "min",
+    "pages": "pages",
+    "episodes": "episodes",
+    "hours": "h"
+  },
+  "progress": {
+    "pages": "p. {{current}} / {{total}}",
+    "pagesOnly": "p. {{current}}",
+    "episodes": "Ep. {{current}} / {{total}}",
+    "episodesOnly": "Ep. {{current}}",
+    "hours": "{{current}} h",
+    "series": "S{{season}} · E{{episode}}",
+    "generic": "{{current}} / {{total}}",
+    "genericOnly": "{{current}}",
+    "percent": "{{percent}} %",
+    "label": "Progress",
+    "addOne": "+1"
+  },
+  "season": {
+    "title": "Season {{number}}",
+    "section": "Seasons",
+    "add": "Add season",
+    "empty": "No seasons yet. Add the first one.",
+    "ofSeries": "Season of {{title}}",
+    "back": "Back to {{title}}"
   }
 }

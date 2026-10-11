@@ -16,7 +16,9 @@ import {
 import { Cover } from "../components/Cover";
 import { useLabel } from "../components/FieldInput";
 import { HistoryList } from "../components/HistoryList";
+import { ProgressEditor } from "../components/ProgressEditor";
 import { RatingSelect } from "../components/RatingSelect";
+import { SeasonsSection } from "../components/SeasonsSection";
 import { RecordForm } from "../components/RecordForm";
 import { StatusSelect } from "../components/StatusSelect";
 import { data } from "../db/database";
@@ -30,13 +32,15 @@ interface RecordScreenProps {
   onBack: () => void;
   /** Called after the record is deleted, to leave its page. */
   onDeleted: () => void;
+  /** Opens another record's page (a season, or a season's series). */
+  onOpenRecord: (id: Uuid) => void;
 }
 
 /**
  * One record: header with cover, inline status and rating, details, notes and history.
  * Edit opens the same page in edit mode (UI Design).
  */
-export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
+export function RecordScreen({ id, onBack, onDeleted, onOpenRecord }: RecordScreenProps) {
   const { t } = useTranslation();
   const label = useLabel();
   // undefined = still loading, null = not found
@@ -47,6 +51,8 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [cover, setCover] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
+  // Seasons only: their series, for the back link and the "Season of …" label.
+  const [parent, setParent] = useState<MediaRecord | null>(null);
 
   /** Cover and tags live in their own tables, so they load separately from the record. */
   function loadExtras() {
@@ -55,7 +61,10 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
   }
 
   useEffect(() => {
-    getRecord(data, id).then((r) => setRecord(r ?? null));
+    getRecord(data, id).then((r) => {
+      setRecord(r ?? null);
+      if (r?.parent_id) getRecord(data, r.parent_id).then((p) => setParent(p ?? null));
+    });
     loadExtras();
   }, [id]);
 
@@ -67,7 +76,9 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
 
   async function handleDelete() {
     await deleteRecord(data, id);
-    onDeleted();
+    // A deleted season goes back to its series.
+    if (parent) onOpenRecord(parent.id);
+    else onDeleted();
   }
 
 
@@ -110,14 +121,23 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
 
   return (
     <section className="screen">
-      <button type="button" className="link-button back-button" onClick={onBack}>
-        <ArrowLeft size={16} aria-hidden /> {t("libraries.title")}
-      </button>
+      {/* A season goes back to its series; everything else to the libraries. */}
+      {parent ? (
+        <button type="button" className="link-button back-button" onClick={() => onOpenRecord(parent.id)}>
+          <ArrowLeft size={16} aria-hidden /> {t("season.back", { title: parent.title })}
+        </button>
+      ) : (
+        <button type="button" className="link-button back-button" onClick={onBack}>
+          <ArrowLeft size={16} aria-hidden /> {t("libraries.title")}
+        </button>
+      )}
 
       <header className="record-header">
         {cover && <Cover path={cover} templateId={record.template} className="record-header-cover" />}
         <div className="record-header-main">
-          <p className="label">{t(`types.${record.template}`)}</p>
+          <p className="label">
+            {parent ? t("season.ofSeries", { title: parent.title }) : t(`types.${record.template}`)}
+          </p>
           <div className="record-title-row">
             <h1>{record.title}</h1>
             <button type="button" className="button" onClick={() => setEditing(true)}>
@@ -129,6 +149,10 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
             <StatusSelect templateId={record.template} value={record.status} onChange={(status) => change({ status })} />
             <RatingSelect templateId={record.template} value={record.rating} onChange={(rating) => change({ rating })} />
           </div>
+
+          {template.progress && (
+            <ProgressEditor record={record} template={template} onSave={(fields) => change({ fields })} />
+          )}
 
           {tags.length > 0 && (
             <div className="tag-list">
@@ -146,16 +170,20 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
               .filter((f) => record.fields[f.key] !== undefined)
               .map((f) => {
                 const value = record.fields[f.key];
+                // A select stores the option key; show its label.
+                const option = f.type === "select" ? f.options?.find((o) => o.key === value) : undefined;
                 return (
                   <div key={f.key}>
                     <dt className="label">{label(f.label)}</dt>
                     <dd>
-                      {Array.isArray(value)
-                        ? value.join(", ")
-                        : typeof value === "boolean"
-                          ? t(value ? "common.yes" : "common.no")
-                          : String(value)}
-                      {f.unit && ` ${f.unit}`}
+                      {option
+                        ? label(option.label)
+                        : Array.isArray(value)
+                          ? value.join(", ")
+                          : typeof value === "boolean"
+                            ? t(value ? "common.yes" : "common.no")
+                            : String(value)}
+                      {f.unit && ` ${t(`unit.${f.unit}`, { defaultValue: f.unit })}`}
                     </dd>
                   </div>
                 );
@@ -163,6 +191,10 @@ export function RecordScreen({ id, onBack, onDeleted }: RecordScreenProps) {
           </dl>
         </div>
       </header>
+
+      {record.template === "series" && (
+        <SeasonsSection series={record} onOpenSeason={onOpenRecord} onChange={() => setVersion((v) => v + 1)} />
+      )}
 
       {record.notes && <p className="record-notes">{record.notes}</p>}
 

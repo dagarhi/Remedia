@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import type { MediaRecord, RecordStatus } from "@remedia/core";
 import { RecordCard } from "../components/RecordCard";
 import { useCovers } from "../images";
+import { useSeasonsByParent } from "../progress";
 import { useRecords } from "../useRecords";
 import "./LibrariesScreen.css";
 
@@ -20,6 +21,7 @@ export function LibraryScreen({ status, onOpenRecord, onBack }: LibraryScreenPro
   const { t } = useTranslation();
   const records = useRecords({ status });
   const covers = useCovers();
+  const seasons = useSeasonsByParent();
 
   return (
     <section className="screen">
@@ -36,7 +38,7 @@ export function LibraryScreen({ status, onOpenRecord, onBack }: LibraryScreenPro
       ) : (
         <div className="library-grid">
           {records.map((record) => (
-            <RecordCard key={record.id} record={record} cover={covers.get(record.id)} onOpen={onOpenRecord} />
+            <RecordCard key={record.id} record={record} cover={covers.get(record.id)} seasons={seasons.get(record.id)} onOpen={onOpenRecord} />
           ))}
         </div>
       )}

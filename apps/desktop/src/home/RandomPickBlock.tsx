@@ -4,6 +4,7 @@ import { Shuffle } from "lucide-react";
 import type { MediaRecord } from "@remedia/core";
 import { RecordCard } from "../components/RecordCard";
 import { useCovers } from "../images";
+import { useSeasonsByParent } from "../progress";
 import { useRecords } from "../useRecords";
 
 /** "What should I watch today?": picks a random record from Pending. */
@@ -11,6 +12,7 @@ export function RandomPickBlock({ onOpenRecord }: { onOpenRecord: (record: Media
   const { t } = useTranslation();
   const pending = useRecords({ status: "planned" });
   const covers = useCovers();
+  const seasons = useSeasonsByParent();
   const [pick, setPick] = useState<MediaRecord | null>(null);
 
   if (!pending) return null;
@@ -28,7 +30,7 @@ export function RandomPickBlock({ onOpenRecord }: { onOpenRecord: (record: Media
       <button type="button" className="button button--primary" onClick={surprise}>
         <Shuffle size={16} aria-hidden /> {t(pick ? "home.randomPick.again" : "home.randomPick.button")}
       </button>
-      {pick && <RecordCard record={pick} cover={covers.get(pick.id)} onOpen={onOpenRecord} />}
+      {pick && <RecordCard record={pick} cover={covers.get(pick.id)} seasons={seasons.get(pick.id)} onOpen={onOpenRecord} />}
     </div>
   );
 }

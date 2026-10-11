@@ -51,7 +51,7 @@ export function FieldInput({ field, value, onChange, error }: FieldInputProps) {
               value={typeof value === "number" ? value : ""}
               onChange={(e) => onChange(e.target.value === "" ? undefined : e.target.valueAsNumber)}
             />
-            {field.unit && <span className="field-unit">{field.unit}</span>}
+            {field.unit && <span className="field-unit">{t(`unit.${field.unit}`, { defaultValue: field.unit })}</span>}
           </span>
         );
       case "date":
