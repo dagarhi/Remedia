@@ -86,3 +86,27 @@
   padding: var(--space-2) var(--space-3);
   min-width: 220px;
 }
+
+.service-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  border-top: var(--border-width) solid var(--border);
+}
+
+.service-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.service-name {
+  font-weight: 500;
+}
+
+.settings-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}

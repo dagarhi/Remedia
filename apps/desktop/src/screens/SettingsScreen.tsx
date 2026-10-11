@@ -4,14 +4,24 @@ import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
-import { LANGUAGES, PROFILE_NAME_MAX_LENGTH, RATING_SCALES, THEME_MODES, type Language, type RatingScale, type ThemeMode } from "@remedia/core";
+import {
+  ADD_MODES,
+  PROVIDERS,
+  LANGUAGES,
+  PROFILE_NAME_MAX_LENGTH,
+  RATING_SCALES,
+  THEME_MODES,
+  type AddMode,
+  type ProviderCredentials, type Language, type RatingScale, type ThemeMode } from "@remedia/core";
 import { Select } from "../components/Select";
 import { RECORD_TYPES } from "../recordTypes";
+import { credentialsPath, getCredentials, setCredentials } from "../providers";
 import { useSettings } from "../settings/SettingsContext";
 import "./LibrariesScreen.css";
+import "../components/TagInput.css";
 import "./SettingsScreen.css";
 
-const SECTIONS = ["profile", "appearance", "recordTypes", "myData", "about"] as const;
+const SECTIONS = ["profile", "appearance", "recordTypes", "services", "myData", "about"] as const;
 type Section = (typeof SECTIONS)[number];
 
 const REPOSITORY_URL = "https://github.com/dagarhi/Remedia";
@@ -45,6 +55,7 @@ export function SettingsScreen() {
           {section === "profile" && <ProfileSettings />}
           {section === "appearance" && <AppearanceSettings />}
           {section === "recordTypes" && <RecordTypeSettings />}
+          {section === "services" && <ServicesSettings />}
           {section === "myData" && <MyDataSettings />}
           {section === "about" && <AboutSettings />}
         </div>
@@ -160,6 +171,108 @@ function RecordTypeSettings() {
         );
       })}
       <p className="screen-placeholder">{t("settings.ratingHint")}</p>
+
+      <h2>{t("settings.addMode")}</h2>
+      {RECORD_TYPES.filter((type) => type.enabled).map((type) => {
+        const key = `add_mode.${type.id}` as const;
+        return (
+          <div key={type.id} className="settings-row">
+            <label htmlFor={key} className="label">{t(`types.${type.id}`)}</label>
+            <Select id={key} value={settings[key] ?? "ask"} onChange={(e) => update(key, e.target.value as AddMode)}>
+              {ADD_MODES.map((mode) => (
+                <option key={mode} value={mode}>
+                  {t(`settings.addModes.${mode}`)}
+                </option>
+              ))}
+            </Select>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** External services (UI Design): one row per provider, its types, status and key. */
+function ServicesSettings() {
+  const { t } = useTranslation();
+  const [credentials, setCreds] = useState<ProviderCredentials | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [tmdbDraft, setTmdbDraft] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    getCredentials()
+      .then((c) => {
+        setCreds(c);
+        setTmdbDraft(c.tmdb.token);
+      })
+      .catch((e) => setError(String(e)));
+  }, []);
+
+  async function saveTmdb() {
+    const next: ProviderCredentials = {
+      tmdb: { token: tmdbDraft.trim() },
+      igdb: credentials?.igdb ?? { client_id: "", client_secret: "" },
+    };
+    await setCredentials(next);
+    setCreds(next);
+    setSaved(true);
+  }
+
+  return (
+    <div className="settings-section">
+      <p>{t("settings.services.intro")}</p>
+      {error && <p className="form-error">{t("settings.services.malformed", { error })}</p>}
+
+      {PROVIDERS.map((provider) => {
+        const configured = credentials ? provider.isConfigured(credentials) : false;
+        return (
+          <div key={provider.id} className="service-row">
+            <div className="service-info">
+              <span className="service-name">{t(`providers.${provider.id}.name`)}</span>
+              <span className="screen-placeholder">
+                {provider.templates.map((tpl) => t(`types.${tpl}`)).join(", ")}
+              </span>
+            </div>
+            <span className={configured ? "tag" : "tag tag--suggestion"}>
+              {t(
+                !provider.needsCredentials
+                  ? "settings.services.noKeyNeeded"
+                  : configured
+                    ? "settings.services.ready"
+                    : "settings.services.needsKey",
+              )}
+            </span>
+          </div>
+        );
+      })}
+
+      <h2>{t("providers.tmdb.name")}</h2>
+      <p className="screen-placeholder">{t("settings.services.tmdbHelp")}</p>
+      <div className="settings-row">
+        <label htmlFor="tmdb-token" className="label">{t("settings.services.tmdbToken")}</label>
+        <input
+          id="tmdb-token"
+          type="password"
+          className="settings-input"
+          value={tmdbDraft}
+          autoComplete="off"
+          onChange={(e) => {
+            setTmdbDraft(e.target.value);
+            setSaved(false);
+          }}
+        />
+      </div>
+      <div className="settings-actions">
+        <button type="button" className="button button--primary" onClick={saveTmdb}>
+          {t("form.save")}
+        </button>
+        {saved && <span className="screen-placeholder">{t("settings.services.saved")}</span>}
+        <button type="button" className="link-button" onClick={async () => revealItemInDir(await credentialsPath())}>
+          {t("settings.services.openFolder")}
+        </button>
+      </div>
+      <p className="screen-placeholder">{t("settings.services.privacy")}</p>
     </div>
   );
 }

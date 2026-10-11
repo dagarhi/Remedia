@@ -26,7 +26,15 @@ function App() {
   function renderContent() {
     switch (route.screen) {
       case "add":
-        return <AddScreen key={addFlowKey} onSaved={openRecord} onCancel={() => navigate("home")} />;
+        return (
+          <AddScreen
+            key={addFlowKey}
+            onSaved={openRecord}
+            onCancel={() => navigate("home")}
+            onOpenRecord={(id) => setRoute({ screen: "record", id })}
+            onOpenSettings={() => navigate("settings")}
+          />
+        );
       case "libraries":
         return (
           <LibrariesScreen

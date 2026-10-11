@@ -52,7 +52,13 @@
   "add": {
     "title": "Add",
     "chooseType": "What do you want to add?",
-    "newRecord": "New {{type}}"
+    "newRecord": "New {{type}}",
+    "modeTitle": "How do you want to add this {{type}}?",
+    "automatic": "Automatic",
+    "automaticHint": "Search an online service and review the details it fills in.",
+    "manual": "Manual",
+    "manualHint": "Start from an empty form.",
+    "remember": "Remember my choice for {{type}} (you can change it in Settings)"
   },
   "types": {
     "movie": "Movie",
@@ -150,7 +156,8 @@
     "save_failed": "Could not save. Please try again.",
     "invalid_path": "Invalid image path.",
     "duplicate": "Another season already has this number.",
-    "not_allowed": "This type cannot belong to another record."
+    "not_allowed": "This type cannot belong to another record.",
+    "already_in_library": "This item is already in your library."
   },
   "libraries": {
     "title": "Libraries",
@@ -209,7 +216,8 @@
       "appearance": "Appearance",
       "recordTypes": "Record types",
       "about": "About",
-      "myData": "My data"
+      "myData": "My data",
+      "services": "External services"
     },
     "language": "Language",
     "theme": "Theme",
@@ -244,6 +252,24 @@
       "show": "Show in folder",
       "failed": "The backup could not be created. Check that the folder is writable.",
       "restore": "To restore a backup: close Remedia, and copy remedia.db and the images folder from the backup into the app data folder, replacing the existing ones."
+    },
+    "addMode": "How to add each type",
+    "addModes": {
+      "ask": "Ask each time",
+      "automatic": "Always automatic",
+      "manual": "Always manual"
+    },
+    "services": {
+      "intro": "Online services fill in the details and covers when you add something. Some need a free personal key.",
+      "noKeyNeeded": "No key needed",
+      "ready": "Ready",
+      "needsKey": "Needs a key",
+      "malformed": "credentials.toml could not be read: {{error}}",
+      "tmdbHelp": "Paste your TMDB API key (v3) or API Read Access Token, from themoviedb.org › Settings › API.",
+      "tmdbToken": "TMDB key",
+      "saved": "Saved.",
+      "openFolder": "Open configuration folder",
+      "privacy": "Keys are stored only on this device, in credentials.toml. They are never included in backups or exports."
     }
   },
   "home": {
@@ -338,5 +364,36 @@
     "empty": "No seasons yet. Add the first one.",
     "ofSeries": "Season of {{title}}",
     "back": "Back to {{title}}"
+  },
+  "search": {
+    "placeholder": "Search by title",
+    "search": "Search",
+    "searching": "Searching…",
+    "noResults": "No results. Try another title or fill it in manually.",
+    "notListed": "Not listed? Fill it in manually with this title",
+    "alreadyInLibrary": "Already in your library",
+    "loadingDetails": "Fetching the details…",
+    "noProvider": "No service is ready for this type yet. Add your key in Settings › External services, or fill it in manually.",
+    "openServices": "Open External services",
+    "continueManually": "Continue manually",
+    "errors": {
+      "unauthorized": "The service rejected your key. Check it in Settings › External services.",
+      "failed": "The search failed. Check your connection and try again.",
+      "details": "Could not fetch the details. Try again or fill it in manually."
+    }
+  },
+  "providers": {
+    "tmdb": {
+      "name": "TMDB"
+    },
+    "openlibrary": {
+      "name": "Open Library"
+    },
+    "anilist": {
+      "name": "AniList"
+    },
+    "igdb": {
+      "name": "IGDB"
+    }
   }
 }

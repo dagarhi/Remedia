@@ -8,7 +8,9 @@ import {
   type DataIssue,
   type EffectiveTemplate,
   type FieldValue,
+  type LinkInput,
   type MediaRecord,
+  type ProviderRecord,
   type RecordStatus,
 } from "@remedia/core";
 import { data } from "../db/database";
@@ -39,6 +41,10 @@ interface RecordFormProps {
   cover?: string | null;
   /** The record's current tag names, when editing. */
   tags?: string[];
+  /** Values from a provider (automatic mode) to pre-fill a new record; the user reviews them. */
+  prefill?: { values: ProviderRecord["values"]; cover: string | null };
+  /** Provider items the new record corresponds to; saved with it. */
+  links?: LinkInput[];
   onSaved: (record: MediaRecord) => void;
   onCancel: () => void;
   /** Shows a Delete button (edit mode only). */
@@ -54,6 +60,8 @@ export function RecordForm({
   record,
   cover: initialCover,
   tags: initialTags,
+  prefill,
+  links,
   onSaved,
   onCancel,
   onDelete,
@@ -62,15 +70,17 @@ export function RecordForm({
 
   // Initial values: the record's when editing, empty when adding.
   const [template, setTemplate] = useState<EffectiveTemplate | null>(null);
-  const [title, setTitle] = useState(record?.title ?? "");
-  const [originalTitle, setOriginalTitle] = useState(record?.original_title ?? "");
+  const [title, setTitle] = useState(record?.title ?? prefill?.values.title ?? "");
+  const [originalTitle, setOriginalTitle] = useState(record?.original_title ?? prefill?.values.original_title ?? "");
   const [status, setStatus] = useState<RecordStatus>(record?.status ?? "planned");
   const [rating, setRating] = useState<number | null>(record?.rating ?? null); // stored scale, 1-100
   const [notes, setNotes] = useState(record?.notes ?? "");
-  const [cover, setCover] = useState<string | null>(initialCover ?? null);
+  const [cover, setCover] = useState<string | null>(initialCover ?? prefill?.cover ?? null);
   const [tags, setTags] = useState<string[]>(initialTags ?? []);
   // Starts with every stored key, including hidden fields and keys from newer versions, so none is lost.
-  const [fields, setFields] = useState<FormFields>(record?.fields ?? {});
+  const [fields, setFields] = useState<FormFields>(
+    record?.fields ?? (prefill?.values.fields as FormFields | undefined) ?? {},
+  );
   const [issues, setIssues] = useState<DataIssue[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -101,7 +111,7 @@ export function RecordForm({
       };
       const saved = record
         ? await updateRecord(data, record.id, values)
-        : await createRecord(data, { template: templateId, ...values });
+        : await createRecord(data, { template: templateId, ...values, links });
       onSaved(saved);
     } catch (error) {
       if (error instanceof DataValidationError) setIssues(error.issues);
@@ -175,6 +185,7 @@ export function RecordForm({
       </div>
 
       {errorFor("form") && <p className="form-error">{errorFor("form")}</p>}
+      {errorFor("links") && <p className="form-error">{errorFor("links")}</p>}
 
       <div className="form-actions">
         {onDelete && (

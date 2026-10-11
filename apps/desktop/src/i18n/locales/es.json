@@ -52,7 +52,13 @@
   "add": {
     "title": "Añadir",
     "chooseType": "¿Qué quieres añadir?",
-    "newRecord": "Nuevo registro: {{type}}"
+    "newRecord": "Nuevo registro: {{type}}",
+    "modeTitle": "¿Cómo quieres añadir este registro ({{type}})?",
+    "automatic": "Automático",
+    "automaticHint": "Busca en un servicio en línea y revisa los datos que rellena.",
+    "manual": "Manual",
+    "manualHint": "Empieza con el formulario vacío.",
+    "remember": "Recordar mi elección para {{type}} (puedes cambiarla en Ajustes)"
   },
   "types": {
     "movie": "Película",
@@ -151,7 +157,8 @@
     "save_failed": "No se ha podido guardar. Inténtalo de nuevo.",
     "invalid_path": "Ruta de imagen no válida.",
     "duplicate": "Otra temporada ya tiene este número.",
-    "not_allowed": "Este tipo no puede pertenecer a otro registro."
+    "not_allowed": "Este tipo no puede pertenecer a otro registro.",
+    "already_in_library": "Esto ya está en tu biblioteca."
   },
   "libraries": {
     "title": "Bibliotecas",
@@ -210,7 +217,8 @@
       "appearance": "Apariencia",
       "recordTypes": "Tipos de registro",
       "about": "Acerca de",
-      "myData": "Mis datos"
+      "myData": "Mis datos",
+      "services": "Servicios externos"
     },
     "language": "Idioma",
     "theme": "Tema",
@@ -245,6 +253,24 @@
       "show": "Mostrar en la carpeta",
       "failed": "No se ha podido crear la copia. Comprueba que se puede escribir en esa carpeta.",
       "restore": "Para restaurar una copia: cierra Remedia y copia remedia.db y la carpeta images de la copia a la carpeta de datos de la app, sustituyendo los que hay."
+    },
+    "addMode": "Cómo añadir cada tipo",
+    "addModes": {
+      "ask": "Preguntar cada vez",
+      "automatic": "Siempre automático",
+      "manual": "Siempre manual"
+    },
+    "services": {
+      "intro": "Los servicios en línea rellenan los datos y las portadas al añadir algo. Algunos piden una clave personal gratuita.",
+      "noKeyNeeded": "No necesita clave",
+      "ready": "Listo",
+      "needsKey": "Necesita clave",
+      "malformed": "No se ha podido leer credentials.toml: {{error}}",
+      "tmdbHelp": "Pega tu clave de API de TMDB (v3) o tu API Read Access Token, de themoviedb.org › Ajustes › API.",
+      "tmdbToken": "Clave de TMDB",
+      "saved": "Guardada.",
+      "openFolder": "Abrir carpeta de configuración",
+      "privacy": "Las claves se guardan solo en este dispositivo, en credentials.toml. Nunca se incluyen en copias de seguridad ni exportaciones."
     }
   },
   "home": {
@@ -339,5 +365,36 @@
     "empty": "Todavía no hay temporadas. Añade la primera.",
     "ofSeries": "Temporada de {{title}}",
     "back": "Volver a {{title}}"
+  },
+  "search": {
+    "placeholder": "Busca por título",
+    "search": "Buscar",
+    "searching": "Buscando…",
+    "noResults": "No hay resultados. Prueba con otro título o rellénalo a mano.",
+    "notListed": "¿No aparece? Rellénalo a mano con este título",
+    "alreadyInLibrary": "Ya está en tu biblioteca",
+    "loadingDetails": "Obteniendo los datos…",
+    "noProvider": "Todavía no hay ningún servicio listo para este tipo. Añade tu clave en Ajustes › Servicios externos, o rellénalo a mano.",
+    "openServices": "Abrir Servicios externos",
+    "continueManually": "Continuar a mano",
+    "errors": {
+      "unauthorized": "El servicio ha rechazado tu clave. Revísala en Ajustes › Servicios externos.",
+      "failed": "La búsqueda ha fallado. Comprueba tu conexión y vuelve a intentarlo.",
+      "details": "No se han podido obtener los datos. Vuelve a intentarlo o rellénalo a mano."
+    }
+  },
+  "providers": {
+    "tmdb": {
+      "name": "TMDB"
+    },
+    "openlibrary": {
+      "name": "Open Library"
+    },
+    "anilist": {
+      "name": "AniList"
+    },
+    "igdb": {
+      "name": "IGDB"
+    }
   }
 }

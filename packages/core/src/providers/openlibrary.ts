@@ -12,6 +12,12 @@ const SEARCH_FIELDS = "key,title,subtitle,author_name,first_publish_year,cover_i
 /** "/works/OL45883W" -> "OL45883W" */
 const workId = (key: string) => key.split("/").pop() ?? key;
 
+/**
+ * Open Library "subjects" mix genres with places, people and notes ("Dune (Imaginary place)",
+ * "New York Times reviewed"). Only short, plain ones are kept as genres.
+ */
+const genreLike = (subject: string) => subject.length <= 25 && !/[(),:]|reviewed|accessible|protected/i.test(subject);
+
 /** Descriptions come as a string or as `{ value }`. */
 const text = (value: unknown): string | undefined =>
   typeof value === "string" ? value : typeof value === "object" && value ? (value as Json).value : undefined;
@@ -54,7 +60,7 @@ export const openLibrary: Provider = {
           pages: hit.number_of_pages_median || undefined,
           publisher: unique(hit.publisher ?? [], 1)[0],
           isbn: unique(hit.isbn ?? [], 1)[0],
-          genres: unique(work.subjects ?? [], 5),
+          genres: unique((work.subjects ?? []).filter(genreLike), 5),
           synopsis: text(work.description),
         },
       },
