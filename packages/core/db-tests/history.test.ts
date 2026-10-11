@@ -2,7 +2,7 @@ import { DatabaseSync } from "node:sqlite";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createDatabase } from "../src/db/client";
 import { DataValidationError, type DataContext } from "../src/data/context";
-import { addNote, deleteHistoryEntry, listHistory, listRecentHistory, updateNote } from "../src/data/history";
+import { addNote, deleteHistoryEntry, groupActivity, listHistory, listRecentHistory, updateNote } from "../src/data/history";
 import { createRecord, deleteRecord, updateRecord } from "../src/data/records";
 import { nodeBatchExecutor, nodeExecutor, openTestDatabase, runMigrations } from "./nodeSqlite";
 
@@ -163,5 +163,37 @@ describe("listRecentHistory", () => {
 
     expect((await listRecentHistory(ctx)).map((r) => r.record.title)).toEqual(["Heat"]);
     expect(await listRecentHistory(ctx, 0)).toEqual([]);
+  });
+});
+
+describe("groupActivity", () => {
+  it("groups three or more seasons added together, keeps the rest as lines, and names the series", async () => {
+    const severance = await createRecord(ctx, { template: "series", title: "Severance" });
+    for (const n of [1, 2, 3]) {
+      clock += 1000;
+      await createRecord(ctx, { template: "season", parent_id: severance.id, title: `Season ${n}`, fields: { season_number: n } });
+    }
+    clock += 5000;
+    const dune = await createRecord(ctx, { template: "movie", title: "Dune" });
+
+    const recent = await listRecentHistory(ctx, 20);
+    expect(recent.find((r) => r.record.title === "Season 1")?.parent).toEqual({ id: severance.id, title: "Severance" });
+
+    const items = groupActivity(recent);
+    expect(items.map((i) => (i.kind === "group" ? `group:${i.parent.title}:${i.lines.length}` : i.line.record.title))).toEqual([
+      "Dune",
+      "group:Severance:3",
+      "Severance",
+    ]);
+    expect(dune).toBeDefined();
+  });
+
+  it("keeps two similar lines separate", async () => {
+    const severance = await createRecord(ctx, { template: "series", title: "Severance" });
+    for (const n of [1, 2]) {
+      clock += 1000;
+      await createRecord(ctx, { template: "season", parent_id: severance.id, title: `Season ${n}`, fields: { season_number: n } });
+    }
+    expect(groupActivity(await listRecentHistory(ctx, 20)).every((i) => i.kind === "line")).toBe(true);
   });
 });

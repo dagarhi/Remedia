@@ -295,7 +295,9 @@
       "empty": "Nothing pending yet. Add something you want to watch."
     },
     "recentActivity": {
-      "empty": "Nothing here yet. Your changes and notes will appear here."
+      "empty": "Nothing here yet. Your changes and notes will appear here.",
+      "seasons_one": "{{count}} season",
+      "seasons_other": "{{count}} seasons"
     },
     "quotes": [
       {

@@ -296,7 +296,9 @@
       "empty": "Todavía no hay nada pendiente. Añade algo que quieras ver."
     },
     "recentActivity": {
-      "empty": "Aquí todavía no hay nada. Tus cambios y notas aparecerán aquí."
+      "empty": "Aquí todavía no hay nada. Tus cambios y notas aparecerán aquí.",
+      "seasons_one": "{{count}} temporada",
+      "seasons_other": "{{count}} temporadas"
     },
     "quotes": [
       {
