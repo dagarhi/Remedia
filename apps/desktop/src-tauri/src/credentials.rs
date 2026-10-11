@@ -28,14 +28,34 @@ pub struct Credentials {
     pub igdb: Igdb,
 }
 
+/// The device's local app folder (%LOCALAPPDATA%\<app> on Windows): separate from the data
+/// folder that holds the database and images, and never roamed to other machines.
 pub fn path(app: &AppHandle) -> Result<PathBuf, String> {
-    Ok(app.path().app_config_dir().map_err(|e| e.to_string())?.join("credentials.toml"))
+    Ok(app.path().app_local_data_dir().map_err(|e| e.to_string())?.join("credentials.toml"))
+}
+
+/// Earlier versions kept the file in the roaming config folder, next to the database.
+/// Moves it once to the local folder so the key does not have to be entered again.
+fn move_from_old_location(app: &AppHandle, new_path: &PathBuf) {
+    let Ok(old_dir) = app.path().app_config_dir() else { return };
+    let old_path = old_dir.join("credentials.toml");
+    if old_path == *new_path || !old_path.exists() || new_path.exists() {
+        return;
+    }
+    if let Some(dir) = new_path.parent() {
+        let _ = std::fs::create_dir_all(dir);
+    }
+    // Copy then delete, since the two folders can be on different drives.
+    if std::fs::copy(&old_path, new_path).is_ok() {
+        let _ = std::fs::remove_file(&old_path);
+    }
 }
 
 /// Reads the file. A missing file means no credentials; a malformed one is an error with
 /// its message (line and column), so Settings can show it. It never blocks startup.
 pub fn load(app: &AppHandle) -> Result<Credentials, String> {
     let path = path(app)?;
+    move_from_old_location(app, &path);
     match std::fs::read_to_string(&path) {
         Ok(text) => toml::from_str(&text).map_err(|e| format!("malformed_credentials: {e}")),
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Credentials::default()),
