@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getVersion } from "@tauri-apps/api/app";
-import { openUrl } from "@tauri-apps/plugin-opener";
+import { invoke } from "@tauri-apps/api/core";
+import { open } from "@tauri-apps/plugin-dialog";
+import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
 import { LANGUAGES, PROFILE_NAME_MAX_LENGTH, RATING_SCALES, THEME_MODES, type Language, type RatingScale, type ThemeMode } from "@remedia/core";
 import { Select } from "../components/Select";
 import { RECORD_TYPES } from "../recordTypes";
@@ -9,7 +11,7 @@ import { useSettings } from "../settings/SettingsContext";
 import "./LibrariesScreen.css";
 import "./SettingsScreen.css";
 
-const SECTIONS = ["profile", "appearance", "recordTypes", "about"] as const;
+const SECTIONS = ["profile", "appearance", "recordTypes", "myData", "about"] as const;
 type Section = (typeof SECTIONS)[number];
 
 const REPOSITORY_URL = "https://github.com/dagarhi/Remedia";
@@ -43,6 +45,7 @@ export function SettingsScreen() {
           {section === "profile" && <ProfileSettings />}
           {section === "appearance" && <AppearanceSettings />}
           {section === "recordTypes" && <RecordTypeSettings />}
+          {section === "myData" && <MyDataSettings />}
           {section === "about" && <AboutSettings />}
         </div>
       </div>
@@ -157,6 +160,54 @@ function RecordTypeSettings() {
         );
       })}
       <p className="screen-placeholder">{t("settings.ratingHint")}</p>
+    </div>
+  );
+}
+
+/** "Remedia backup 2026-10-11 1530": sortable, and valid as a folder name on every system. */
+function backupName(): string {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `Remedia backup ${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}${pad(d.getMinutes())}`;
+}
+
+function MyDataSettings() {
+  const { t } = useTranslation();
+  const [state, setState] = useState<{ kind: "idle" | "working" } | { kind: "done"; path: string } | { kind: "error" }>({
+    kind: "idle",
+  });
+
+  async function backup() {
+    const parent = await open({ directory: true, multiple: false, title: t("settings.backup.choose") });
+    if (!parent) return;
+    setState({ kind: "working" });
+    try {
+      const path = await invoke<string>("create_backup", { parent, name: backupName() });
+      setState({ kind: "done", path });
+    } catch {
+      setState({ kind: "error" });
+    }
+  }
+
+  return (
+    <div className="settings-section">
+      <h2>{t("settings.backup.title")}</h2>
+      <p>{t("settings.backup.description")}</p>
+      <div>
+        <button type="button" className="button button--primary" disabled={state.kind === "working"} onClick={backup}>
+          {t(state.kind === "working" ? "settings.backup.working" : "settings.backup.create")}
+        </button>
+      </div>
+      {state.kind === "done" && (
+        <p>
+          {t("settings.backup.done")}{" "}
+          <button type="button" className="link-button" onClick={() => revealItemInDir(state.path)}>
+            {t("settings.backup.show")}
+          </button>
+        </p>
+      )}
+      {state.kind === "error" && <p className="form-error">{t("settings.backup.failed")}</p>}
+      <p className="screen-placeholder">{t("settings.backup.restore")}</p>
     </div>
   );
 }

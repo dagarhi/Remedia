@@ -1,3 +1,4 @@
+mod backup;
 mod db;
 mod images;
 
@@ -31,6 +32,12 @@ fn import_image(app: AppHandle, source: PathBuf, folder: String) -> Result<Strin
     images::import(&app, &source, &folder)
 }
 
+/// Copies the database and all images into a new folder `name` inside `parent`.
+#[tauri::command]
+fn create_backup(app: AppHandle, db: State<Database>, parent: PathBuf, name: String) -> Result<String, String> {
+    backup::create(&app, &db, &parent, &name)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -44,7 +51,7 @@ pub fn run() {
             app.manage(database);
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![db_execute, db_batch, images_dir, import_image])
+        .invoke_handler(tauri::generate_handler![db_execute, db_batch, images_dir, import_image, create_backup])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

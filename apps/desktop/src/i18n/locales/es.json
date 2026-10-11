@@ -209,7 +209,8 @@
       "profile": "Perfil",
       "appearance": "Apariencia",
       "recordTypes": "Tipos de registro",
-      "about": "Acerca de"
+      "about": "Acerca de",
+      "myData": "Mis datos"
     },
     "language": "Idioma",
     "theme": "Tema",
@@ -233,7 +234,18 @@
     "licence": "Licencia",
     "sourceCode": "Código fuente en GitHub",
     "name": "Tu nombre",
-    "nameHint": "Se usa en el saludo de Inicio. Se queda en este dispositivo."
+    "nameHint": "Se usa en el saludo de Inicio. Se queda en este dispositivo.",
+    "backup": {
+      "title": "Copia de seguridad",
+      "description": "Guarda una copia de todos tus registros, historial, etiquetas, ajustes y portadas en la carpeta que elijas. Guárdala en un sitio seguro, como una carpeta en la nube o un disco externo.",
+      "choose": "Elige dónde guardar la copia",
+      "create": "Crear copia de seguridad",
+      "working": "Creando la copia…",
+      "done": "Copia creada.",
+      "show": "Mostrar en la carpeta",
+      "failed": "No se ha podido crear la copia. Comprueba que se puede escribir en esa carpeta.",
+      "restore": "Para restaurar una copia: cierra Remedia y copia remedia.db y la carpeta images de la copia a la carpeta de datos de la app, sustituyendo los que hay."
+    }
   },
   "home": {
     "greeting": "Hola de nuevo",

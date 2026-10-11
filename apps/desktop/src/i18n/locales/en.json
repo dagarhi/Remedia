@@ -208,7 +208,8 @@
       "profile": "Profile",
       "appearance": "Appearance",
       "recordTypes": "Record types",
-      "about": "About"
+      "about": "About",
+      "myData": "My data"
     },
     "language": "Language",
     "theme": "Theme",
@@ -232,7 +233,18 @@
     "licence": "Licence",
     "sourceCode": "Source code on GitHub",
     "name": "Your name",
-    "nameHint": "Used in the greeting on Home. It stays on this device."
+    "nameHint": "Used in the greeting on Home. It stays on this device.",
+    "backup": {
+      "title": "Backup",
+      "description": "Saves a copy of all your records, history, tags, settings and covers in a folder you choose. Keep it somewhere safe, such as a cloud folder or an external drive.",
+      "choose": "Choose where to save the backup",
+      "create": "Create backup",
+      "working": "Creating backup…",
+      "done": "Backup created.",
+      "show": "Show in folder",
+      "failed": "The backup could not be created. Check that the folder is writable.",
+      "restore": "To restore a backup: close Remedia, and copy remedia.db and the images folder from the backup into the app data folder, replacing the existing ones."
+    }
   },
   "home": {
     "greeting": "Welcome back",

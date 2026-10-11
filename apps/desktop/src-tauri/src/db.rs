@@ -52,6 +52,14 @@ impl Database {
         run_query(&conn, query).map_err(|e| e.to_string())
     }
 
+    /// Writes a consistent copy of the whole database to `target` (which must not exist yet).
+    /// `VACUUM INTO` works while the app is open and includes changes still in the WAL file.
+    pub fn backup_to(&self, target: &Path) -> Result<(), String> {
+        let conn = self.0.lock().map_err(|e| e.to_string())?;
+        conn.execute("VACUUM INTO ?1", [target.to_string_lossy()]).map_err(|e| e.to_string())?;
+        Ok(())
+    }
+
     /// Runs every query in one transaction: if one fails, none is applied.
     pub fn execute_batch(&self, queries: &[SqlQuery]) -> Result<Vec<Json>, String> {
         let mut conn = self.0.lock().map_err(|e| e.to_string())?;
@@ -156,6 +164,21 @@ mod tests {
 
         let missing = db.execute(&query("SELECT title FROM records WHERE id = ?", vec![json!("x")], "get")).unwrap();
         assert_eq!(missing, json!({ "rows": null }));
+    }
+
+    #[test]
+    fn backs_up_to_a_readable_copy() {
+        let db = Database::open_in_memory().unwrap();
+        let target = std::env::temp_dir().join(format!("remedia-backup-{}.db", std::process::id()));
+        let _ = std::fs::remove_file(&target);
+
+        db.backup_to(&target).unwrap();
+
+        let copy = Database::open(&target).unwrap();
+        let result = copy.execute(&query("SELECT count(*) FROM templates", vec![], "get")).unwrap();
+        assert_eq!(result, json!({ "rows": [6] }));
+        drop(copy);
+        let _ = std::fs::remove_file(&target);
     }
 
     #[test]
