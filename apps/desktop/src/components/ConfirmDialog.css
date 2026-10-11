@@ -10,7 +10,7 @@
 
 /* The dark layer behind the dialog. */
 .confirm-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.4);                     /* black at 40 % opacity */
+  background: var(--backdrop);                        /* theme token, with transparency */
 }
 
 .confirm-dialog h2 {

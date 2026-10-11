@@ -9,6 +9,8 @@ import {
 } from "./types";
 
 const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/);
+/** `#RRGGBB` or `#RRGGBBAA`: only tokens that need transparency accept the alpha pair. */
+const hexColorWithAlpha = z.string().regex(/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/);
 const fontStack = z.array(z.string().min(1)).min(1);
 const size = z.number().nonnegative();
 
@@ -27,6 +29,7 @@ const colorSchemas: Record<keyof ThemeColors, z.ZodType> = {
   accentText: hexColor,
   danger: hexColor,
   success: hexColor,
+  backdrop: hexColorWithAlpha,
 };
 
 const typographySchemas: Record<keyof ThemeTypography, z.ZodType> = {

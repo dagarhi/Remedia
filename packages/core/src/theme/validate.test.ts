@@ -73,3 +73,15 @@ describe("themeFileJsonSchema", () => {
     );
   });
 });
+
+describe("backdrop token", () => {
+  const meta = { formatVersion: 1, id: "veil", name: "Veil", appearance: "dark" };
+
+  it("accepts transparency only on the backdrop", () => {
+    expect(validateThemeFile({ ...meta, colors: { backdrop: "#00000080", accent: "#D9A25F80" } })).toMatchObject({
+      ok: true,
+      theme: { colors: { backdrop: "#00000080" } },
+      warnings: [{ path: "colors.accent", code: "invalid_value" }],
+    });
+  });
+});

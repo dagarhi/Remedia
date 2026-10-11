@@ -44,6 +44,8 @@ export const remediaDark: Theme = {
     accentText: "#D9A25F",
     danger: "#E5897A",
     success: "#A3BA96",
+    // Black at 60 %: the dark theme needs a stronger veil to separate the dialog.
+    backdrop: "#00000099",
   },
   typography,
   shape,
@@ -69,6 +71,8 @@ export const remediaLight: Theme = {
     accentText: "#8F5B1C",
     danger: "#A9472F",
     success: "#4F6B45",
+    // The warm ink colour at 40 %, so the veil keeps the paper tone.
+    backdrop: "#2B262066",
   },
   typography,
   shape,

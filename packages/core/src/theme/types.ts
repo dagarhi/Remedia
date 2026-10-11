@@ -27,6 +27,11 @@ export interface ThemeColors {
   accentText: HexColor;
   danger: HexColor;
   success: HexColor;
+  /**
+   * Dark layer behind dialogs. The only colour with transparency: `#RRGGBBAA`
+   * (or `#RRGGBB` for an opaque one).
+   */
+  backdrop: HexColor;
 }
 
 export interface ThemeTypography {
