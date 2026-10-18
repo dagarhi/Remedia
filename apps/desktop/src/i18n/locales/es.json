@@ -43,7 +43,12 @@
     "hours_played": "Horas jugadas",
     "studios": "Estudios",
     "anime_format": "Formato",
-    "original_title_romaji": "Título en romaji"
+    "original_title_romaji": "Título en romaji",
+    "manga_format": "Formato",
+    "publishing_status": "Publicación",
+    "chapter_count": "Capítulos",
+    "chapters_read": "Capítulos leídos",
+    "volume_count": "Tomos"
   },
   "common": {
     "yes": "Sí",
@@ -133,6 +138,13 @@
       "in_progress": "Viendo",
       "paused": "En pausa",
       "completed": "Visto",
+      "dropped": "Abandonado"
+    },
+    "manga": {
+      "planned": "Pendiente",
+      "in_progress": "Leyendo",
+      "paused": "En pausa",
+      "completed": "Leído",
       "dropped": "Abandonado"
     }
   },
@@ -366,19 +378,31 @@
     "movie_format": "Película",
     "ova": "OVA",
     "ona": "ONA",
-    "special": "Especial"
+    "special": "Especial",
+    "manga": "Manga",
+    "manhwa": "Manhwa",
+    "manhua": "Manhua",
+    "one_shot": "One-shot",
+    "manga_publishing": "En publicación",
+    "manga_finished": "Finalizado",
+    "manga_hiatus": "En pausa",
+    "manga_cancelled": "Cancelado"
   },
   "unit": {
     "min": "min",
     "pages": "páginas",
     "episodes": "episodios",
-    "hours": "h"
+    "hours": "h",
+    "chapters": "capítulos",
+    "volumes": "tomos"
   },
   "progress": {
     "pages": "p. {{current}} / {{total}}",
     "pagesOnly": "p. {{current}}",
     "episodes": "Ep. {{current}} / {{total}}",
     "episodesOnly": "Ep. {{current}}",
+    "chapters": "Cap. {{current}} / {{total}}",
+    "chaptersOnly": "Cap. {{current}}",
     "hours": "{{current}} h",
     "series": "T{{season}} · E{{episode}}",
     "generic": "{{current}} / {{total}}",

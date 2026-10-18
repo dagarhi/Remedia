@@ -5,7 +5,7 @@ export interface RecordType {
   /** Template id; also the i18n key under `types.` */
   id: string;
   icon: LucideIcon;
-  /** Manga is not available yet. */
+  /** False hides the type from the add flow and Settings (kept for future types). */
   enabled: boolean;
 }
 
@@ -16,7 +16,7 @@ export const RECORD_TYPES: RecordType[] = [
   { id: "book", icon: BookOpen, enabled: true },
   { id: "game", icon: Gamepad2, enabled: true },
   { id: "anime", icon: Sparkles, enabled: true },
-  { id: "manga", icon: BookImage, enabled: false },
+  { id: "manga", icon: BookImage, enabled: true },
 ];
 
 /** Icon for a template; custom templates get a generic one. */

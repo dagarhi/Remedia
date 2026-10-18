@@ -17,6 +17,7 @@ const MIGRATIONS: &[&str] = &[
     include_str!("../../../../packages/core/migrations/0001_initial.sql"),
     include_str!("../../../../packages/core/migrations/0002_history_events.sql"),
     include_str!("../../../../packages/core/migrations/0003_anime_template.sql"),
+    include_str!("../../../../packages/core/migrations/0004_manga_template.sql"),
 ];
 
 /// One connection behind a mutex: every query runs on the same connection, so
@@ -181,7 +182,7 @@ mod tests {
     fn migrates_and_seeds_built_in_templates() {
         let db = Database::open_in_memory().unwrap();
         let result = db.execute(&query("SELECT count(*) FROM templates", vec![], "get")).unwrap();
-        assert_eq!(result, json!({ "rows": [6] }));
+        assert_eq!(result, json!({ "rows": [7] }));
     }
 
     #[test]
@@ -208,7 +209,7 @@ mod tests {
 
         let copy = Database::open(&target).unwrap();
         let result = copy.execute(&query("SELECT count(*) FROM templates", vec![], "get")).unwrap();
-        assert_eq!(result, json!({ "rows": [6] }));
+        assert_eq!(result, json!({ "rows": [7] }));
         drop(copy);
         let _ = std::fs::remove_file(&target);
     }

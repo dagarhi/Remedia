@@ -108,6 +108,26 @@ export const animeTemplate: CodeTemplateDefinition = {
   progress: { field: "episodes_watched", total: "episode_count" },
 };
 
+/** Manga: one record per work, as on AniList; progress in chapters (light novels are books). */
+export const mangaTemplate: CodeTemplateDefinition = {
+  fields: [
+    field("publication_date", "date"),
+    field("author", "text_list"),
+    field("manga_format", "select", { options: options("manga", "manhwa", "manhua", "one_shot") }),
+    field("publishing_status", "select", {
+      options: options("manga_publishing", "manga_finished", "manga_hiatus", "manga_cancelled"),
+    }),
+    field("chapter_count", "number", { unit: "chapters" }),
+    field("chapters_read", "number", { unit: "chapters" }),
+    field("volume_count", "number", { unit: "volumes" }),
+    field("genres", "text_list"),
+    field("synopsis", "long_text"),
+    field("original_title_romaji", "text"),
+  ],
+  identity: ["publication_date", "author"],
+  progress: { field: "chapters_read", total: "chapter_count" },
+};
+
 const CODE_TEMPLATES: Partial<Record<BuiltInTemplateId, CodeTemplateDefinition>> = {
   movie: movieTemplate,
   series: seriesTemplate,
@@ -115,6 +135,7 @@ const CODE_TEMPLATES: Partial<Record<BuiltInTemplateId, CodeTemplateDefinition>>
   book: bookTemplate,
   game: gameTemplate,
   anime: animeTemplate,
+  manga: mangaTemplate,
 };
 
 /** The developer's part of a template, or null for custom templates (and built-ins not written yet). */

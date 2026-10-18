@@ -43,7 +43,12 @@
     "hours_played": "Hours played",
     "studios": "Studios",
     "anime_format": "Format",
-    "original_title_romaji": "Romaji title"
+    "original_title_romaji": "Romaji title",
+    "manga_format": "Format",
+    "publishing_status": "Publication",
+    "chapter_count": "Chapters",
+    "chapters_read": "Chapters read",
+    "volume_count": "Volumes"
   },
   "common": {
     "yes": "Yes",
@@ -132,6 +137,13 @@
       "in_progress": "Watching",
       "paused": "Paused",
       "completed": "Watched",
+      "dropped": "Dropped"
+    },
+    "manga": {
+      "planned": "Pending",
+      "in_progress": "Reading",
+      "paused": "Paused",
+      "completed": "Read",
       "dropped": "Dropped"
     }
   },
@@ -365,19 +377,31 @@
     "movie_format": "Movie",
     "ova": "OVA",
     "ona": "ONA",
-    "special": "Special"
+    "special": "Special",
+    "manga": "Manga",
+    "manhwa": "Manhwa",
+    "manhua": "Manhua",
+    "one_shot": "One-shot",
+    "manga_publishing": "Publishing",
+    "manga_finished": "Finished",
+    "manga_hiatus": "On hiatus",
+    "manga_cancelled": "Cancelled"
   },
   "unit": {
     "min": "min",
     "pages": "pages",
     "episodes": "episodes",
-    "hours": "h"
+    "hours": "h",
+    "chapters": "chapters",
+    "volumes": "volumes"
   },
   "progress": {
     "pages": "p. {{current}} / {{total}}",
     "pagesOnly": "p. {{current}}",
     "episodes": "Ep. {{current}} / {{total}}",
     "episodesOnly": "Ep. {{current}}",
+    "chapters": "Ch. {{current}} / {{total}}",
+    "chaptersOnly": "Ch. {{current}}",
     "hours": "{{current}} h",
     "series": "S{{season}} · E{{episode}}",
     "generic": "{{current}} / {{total}}",

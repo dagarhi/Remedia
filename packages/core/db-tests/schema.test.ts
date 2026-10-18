@@ -26,7 +26,7 @@ function insertRecord(id = ID, column?: string, sqlValue?: string) {
 describe("migration 0001", () => {
   it("creates the built-in template rows", () => {
     const ids = db.prepare("SELECT id FROM templates ORDER BY id").all().map((r) => r.id);
-    expect(ids).toEqual(["anime", "book", "game", "movie", "season", "series"]);
+    expect(ids).toEqual(["anime", "book", "game", "manga", "movie", "season", "series"]);
   });
 
   it("matches the Drizzle schema column by column", () => {

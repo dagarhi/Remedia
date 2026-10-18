@@ -35,7 +35,7 @@ describe("codeTemplateFor", () => {
 });
 
 describe("every built-in template", () => {
-  it.each(["movie", "series", "season", "book", "game", "anime"])("%s has unique keys and valid identity and progress", (id) => {
+  it.each(["movie", "series", "season", "book", "game", "anime", "manga"])("%s has unique keys and valid identity and progress", (id) => {
     const template = codeTemplateFor(id)!;
     const keys = template.fields.map((f) => f.key);
     expect(new Set(keys).size).toBe(keys.length);

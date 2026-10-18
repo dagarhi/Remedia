@@ -217,6 +217,63 @@ describe("aniList", () => {
       { provider: "myanimelist", external_id: "16498" },
     ]);
   });
+
+  it("maps a manhwa with its writers and artists, publication status and scoped MyAnimeList link", async () => {
+    const { http, calls } = fakeHttp({
+      "https://graphql.anilist.co": {
+        data: {
+          Media: {
+            id: 105398,
+            idMal: 121496,
+            title: { romaji: "Na Honjaman Level Up", english: "Solo Leveling", native: "나 혼자만 레벨업" },
+            startDate: { year: 2018, month: 3, day: 4 },
+            coverImage: { extraLarge: "https://s4.anilist.co/m.jpg" },
+            format: "MANGA",
+            countryOfOrigin: "KR",
+            status: "FINISHED",
+            chapters: 201,
+            volumes: 14,
+            staff: {
+              edges: [
+                { role: "Original Story", node: { name: { full: "Chugong" } } },
+                { role: "Art", node: { name: { full: "DUBU" } } },
+                { role: "Translator (English)", node: { name: { full: "Someone Else" } } },
+              ],
+            },
+            genres: ["Action"],
+            description: "A weak hunter.",
+          },
+        },
+      },
+    });
+    const record = await aniList.details(ctx(http), "manga", { externalId: "105398" } as never);
+
+    expect(calls[0].body).toMatchObject({ variables: { id: 105398, type: "MANGA" } });
+    expect(record.values.fields).toEqual({
+      publication_date: "2018-03-04",
+      author: ["Chugong", "DUBU"],
+      manga_format: "manhwa",
+      publishing_status: "manga_finished",
+      chapter_count: 201,
+      volume_count: 14,
+      genres: ["Action"],
+      synopsis: "A weak hunter.",
+      original_title_romaji: "Na Honjaman Level Up",
+    });
+    expect(record.links).toEqual([
+      { provider: "anilist", external_id: "105398" },
+      { provider: "myanimelist:manga", external_id: "121496" },
+    ]);
+  });
+
+  it("leaves light novels out of manga searches", async () => {
+    const { http, calls } = fakeHttp({ "https://graphql.anilist.co": { data: { Page: { media: [] } } } });
+    await aniList.search(ctx(http), "manga", "frieren");
+    await aniList.search(ctx(http), "anime", "frieren");
+
+    expect(calls[0].body).toMatchObject({ variables: { type: "MANGA", formatNot: "NOVEL" } });
+    expect(calls[1].body).toMatchObject({ variables: { type: "ANIME", formatNot: null } });
+  });
 });
 
 describe("providersFor", () => {
@@ -226,6 +283,7 @@ describe("providersFor", () => {
     expect(providersFor("book").map((p) => p.id)).toEqual(["openlibrary", "googlebooks"]);
     expect(providersFor("game").map((p) => p.id)).toEqual(["rawg", "igdb"]);
     expect(providersFor("anime").map((p) => p.id)).toEqual(["anilist", "jikan"]);
+    expect(providersFor("manga").map((p) => p.id)).toEqual(["anilist", "jikan"]);
     expect(providersFor("00000000-0000-4000-8000-000000000001").length).toBeGreaterThan(1);
   });
 });

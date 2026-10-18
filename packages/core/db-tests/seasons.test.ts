@@ -70,7 +70,7 @@ describe("seasons", () => {
 });
 
 describe("new built-in types", () => {
-  it.each(["book", "game", "anime", "series"])("can create a %s", async (template) => {
+  it.each(["book", "game", "anime", "manga", "series"])("can create a %s", async (template) => {
     await expect(createRecord(ctx, { template, title: "x" })).resolves.toMatchObject({ template });
   });
 });

@@ -115,6 +115,45 @@ describe("jikan", () => {
     expect(record.links).toEqual([{ provider: "myanimelist", external_id: "52991" }]);
     expect(record.posterUrl).toBe("https://cdn.myanimelist.net/l.jpg");
   });
+
+  it("fills a manga, skipping light novels and turning MAL names around", async () => {
+    const { http, calls } = fakeHttp({
+      "https://api.jikan.moe/v4/manga": {
+        data: [
+          { mal_id: 1, title: "Some Light Novel", type: "Light Novel" },
+          {
+            mal_id: 13,
+            title: "One Piece",
+            title_english: "One Piece",
+            title_japanese: "ONE PIECE",
+            type: "Manga",
+            status: "Publishing",
+            chapters: null,
+            volumes: null,
+            published: { from: "1997-07-22T00:00:00+00:00" },
+            authors: [{ name: "Oda, Eiichiro" }],
+            genres: [{ name: "Adventure" }],
+            synopsis: "Pirates. [Written by MAL Rewrite]",
+          },
+        ],
+      },
+    });
+    const hits = await jikan.search(ctx(http), "manga", "one piece");
+    const record = await jikan.details(ctx(http), "manga", hits[0]);
+
+    expect(calls[0].url).toMatch(/^https:\/\/api\.jikan\.moe\/v4\/manga\?/);
+    expect(hits.map((h) => h.title)).toEqual(["One Piece"]);
+    expect(hits[0].linkProvider).toBe("myanimelist:manga");
+    expect(record.values.fields).toEqual({
+      publication_date: "1997-07-22",
+      author: ["Eiichiro Oda"],
+      manga_format: "manga",
+      publishing_status: "manga_publishing",
+      genres: ["Adventure"],
+      synopsis: "Pirates.",
+    });
+    expect(record.links).toEqual([{ provider: "myanimelist:manga", external_id: "13" }]);
+  });
 });
 
 describe("googleBooks", () => {

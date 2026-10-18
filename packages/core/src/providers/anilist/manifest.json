@@ -9,7 +9,8 @@
   "author": "Remedia",
   "homepage": "https://anilist.co",
   "recordTypes": [
-    "anime"
+    "anime",
+    "manga"
   ],
   "capabilities": [
     "metadata.search",

@@ -14,15 +14,16 @@ import { data } from "./db/database";
 export interface ProgressInfo {
   /** 0-100 when there is a total; null shows the label only. */
   percent: number | null;
-  /** Short text: "p. 120 / 400", "Ep. 5 / 12", "S2 · E5", "12 h". */
+  /** Short text: "p. 120 / 400", "Ep. 5 / 12", "Ch. 45", "S2 · E5", "12 h". */
   label: string;
 }
 
 /** Which label style each type uses; anything else gets the generic "current / total". */
-const LABEL_STYLE: Record<string, "pages" | "episodes" | "hours"> = {
+const LABEL_STYLE: Record<string, "pages" | "episodes" | "chapters" | "hours"> = {
   book: "pages",
   season: "episodes",
   anime: "episodes",
+  manga: "chapters",
   game: "hours",
 };
 
