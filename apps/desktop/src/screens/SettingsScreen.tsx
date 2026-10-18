@@ -14,6 +14,7 @@ import {
   THEME_MODES,
   type AddMode,
   type ProviderCredentials, type Language, type RatingScale, type ThemeMode } from "@remedia/core";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Select } from "../components/Select";
 import { RECORD_TYPES } from "../recordTypes";
 import { credentialsPath, getCredentials, setCredentials } from "../providers";
@@ -344,8 +345,76 @@ function MyDataSettings() {
         </p>
       )}
       {state.kind === "error" && <p className="form-error">{t("settings.backup.failed")}</p>}
-      <p className="screen-placeholder">{t("settings.backup.restore")}</p>
+
+      <RestoreBackup />
     </div>
+  );
+}
+
+type RestoreState =
+  | { kind: "idle" }
+  | { kind: "confirming"; folder: string }
+  | { kind: "working" }
+  | { kind: "done"; safetyCopy: string }
+  | { kind: "error"; code: string };
+
+/** Restores a backup folder, after confirming; the app saves a safety copy of the current data first. */
+function RestoreBackup() {
+  const { t } = useTranslation();
+  const [state, setState] = useState<RestoreState>({ kind: "idle" });
+
+  async function choose() {
+    const folder = await open({ directory: true, multiple: false, title: t("settings.restore.choose") });
+    if (folder) setState({ kind: "confirming", folder });
+  }
+
+  async function restore(folder: string) {
+    setState({ kind: "working" });
+    try {
+      const safetyCopy = await invoke<string>("restore_backup", { folder });
+      setState({ kind: "done", safetyCopy });
+    } catch (error) {
+      const code = String(error);
+      setState({ kind: "error", code: ["not_a_backup", "backup_from_newer_version"].includes(code) ? code : "failed" });
+    }
+  }
+
+  return (
+    <>
+      <h2>{t("settings.restore.title")}</h2>
+      <p>{t("settings.restore.description")}</p>
+      <div>
+        <button type="button" className="button" disabled={state.kind === "working"} onClick={choose}>
+          {t(state.kind === "working" ? "settings.restore.working" : "settings.restore.button")}
+        </button>
+      </div>
+
+      {state.kind === "done" && (
+        <div className="settings-section">
+          <p>{t("settings.restore.done")}</p>
+          <div className="settings-actions">
+            {/* Everything on screen still shows the old data: reloading reads the restored one. */}
+            <button type="button" className="button button--primary" onClick={() => window.location.reload()}>
+              {t("settings.restore.reload")}
+            </button>
+            <button type="button" className="link-button" onClick={() => revealItemInDir(state.safetyCopy)}>
+              {t("settings.restore.showSafetyCopy")}
+            </button>
+          </div>
+        </div>
+      )}
+      {state.kind === "error" && <p className="form-error">{t(`settings.restore.errors.${state.code}`)}</p>}
+
+      <ConfirmDialog
+        open={state.kind === "confirming"}
+        title={t("settings.restore.confirmTitle")}
+        message={t("settings.restore.confirmMessage", { folder: state.kind === "confirming" ? state.folder : "" })}
+        confirmLabel={t("settings.restore.confirm")}
+        cancelLabel={t("form.cancel")}
+        onConfirm={() => state.kind === "confirming" && restore(state.folder)}
+        onCancel={() => setState({ kind: "idle" })}
+      />
+    </>
   );
 }
 

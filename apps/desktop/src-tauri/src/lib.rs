@@ -62,6 +62,12 @@ fn create_backup(app: AppHandle, db: State<Database>, parent: PathBuf, name: Str
     backup::create(&app, &db, &parent, &name)
 }
 
+/// Restores a backup folder; returns where the safety copy of the previous data was saved.
+#[tauri::command]
+fn restore_backup(app: AppHandle, db: State<Database>, folder: PathBuf) -> Result<String, String> {
+    backup::restore(&app, &db, &folder)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -85,7 +91,8 @@ pub fn run() {
             get_credentials,
             set_credentials,
             credentials_path,
-            create_backup
+            create_backup,
+            restore_backup
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

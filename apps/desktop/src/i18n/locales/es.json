@@ -251,8 +251,7 @@
       "working": "Creando la copia…",
       "done": "Copia creada.",
       "show": "Mostrar en la carpeta",
-      "failed": "No se ha podido crear la copia. Comprueba que se puede escribir en esa carpeta.",
-      "restore": "Para restaurar una copia: cierra Remedia y copia remedia.db y la carpeta images de la copia a la carpeta de datos de la app, sustituyendo los que hay."
+      "failed": "No se ha podido crear la copia. Comprueba que se puede escribir en esa carpeta."
     },
     "addMode": "Cómo añadir cada tipo",
     "addModes": {
@@ -276,6 +275,24 @@
         "client_secret": "Client Secret"
       },
       "keys": "Claves"
+    },
+    "restore": {
+      "title": "Restaurar una copia",
+      "description": "Sustituye todos tus datos actuales por una copia hecha con el botón de arriba. Antes, Remedia guarda una copia de seguridad de tus datos actuales, así que no se pierde nada.",
+      "button": "Restaurar desde una copia…",
+      "working": "Restaurando…",
+      "choose": "Elige la carpeta de la copia (Remedia backup …)",
+      "confirmTitle": "¿Restaurar esta copia?",
+      "confirmMessage": "Todos tus registros, historial, etiquetas y ajustes actuales se sustituirán por la copia de {{folder}}. Antes se guarda una copia de seguridad de tus datos actuales.",
+      "confirm": "Restaurar",
+      "done": "Copia restaurada. Recarga la app para verla.",
+      "reload": "Recargar ahora",
+      "showSafetyCopy": "Mostrar la copia de seguridad previa",
+      "errors": {
+        "not_a_backup": "Esa carpeta no contiene una copia de Remedia. Elige la carpeta llamada \"Remedia backup …\".",
+        "backup_from_newer_version": "Esa copia se hizo con una versión más nueva de Remedia. Actualiza la app para restaurarla.",
+        "failed": "No se ha podido restaurar la copia. Tus datos no han cambiado."
+      }
     }
   },
   "home": {

@@ -8,7 +8,7 @@ use std::path::Path;
 use std::sync::Mutex;
 
 use rusqlite::types::{Value, ValueRef};
-use rusqlite::{params_from_iter, Connection};
+use rusqlite::{params_from_iter, Connection, OpenFlags, MAIN_DB};
 use serde::Deserialize;
 use serde_json::{json, Value as Json};
 
@@ -52,6 +52,18 @@ impl Database {
         run_query(&conn, query).map_err(|e| e.to_string())
     }
 
+    /// Replaces the whole database with the one at `source` (a backup), while the app stays open.
+    /// Refuses files that are not Remedia databases or come from a newer app version, then
+    /// brings an older backup up to date with the migrations.
+    pub fn restore_from(&self, source: &Path) -> Result<(), String> {
+        check_backup(source)?;
+        let mut conn = self.0.lock().map_err(|e| e.to_string())?;
+        // SQLite's online backup API copies every page into the open connection.
+        conn.restore(MAIN_DB, source, None::<fn(rusqlite::backup::Progress)>)
+            .map_err(|e| e.to_string())?;
+        run_migrations(&mut conn).map_err(|e| e.to_string())
+    }
+
     /// Writes a consistent copy of the whole database to `target` (which must not exist yet).
     /// `VACUUM INTO` works while the app is open and includes changes still in the WAL file.
     pub fn backup_to(&self, target: &Path) -> Result<(), String> {
@@ -72,6 +84,26 @@ impl Database {
         tx.commit().map_err(|e| e.to_string())?;
         Ok(results)
     }
+}
+
+/// Checks that `path` is a Remedia database this app can open (not from a newer version).
+pub fn check_backup(path: &Path) -> Result<(), String> {
+    if backup_version(path)? > MIGRATIONS.len() as i64 {
+        return Err("backup_from_newer_version".into());
+    }
+    Ok(())
+}
+
+/// The migration version of a backup file, after checking it really is a Remedia database.
+fn backup_version(path: &Path) -> Result<i64, String> {
+    let conn = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY).map_err(|_| "not_a_backup")?;
+    let has_records: bool = conn
+        .query_row("SELECT count(*) > 0 FROM sqlite_master WHERE type = 'table' AND name = 'records'", [], |r| r.get(0))
+        .map_err(|_| "not_a_backup")?;
+    if !has_records {
+        return Err("not_a_backup".into());
+    }
+    conn.query_row("PRAGMA user_version", [], |r| r.get(0)).map_err(|e| e.to_string())
 }
 
 /// Applies the migrations newer than `PRAGMA user_version`, each in its own transaction.
@@ -179,6 +211,32 @@ mod tests {
         assert_eq!(result, json!({ "rows": [6] }));
         drop(copy);
         let _ = std::fs::remove_file(&target);
+    }
+
+    #[test]
+    fn restores_a_backup_into_the_open_database() {
+        let original = Database::open_in_memory().unwrap();
+        let insert = "INSERT INTO records (id, template, title, created_at, updated_at) VALUES (?, 'movie', 'Arrival', 1, 1)";
+        original.execute(&query(insert, vec![json!(ID)], "run")).unwrap();
+        let file = std::env::temp_dir().join(format!("remedia-restore-{}.db", std::process::id()));
+        let _ = std::fs::remove_file(&file);
+        original.backup_to(&file).unwrap();
+
+        let current = Database::open_in_memory().unwrap();
+        current.restore_from(&file).unwrap();
+
+        let titles = current.execute(&query("SELECT title FROM records", vec![], "all")).unwrap();
+        assert_eq!(titles, json!({ "rows": [["Arrival"]] }));
+        let _ = std::fs::remove_file(&file);
+    }
+
+    #[test]
+    fn refuses_files_that_are_not_backups() {
+        let file = std::env::temp_dir().join(format!("remedia-not-a-backup-{}.db", std::process::id()));
+        std::fs::write(&file, b"hello").unwrap();
+        let db = Database::open_in_memory().unwrap();
+        assert_eq!(db.restore_from(&file).unwrap_err(), "not_a_backup");
+        let _ = std::fs::remove_file(&file);
     }
 
     #[test]

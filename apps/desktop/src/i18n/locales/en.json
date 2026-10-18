@@ -250,8 +250,7 @@
       "working": "Creating backup…",
       "done": "Backup created.",
       "show": "Show in folder",
-      "failed": "The backup could not be created. Check that the folder is writable.",
-      "restore": "To restore a backup: close Remedia, and copy remedia.db and the images folder from the backup into the app data folder, replacing the existing ones."
+      "failed": "The backup could not be created. Check that the folder is writable."
     },
     "addMode": "How to add each type",
     "addModes": {
@@ -275,6 +274,24 @@
         "client_secret": "Client Secret"
       },
       "keys": "Keys"
+    },
+    "restore": {
+      "title": "Restore a backup",
+      "description": "Replaces all your current data with a backup made with the button above. Before doing it, Remedia saves a safety copy of your current data, so nothing is lost.",
+      "button": "Restore from a backup…",
+      "working": "Restoring…",
+      "choose": "Choose the backup folder (Remedia backup …)",
+      "confirmTitle": "Restore this backup?",
+      "confirmMessage": "All your current records, history, tags and settings will be replaced with the backup in {{folder}}. A safety copy of your current data is saved first.",
+      "confirm": "Restore",
+      "done": "Backup restored. Reload the app to see it.",
+      "reload": "Reload now",
+      "showSafetyCopy": "Show the safety copy",
+      "errors": {
+        "not_a_backup": "That folder does not contain a Remedia backup. Choose the folder named \"Remedia backup …\".",
+        "backup_from_newer_version": "That backup was made with a newer version of Remedia. Update the app to restore it.",
+        "failed": "The backup could not be restored. Your data has not changed."
+      }
     }
   },
   "home": {
