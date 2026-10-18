@@ -2,6 +2,7 @@ mod backup;
 mod credentials;
 mod db;
 mod images;
+mod legacy;
 
 use std::path::PathBuf;
 
@@ -75,7 +76,9 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_http::init())
         .setup(|app| {
-            // The database lives in the app data folder, e.g. %APPDATA%\io.github.dagarhi.remedia on Windows.
+            // Data from before the identifier change is moved first, so it is found below.
+            legacy::migrate(app.handle());
+            // The database lives in the app data folder, e.g. %APPDATA%\app.remedia on Windows.
             let dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&dir)?;
             let database = Database::open(&dir.join("remedia.db"))?;

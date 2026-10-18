@@ -21,7 +21,7 @@ fn check_folder(folder: &str) -> Result<(), String> {
     }
 }
 
-/// Absolute path of the images folder, e.g. %APPDATA%\io.github.dagarhi.remedia\images.
+/// Absolute path of the images folder, e.g. %APPDATA%\app.remedia\images.
 pub fn images_dir(app: &AppHandle) -> Result<PathBuf, String> {
     Ok(app.path().app_data_dir().map_err(|e| e.to_string())?.join("images"))
 }
