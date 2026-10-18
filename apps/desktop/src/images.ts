@@ -27,7 +27,7 @@ export function useImageUrl(relativePath: string | null | undefined): string | n
  * Lets the user pick an image file and copies it into the app's images folder.
  * Returns the relative path to store, or null if the user cancelled.
  */
-export async function pickImage(folder: "covers"): Promise<string | null> {
+export async function pickImage(folder: "covers" | "avatars"): Promise<string | null> {
   const source = await open({
     multiple: false,
     directory: false,

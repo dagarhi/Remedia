@@ -1,17 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HomeScreen } from "./home/HomeScreen";
 import { Sidebar } from "./components/Sidebar";
-import type { MediaRecord } from "@remedia/core";
+import { listRecords, type MediaRecord } from "@remedia/core";
+import { data } from "./db/database";
 import { AddScreen } from "./screens/AddScreen";
 import { LibrariesScreen } from "./screens/LibrariesScreen";
 import { LibraryScreen } from "./screens/LibraryScreen";
 import { RecordScreen } from "./screens/RecordScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
+import { WelcomeScreen } from "./screens/WelcomeScreen";
+import { useSettings } from "./settings/SettingsContext";
 import { sidebarScreenFor, type Route, type Screen } from "./screens";
 import "./App.css";
 
 function App() {
+  const { settings, update } = useSettings();
   const [route, setRoute] = useState<Route>({ screen: "home" });
+
+  // First run (UI Design): only for someone starting from nothing. A profile name or any
+  // record means the app was already in use, so the welcome is marked done silently.
+  const onboarded = settings["onboarding.done"];
+  const [checkingFirstRun, setCheckingFirstRun] = useState(!onboarded);
+  useEffect(() => {
+    if (onboarded) return;
+    (async () => {
+      const inUse = settings["profile.name"].trim() !== "" || (await listRecords(data)).length > 0;
+      if (inUse) update("onboarding.done", true);
+      setCheckingFirstRun(false);
+    })();
+  }, []);
+
   const [collapsed, setCollapsed] = useState(false);
   // Changing a component's `key` makes React start it fresh: pressing Add always restarts the flow.
   const [addFlowKey, setAddFlowKey] = useState(0);
@@ -68,6 +86,8 @@ function App() {
         );
     }
   }
+
+  if (!onboarded) return checkingFirstRun ? null : <WelcomeScreen />;
 
   return (
     <div className="app">

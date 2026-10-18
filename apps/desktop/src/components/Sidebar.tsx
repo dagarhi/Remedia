@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { House, Library, PanelLeftClose, PanelLeftOpen, Plus, Settings, type LucideIcon } from "lucide-react";
+import { House, Library, PanelLeftClose, PanelLeftOpen, Plus, type LucideIcon } from "lucide-react";
 import type { Screen } from "../screens";
+import { useSettings } from "../settings/SettingsContext";
+import { Avatar } from "./Avatar";
 import "./Sidebar.css";
 
 interface NavItem {
@@ -23,6 +25,8 @@ interface SidebarProps {
 
 export function Sidebar({ current, collapsed, onNavigate, onToggleCollapsed }: SidebarProps) {
   const { t } = useTranslation();
+  const { settings } = useSettings();
+  const name = settings["profile.name"].trim();
 
   const item = ({ screen, icon: Icon }: NavItem, className = "sidebar-item") => (
     <button
@@ -57,7 +61,20 @@ export function Sidebar({ current, collapsed, onNavigate, onToggleCollapsed }: S
 
       <div className="sidebar-main">{MAIN_ITEMS.map((i) => item(i))}</div>
 
-      <div className="sidebar-bottom">{item({ screen: "settings", icon: Settings })}</div>
+      {/* The profile picture takes the place of the Settings gear (it opens Settings). */}
+      <div className="sidebar-bottom">
+        <button
+          type="button"
+          className="sidebar-item sidebar-profile"
+          aria-current={current === "settings" ? "page" : undefined}
+          aria-label={t("nav.settings")}
+          title={t("nav.settings")}
+          onClick={() => onNavigate("settings")}
+        >
+          <Avatar value={settings["profile.avatar"]} size={collapsed ? 28 : 32} />
+          {!collapsed && <span className="sidebar-profile-name">{name || t("nav.settings")}</span>}
+        </button>
+      </div>
     </nav>
   );
 }

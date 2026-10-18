@@ -453,5 +453,29 @@
     "list": "List",
     "allTypes": "All",
     "noMatch": "Nothing matches these filters."
+  },
+  "welcome": {
+    "title": "Welcome to Remedia",
+    "name": "What's your name?",
+    "namePlaceholder": "Your name",
+    "avatar": "Choose your picture",
+    "private": "Everything stays on this device. No account needed.",
+    "start": "Get started"
+  },
+  "profile": {
+    "avatar": "Profile picture",
+    "ownImage": "Use my own image",
+    "animals": {
+      "cat": "Cat",
+      "dog": "Dog",
+      "rabbit": "Rabbit",
+      "bird": "Bird",
+      "fish": "Fish",
+      "turtle": "Turtle",
+      "squirrel": "Squirrel",
+      "snail": "Snail",
+      "rat": "Rat",
+      "panda": "Panda"
+    }
   }
 }

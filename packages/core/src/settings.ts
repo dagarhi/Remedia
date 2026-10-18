@@ -1,5 +1,6 @@
 import type { Timestamp } from "./common";
 import { RATING_SCALES, type RatingScale } from "./rating";
+import { isRelativeImagePath } from "./data/images";
 import { RECORD_STATUSES, type RecordStatus } from "./record";
 
 /** One row of `settings`. Rows are never deleted; resetting stores the default. */
@@ -23,6 +24,13 @@ export type HomeBlock = (typeof HOME_BLOCKS)[number];
 
 export const PROFILE_NAME_MAX_LENGTH = 40;
 
+/** Built-in avatars (animals for now; other sets may come later). */
+export const AVATAR_ICONS = ["cat", "dog", "rabbit", "bird", "fish", "turtle", "squirrel", "snail", "rat", "panda"] as const;
+export type AvatarIcon = (typeof AVATAR_ICONS)[number];
+
+/** `icon:cat` for a built-in avatar, or `image:avatars/<uuid>.jpg` (relative to the images folder). */
+export type Avatar = `icon:${AvatarIcon}` | `image:${string}`;
+
 /** How a type is added: ask each time, always search a provider, or always the empty form. */
 export const ADD_MODES = ["ask", "automatic", "manual"] as const;
 export type AddMode = (typeof ADD_MODES)[number];
@@ -34,6 +42,9 @@ export interface Settings {
   "theme.mode": ThemeMode;
   /** Shown in the Home greeting; empty until the user enters it. */
   "profile.name": string;
+  "profile.avatar": Avatar;
+  /** True once the welcome screen was completed (or skipped because data already existed). */
+  "onboarding.done": boolean;
   /** Active Home blocks, in display order. */
   "home.blocks": HomeBlock[];
   /** Libraries shown by the "Your libraries" block, in display order. */
@@ -50,6 +61,8 @@ export const SETTING_DEFAULTS: Settings = {
   language: "system",
   "theme.mode": "system",
   "profile.name": "",
+  "profile.avatar": "icon:cat",
+  "onboarding.done": false,
   "home.blocks": ["libraries", "random-pick", "recent-activity"],
   "home.libraries": ["in_progress", "planned", "completed"],
   "rating_display.default": "stars_5",
@@ -65,11 +78,19 @@ const isUniqueListOf =
   (value: unknown): value is T[] =>
     Array.isArray(value) && value.every(isOneOf(values)) && new Set(value).size === value.length;
 
+function isAvatar(value: unknown): value is Avatar {
+  if (typeof value !== "string") return false;
+  if (value.startsWith("icon:")) return isOneOf(AVATAR_ICONS)(value.slice(5));
+  return value.startsWith("image:") && isRelativeImagePath(value.slice(6));
+}
+
 /** Checks a stored value, so a broken or older value falls back to the default instead of breaking the app. */
 export function isValidSettingValue(key: string, value: unknown): boolean {
   if (key === "language") return value === "system" || isOneOf(LANGUAGES)(value);
   if (key === "theme.mode") return isOneOf(THEME_MODES)(value);
   if (key === "profile.name") return typeof value === "string" && value.length <= PROFILE_NAME_MAX_LENGTH;
+  if (key === "profile.avatar") return isAvatar(value);
+  if (key === "onboarding.done") return typeof value === "boolean";
   if (key === "home.blocks") return isUniqueListOf(HOME_BLOCKS)(value);
   if (key === "home.libraries") return isUniqueListOf(RECORD_STATUSES)(value);
   if (key.startsWith("add_mode.")) return isOneOf(ADD_MODES)(value);

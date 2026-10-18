@@ -9,6 +9,18 @@ use tauri::{AppHandle, Manager};
 /// Image types the app accepts (what the webview can display).
 const ALLOWED_EXTENSIONS: &[&str] = &["jpg", "jpeg", "png", "webp", "gif", "avif"];
 
+/// Sub-folders of the images folder the app writes to. Anything else is refused, so a
+/// request can never write outside the images folder (e.g. with "../").
+const ALLOWED_FOLDERS: &[&str] = &["covers", "avatars"];
+
+fn check_folder(folder: &str) -> Result<(), String> {
+    if ALLOWED_FOLDERS.contains(&folder) {
+        Ok(())
+    } else {
+        Err("folder_not_allowed".into())
+    }
+}
+
 /// Absolute path of the images folder, e.g. %APPDATA%\io.github.dagarhi.remedia\images.
 pub fn images_dir(app: &AppHandle) -> Result<PathBuf, String> {
     Ok(app.path().app_data_dir().map_err(|e| e.to_string())?.join("images"))
@@ -18,6 +30,7 @@ pub fn images_dir(app: &AppHandle) -> Result<PathBuf, String> {
 /// and returns the relative path to store, e.g. "covers/3f2b….jpg".
 /// The original file is never moved or changed.
 pub fn import(app: &AppHandle, source: &Path, folder: &str) -> Result<String, String> {
+    check_folder(folder)?;
     let extension = source
         .extension()
         .and_then(|e| e.to_str())
@@ -60,6 +73,7 @@ fn extension_for(content_type: &str) -> Option<&'static str> {
 /// Downloads a provider's poster into `images/<folder>/` and returns the relative path.
 /// Images are always stored locally; the remote URL is never used for display (data model).
 pub async fn download(app: &AppHandle, url: &str, folder: &str) -> Result<String, String> {
+    check_folder(folder)?;
     let parsed = tauri::Url::parse(url).map_err(|e| e.to_string())?;
     if parsed.scheme() != "https" || !ALLOWED_IMAGE_HOSTS.contains(&parsed.host_str().unwrap_or("")) {
         return Err("image_host_not_allowed".into());
@@ -87,7 +101,14 @@ pub async fn download(app: &AppHandle, url: &str, folder: &str) -> Result<String
 
 #[cfg(test)]
 mod tests {
-    use super::{extension_for, ALLOWED_EXTENSIONS};
+    use super::{check_folder, extension_for, ALLOWED_EXTENSIONS};
+
+    #[test]
+    fn only_writes_to_known_folders() {
+        assert!(check_folder("covers").is_ok());
+        assert!(check_folder("avatars").is_ok());
+        assert!(check_folder("../outside").is_err());
+    }
 
     #[test]
     fn maps_image_content_types() {

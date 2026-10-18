@@ -22,6 +22,12 @@ describe("isValidSettingValue", () => {
     ["home.libraries", "planned", false],
     ["add_mode.movie", "automatic", true],
     ["add_mode.movie", "sometimes", false],
+    ["profile.avatar", "icon:panda", true],
+    ["profile.avatar", "icon:dragon", false],
+    ["profile.avatar", "image:avatars/a.jpg", true],
+    ["profile.avatar", "image:C:/me.jpg", false],
+    ["onboarding.done", true, true],
+    ["onboarding.done", "yes", false],
     ["unknown.key", "x", false],
   ])("%s = %s is %s", (key, value, valid) => {
     expect(isValidSettingValue(key, value)).toBe(valid);

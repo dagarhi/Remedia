@@ -14,6 +14,7 @@ import {
   THEME_MODES,
   type AddMode,
   type ProviderCredentials, type Language, type RatingScale, type ThemeMode } from "@remedia/core";
+import { AvatarPicker } from "../components/AvatarPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Select } from "../components/Select";
 import { RECORD_TYPES } from "../recordTypes";
@@ -86,6 +87,8 @@ function ProfileSettings() {
         />
       </div>
       <p className="screen-placeholder">{t("settings.nameHint")}</p>
+      <span className="label">{t("profile.avatar")}</span>
+      <AvatarPicker value={settings["profile.avatar"]} onChange={(avatar) => update("profile.avatar", avatar)} />
     </div>
   );
 }

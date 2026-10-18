@@ -1,0 +1,64 @@
+/* Full window, no sidebar: the first thing a new user sees. */
+.welcome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-8);
+  background: var(--background);
+}
+
+.welcome-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 600px;
+  padding: var(--space-8);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.welcome-card header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.welcome-card h1 {
+  font-size: var(--text-xl);
+}
+
+.welcome-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.welcome-row {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.welcome-card input:not([type="checkbox"]),
+.welcome-card select {
+  font: inherit;
+  color: var(--text);
+  background: var(--background);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+}
+
+.welcome-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.welcome-actions .screen-placeholder {
+  font-size: var(--text-sm);
+}

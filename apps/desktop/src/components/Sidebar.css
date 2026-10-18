@@ -101,3 +101,18 @@
 .sidebar-bottom {
   margin-top: auto;
 }
+
+/* Profile picture + name at the bottom, in place of the Settings gear. */
+.sidebar-profile {
+  padding-left: var(--space-2);
+}
+
+.sidebar--collapsed .sidebar-profile {
+  padding: var(--space-1);
+}
+
+.sidebar-profile-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
