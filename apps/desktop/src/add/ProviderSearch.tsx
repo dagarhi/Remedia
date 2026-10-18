@@ -16,6 +16,7 @@ import { data } from "../db/database";
 import { getCredentials, isCompatible, providerContext, ProviderHttpError } from "../providers";
 import { useSettings } from "../settings/SettingsContext";
 import { systemLanguage } from "../i18n";
+import { Spinner } from "../components/Spinner";
 
 interface ProviderSearchProps {
   templateId: string;
@@ -185,7 +186,8 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
       </form>
 
       {status.kind === "searching" && pending.length > 0 && (
-        <p className="screen-placeholder" role="status">
+        <p className="screen-placeholder loading" role="status">
+          <Spinner size={20} />
           {t("search.waitingFor", { services: names(pending) })}
         </p>
       )}

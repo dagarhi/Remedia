@@ -79,3 +79,9 @@ button {
   background: var(--hover);
   color: var(--text);
 }
+
+.loading {
+  display: flex;      /* children side by side */
+  align-items: center;  /* vertically centred */
+  gap: var(--space-4);          
+}

@@ -23,6 +23,7 @@ import { useSettings } from "../settings/SettingsContext";
 import "../components/TagInput.css";
 import "./LibrariesScreen.css";
 import "./AddScreen.css";
+import { Spinner } from "../components/Spinner";
 
 type Step =
   | { kind: "type" }
@@ -139,7 +140,10 @@ export function AddScreen({ onSaved, onCancel, onOpenRecord, onOpenSettings }: A
         <h1>{heading}</h1>
         {lookupFailed && <p className="form-error">{t("search.errors.details")}</p>}
         {step.kind === "loading" ? (
-          <p className="screen-placeholder">{t("search.loadingDetails")}</p>
+          <p className="screen-placeholder loading" role="status">
+            <Spinner size={20} />
+            {t("search.loadingDetails")}
+          </p>
         ) : (
           <ProviderSearch
             templateId={step.template}
