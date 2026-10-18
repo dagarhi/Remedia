@@ -422,6 +422,7 @@
     "placeholder": "Search by title",
     "search": "Search",
     "searching": "Searching…",
+    "waitingFor": "Waiting for {{services}}…",
     "noResults": "No results. Try another title or fill it in manually.",
     "notListed": "Not listed? Fill it in manually with this title",
     "alreadyInLibrary": "Already in your library",

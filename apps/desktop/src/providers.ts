@@ -23,20 +23,30 @@ async function json(response: Response): Promise<unknown> {
 }
 
 /**
+ * How long a service gets to answer. Without a limit, a service that is down keeps the
+ * search waiting until the system gives up on the connection (half a minute or more).
+ */
+const REQUEST_TIMEOUT_MS = 10_000;
+
+/** A request that is cancelled (and fails) when the service takes longer than the limit. */
+const request = (url: string, init: RequestInit = {}) =>
+  fetch(url, { ...init, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+
+/**
  * HTTP through the Tauri HTTP plugin: requests are made by Rust, so providers without
  * browser CORS support work too. Allowed hosts are listed in capabilities/default.json.
  */
 const http: HttpClient = {
-  getJson: async (url, headers = {}) => json(await fetch(url, { headers: { Accept: "application/json", ...headers } })),
+  getJson: async (url, headers = {}) => json(await request(url, { headers: { Accept: "application/json", ...headers } })),
   postJson: async (url, body, headers = {}) =>
     json(
-      await fetch(url, {
+      await request(url, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json", ...headers },
         body: JSON.stringify(body),
       }),
     ),
-  postText: async (url, body, headers = {}) => json(await fetch(url, { method: "POST", headers, body })),
+  postText: async (url, body, headers = {}) => json(await request(url, { method: "POST", headers, body })),
 };
 
 /** credentials.toml, read fresh each time (hand edits apply at once). Throws on a malformed file. */

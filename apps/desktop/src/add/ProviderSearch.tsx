@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react";
 import {
@@ -6,6 +6,7 @@ import {
   linkedExternalIds,
   providersFor,
   type Provider,
+  type ProviderContext,
   type ProviderId,
   type SearchResult,
   type Uuid,
@@ -27,6 +28,20 @@ interface ProviderSearchProps {
 
 type Status = { kind: "idle" } | { kind: "searching" } | { kind: "done" } | { kind: "error"; code: string };
 
+/** i18n key under `search.errors` for a failed search. */
+const errorCode = (error: unknown) =>
+  error instanceof ProviderHttpError && error.status === 401 ? "unauthorized" : "failed";
+
+/** Hits already in the library (same external link, data model), as `linkProvider:id` -> record id. */
+async function alreadyInLibrary(hits: SearchResult[]): Promise<Map<string, Uuid>> {
+  const found = new Map<string, Uuid>();
+  for (const linkProvider of new Set(hits.map((hit) => hit.linkProvider))) {
+    const ids = hits.filter((hit) => hit.linkProvider === linkProvider).map((hit) => hit.externalId);
+    for (const [id, recordId] of await linkedExternalIds(data, linkProvider, ids)) found.set(`${linkProvider}:${id}`, recordId);
+  }
+  return found;
+}
+
 /** Automatic mode: provider chips above a title search; results link to the form (UI Design, add flow). */
 export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, onOpenSettings }: ProviderSearchProps) {
   const { t } = useTranslation();
@@ -37,11 +52,15 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
   const [usable, setUsable] = useState<Provider[] | null>(null);
   const [selected, setSelected] = useState<Set<ProviderId>>(new Set());
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<{ provider: Provider; result: SearchResult }[]>([]);
+  // Each service's hits, filled in as it answers.
+  const [resultsBy, setResultsBy] = useState<Partial<Record<ProviderId, SearchResult[]>>>({});
   const [existing, setExisting] = useState<Map<string, Uuid>>(new Map());
   const [status, setStatus] = useState<Status>({ kind: "idle" });
-  // Services that failed in the last search while others answered.
+  // Services the current search is still waiting for, and those that failed.
+  const [pending, setPending] = useState<Provider[]>([]);
   const [failed, setFailed] = useState<Provider[]>([]);
+  // Numbers each search, so answers that arrive after a newer search started are ignored.
+  const searchRun = useRef(0);
 
   useEffect(() => {
     async function load() {
@@ -63,35 +82,48 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
   async function search(event: FormEvent) {
     event.preventDefault();
     if (query.trim() === "" || !usable) return;
+    const run = ++searchRun.current;
+    const isCurrent = () => searchRun.current === run;
+    const text = query.trim();
+    const chosen = usable.filter((p) => selected.has(p.id));
+
     setStatus({ kind: "searching" });
+    setResultsBy({});
+    setExisting(new Map());
+    setPending(chosen);
+    setFailed([]);
+
+    let ctx: ProviderContext;
     try {
-      const ctx = await providerContext(language);
-      const chosen = usable.filter((p) => selected.has(p.id));
-      // Each service answers on its own: one that is down never hides the others' results.
-      const outcomes = await Promise.allSettled(
-        chosen.map(async (provider) =>
-          (await provider.search(ctx, templateId, query.trim())).map((result) => ({ provider, result })),
-        ),
-      );
-      const failedProviders = chosen.filter((_, i) => outcomes[i].status === "rejected");
-      if (failedProviders.length === chosen.length) {
-        // Every service failed: report it like a single failure.
-        throw (outcomes[0] as PromiseRejectedResult).reason;
-      }
-      setFailed(failedProviders);
-      const all = outcomes.flatMap((o) => (o.status === "fulfilled" ? o.value : []));
-      // Results already in the library are marked (same external link, data model).
-      const found = new Map<string, Uuid>();
-      for (const linkProvider of new Set(all.map((r) => r.result.linkProvider))) {
-        const ids = all.filter((r) => r.result.linkProvider === linkProvider).map((r) => r.result.externalId);
-        for (const [id, recordId] of await linkedExternalIds(data, linkProvider, ids)) found.set(`${linkProvider}:${id}`, recordId);
-      }
-      setExisting(found);
-      setResults(all);
-      setStatus({ kind: "done" });
+      ctx = await providerContext(language);
     } catch (error) {
-      setStatus({ kind: "error", code: error instanceof ProviderHttpError && error.status === 401 ? "unauthorized" : "failed" });
+      setStatus({ kind: "error", code: errorCode(error) });
+      return;
     }
+
+    // Each service answers on its own and its results show at once: a slow or broken
+    // service never holds back or hides the others.
+    const errors: unknown[] = [];
+    await Promise.all(
+      chosen.map(async (provider) => {
+        try {
+          const hits = await provider.search(ctx, templateId, text);
+          const found = await alreadyInLibrary(hits);
+          if (!isCurrent()) return;
+          setExisting((current) => new Map([...current, ...found]));
+          setResultsBy((current) => ({ ...current, [provider.id]: hits }));
+        } catch (error) {
+          errors.push(error);
+          if (isCurrent()) setFailed((current) => [...current, provider]);
+        } finally {
+          if (isCurrent()) setPending((current) => current.filter((p) => p !== provider));
+        }
+      }),
+    );
+
+    if (!isCurrent()) return;
+    // Every service failed: report it like a single failure.
+    setStatus(errors.length === chosen.length ? { kind: "error", code: errorCode(errors[0]) } : { kind: "done" });
   }
 
   if (!usable) return <p className="screen-placeholder">{t("form.loading")}</p>;
@@ -114,6 +146,9 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
   }
 
   const Icon = iconForType(templateId);
+  // Always in chip order, whichever service answered first.
+  const results = usable.flatMap((provider) => (resultsBy[provider.id] ?? []).map((result) => ({ provider, result })));
+  const names = (providers: Provider[]) => providers.map((p) => t(`providers.${p.id}.name`)).join(", ");
 
   return (
     <div className="provider-search">
@@ -149,11 +184,14 @@ export function ProviderSearch({ templateId, onPick, onManual, onOpenExisting, o
         </button>
       </form>
 
-      {status.kind === "error" && <p className="form-error">{t(`search.errors.${status.code}`)}</p>}
-      {status.kind === "done" && failed.length > 0 && (
-        <p className="screen-placeholder">
-          {t("search.partialFailure", { services: failed.map((p) => t(`providers.${p.id}.name`)).join(", ") })}
+      {status.kind === "searching" && pending.length > 0 && (
+        <p className="screen-placeholder" role="status">
+          {t("search.waitingFor", { services: names(pending) })}
         </p>
+      )}
+      {status.kind === "error" && <p className="form-error">{t(`search.errors.${status.code}`)}</p>}
+      {status.kind !== "error" && failed.length > 0 && (
+        <p className="screen-placeholder">{t("search.partialFailure", { services: names(failed) })}</p>
       )}
 
       {status.kind === "done" && results.length === 0 && <p className="screen-placeholder">{t("search.noResults")}</p>}

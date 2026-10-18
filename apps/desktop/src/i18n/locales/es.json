@@ -423,6 +423,7 @@
     "placeholder": "Busca por título",
     "search": "Buscar",
     "searching": "Buscando…",
+    "waitingFor": "Esperando a {{services}}…",
     "noResults": "No hay resultados. Prueba con otro título o rellénalo a mano.",
     "notListed": "¿No aparece? Rellénalo a mano con este título",
     "alreadyInLibrary": "Ya está en tu biblioteca",
