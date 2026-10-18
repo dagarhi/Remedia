@@ -168,12 +168,14 @@ export function RecordScreen({ id, onBack, onDeleted, onOpenRecord }: RecordScre
           <dl className="record-details">
             {template.fields
               .filter((f) => record.fields[f.key] !== undefined)
+              // Long texts (synopsis) go last, each on a full row, so short fields keep their columns.
+              .sort((a, b) => Number(a.type === "long_text") - Number(b.type === "long_text"))
               .map((f) => {
                 const value = record.fields[f.key];
                 // A select stores the option key; show its label.
                 const option = f.type === "select" ? f.options?.find((o) => o.key === value) : undefined;
                 return (
-                  <div key={f.key}>
+                  <div key={f.key} className={f.type === "long_text" ? "record-details-wide" : undefined}>
                     <dt className="label">{label(f.label)}</dt>
                     <dd>
                       {option

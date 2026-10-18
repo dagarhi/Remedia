@@ -36,3 +36,13 @@
 .record-details dd {
   margin: var(--space-1) 0 0;
 }
+
+/* A long text spans the whole row and keeps its paragraph breaks. */
+.record-details-wide {
+  grid-column: 1 / -1;
+}
+
+.record-details-wide dd {
+  white-space: pre-line;
+  max-width: 70ch;
+}
