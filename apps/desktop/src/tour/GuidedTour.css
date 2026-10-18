@@ -1,0 +1,73 @@
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+/* Centred steps: the whole window is veiled. */
+.tour-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--backdrop);
+}
+
+/* A window onto the highlighted element: the giant shadow veils everything around it. */
+.tour-spotlight {
+  position: absolute;
+  border-radius: var(--radius-card);
+  box-shadow: 0 0 0 9999px var(--backdrop);
+  outline: 2px solid var(--accent-text);
+  transition:
+    left 200ms ease,
+    top 200ms ease,
+    width 200ms ease,
+    height 200ms ease;
+  pointer-events: none;
+}
+
+.tour-card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 340px;
+  padding: var(--space-6);
+  background: var(--surface-raised);
+  color: var(--text);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-raised);
+}
+
+.tour-card--centred {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tour-card h2 {
+  font-size: var(--text-lg);
+  padding-right: var(--space-6);
+}
+
+.tour-card p {
+  margin: 0;
+}
+
+.tour-close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+
+.tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-3);
+}
+
+.tour-nav {
+  display: flex;
+  gap: var(--space-2);
+}

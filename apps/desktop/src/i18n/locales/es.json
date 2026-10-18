@@ -218,7 +218,8 @@
       "recordTypes": "Tipos de registro",
       "about": "Acerca de",
       "myData": "Mis datos",
-      "services": "Servicios externos"
+      "services": "Servicios externos",
+      "tutorial": "Tutorial"
     },
     "language": "Idioma",
     "theme": "Tema",
@@ -293,6 +294,10 @@
         "backup_from_newer_version": "Esa copia se hizo con una versión más nueva de Remedia. Actualiza la app para restaurarla.",
         "failed": "No se ha podido restaurar la copia. Tus datos no han cambiado."
       }
+    },
+    "tutorial": {
+      "description": "Un recorrido corto por las partes principales de Remedia.",
+      "replay": "Repetir el tutorial"
     }
   },
   "home": {
@@ -461,7 +466,8 @@
     "namePlaceholder": "Tu nombre",
     "avatar": "Elige tu imagen",
     "private": "Todo se queda en este dispositivo. No necesitas cuenta.",
-    "start": "Empezar"
+    "showMe": "Enséñame la app",
+    "skipTour": "Saltar y empezar"
   },
   "profile": {
     "avatar": "Imagen de perfil",
@@ -477,6 +483,39 @@
       "snail": "Caracol",
       "rat": "Rata",
       "panda": "Panda"
+    }
+  },
+  "tour": {
+    "progress": "{{current}} de {{total}}",
+    "next": "Siguiente",
+    "back": "Anterior",
+    "skip": "Saltar",
+    "finish": "¡Vamos!",
+    "steps": {
+      "intro": {
+        "title": "Te damos la bienvenida a Remedia",
+        "text": "Te enseñamos Remedia en un minuto. Puedes saltarlo cuando quieras."
+      },
+      "add": {
+        "title": "Añadir",
+        "text": "Añade tus registros, del tipo que sea. Por servicios externos o rellénalos a mano."
+      },
+      "home": {
+        "title": "Inicio",
+        "text": "Tu resumen: tus bibliotecas, una sugerencia al azar y lo último que has hecho. Personalízalo con Editar inicio."
+      },
+      "libraries": {
+        "title": "Bibliotecas",
+        "text": "Todo se ordena por estado: En curso, Pendientes, En pausa, Terminados y Abandonados."
+      },
+      "settings": {
+        "title": "Ajustes",
+        "text": "Aquí están los ajustes: tu perfil, el tema, los servicios externos y las copias de seguridad."
+      },
+      "done": {
+        "title": "¡Listo!",
+        "text": "Empieza por añadir lo primero que quieras guardar."
+      }
     }
   }
 }

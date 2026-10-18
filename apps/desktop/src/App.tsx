@@ -10,6 +10,7 @@ import { RecordScreen } from "./screens/RecordScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { useSettings } from "./settings/SettingsContext";
+import { GuidedTour } from "./tour/GuidedTour";
 import { sidebarScreenFor, type Route, type Screen } from "./screens";
 import "./App.css";
 
@@ -31,6 +32,13 @@ function App() {
   }, []);
 
   const [collapsed, setCollapsed] = useState(false);
+  const [touring, setTouring] = useState(false);
+
+  /** The tour explains the sidebar from Home, whatever screen it was started from. */
+  function startTour() {
+    setRoute({ screen: "home" });
+    setTouring(true);
+  }
   // Changing a component's `key` makes React start it fresh: pressing Add always restarts the flow.
   const [addFlowKey, setAddFlowKey] = useState(0);
 
@@ -75,7 +83,7 @@ function App() {
           />
         );
       case "settings":
-        return <SettingsScreen />;
+        return <SettingsScreen onStartTour={startTour} />;
       case "home":
         return (
           <HomeScreen
@@ -87,7 +95,7 @@ function App() {
     }
   }
 
-  if (!onboarded) return checkingFirstRun ? null : <WelcomeScreen />;
+  if (!onboarded) return checkingFirstRun ? null : <WelcomeScreen onStartTour={startTour} />;
 
   return (
     <div className="app">
@@ -98,6 +106,7 @@ function App() {
         onToggleCollapsed={() => setCollapsed((c) => !c)}
       />
       <main className="app-content">{renderContent()}</main>
+      {touring && <GuidedTour onClose={() => setTouring(false)} />}
     </div>
   );
 }

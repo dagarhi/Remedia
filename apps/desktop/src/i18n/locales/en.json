@@ -217,7 +217,8 @@
       "recordTypes": "Record types",
       "about": "About",
       "myData": "My data",
-      "services": "External services"
+      "services": "External services",
+      "tutorial": "Tutorial"
     },
     "language": "Language",
     "theme": "Theme",
@@ -292,6 +293,10 @@
         "backup_from_newer_version": "That backup was made with a newer version of Remedia. Update the app to restore it.",
         "failed": "The backup could not be restored. Your data has not changed."
       }
+    },
+    "tutorial": {
+      "description": "A short guided tour of the main parts of Remedia.",
+      "replay": "Replay the tutorial"
     }
   },
   "home": {
@@ -460,7 +465,8 @@
     "namePlaceholder": "Your name",
     "avatar": "Choose your picture",
     "private": "Everything stays on this device. No account needed.",
-    "start": "Get started"
+    "showMe": "Show me around",
+    "skipTour": "Skip and start"
   },
   "profile": {
     "avatar": "Profile picture",
@@ -476,6 +482,39 @@
       "snail": "Snail",
       "rat": "Rat",
       "panda": "Panda"
+    }
+  },
+  "tour": {
+    "progress": "{{current}} of {{total}}",
+    "next": "Next",
+    "back": "Back",
+    "skip": "Skip",
+    "finish": "Let's go",
+    "steps": {
+      "intro": {
+        "title": "Welcome to Remedia",
+        "text": "We'll show you Remedia in a minute. You can skip it whenever you want."
+      },
+      "add": {
+        "title": "Add",
+        "text": "Add your records, whatever the type. From external services, or fill them in by hand."
+      },
+      "home": {
+        "title": "Home",
+        "text": "Your summary: your libraries, a random pick and what you did last. Customise it with Edit home."
+      },
+      "libraries": {
+        "title": "Libraries",
+        "text": "Everything is sorted by status: In progress, Pending, On hold, Finished and Dropped."
+      },
+      "settings": {
+        "title": "Settings",
+        "text": "Here are the settings: your profile, the theme, external services and backups."
+      },
+      "done": {
+        "title": "All set!",
+        "text": "Start by adding the first thing you want to keep."
+      }
     }
   }
 }

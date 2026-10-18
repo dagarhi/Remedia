@@ -35,6 +35,7 @@ export function Sidebar({ current, collapsed, onNavigate, onToggleCollapsed }: S
       className={className}
       aria-current={current === screen ? "page" : undefined}
       title={collapsed ? t(`nav.${screen}`) : undefined}
+      data-tour={screen}
       onClick={() => onNavigate(screen)}
     >
       <Icon size={20} aria-hidden />
@@ -66,6 +67,7 @@ export function Sidebar({ current, collapsed, onNavigate, onToggleCollapsed }: S
         <button
           type="button"
           className="sidebar-item sidebar-profile"
+          data-tour="profile"
           aria-current={current === "settings" ? "page" : undefined}
           aria-label={t("nav.settings")}
           title={t("nav.settings")}

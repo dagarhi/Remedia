@@ -14,16 +14,23 @@ const LANGUAGE_NAMES: Record<Language, string> = { en: "English", es: "Español"
  * First run (UI Design): a basic local profile, then an empty Home. Shown only when the app
  * has no records and no profile yet. Language, theme and avatar apply live as they are chosen.
  */
-export function WelcomeScreen() {
+export function WelcomeScreen({ onStartTour }: { onStartTour: () => void }) {
   const { t } = useTranslation();
   const { settings, update } = useSettings();
   const [name, setName] = useState(settings["profile.name"]);
 
-  function start(event: FormEvent) {
-    event.preventDefault();
+  /** Saves the profile and enters the app; `withTour` also starts the guided tour (UI Design). */
+  function finish(withTour: boolean) {
     if (name.trim() === "") return;
     update("profile.name", name.trim());
     update("onboarding.done", true);
+    if (withTour) onStartTour();
+  }
+
+  // Enter (form submit) takes the main option: the tour.
+  function start(event: FormEvent) {
+    event.preventDefault();
+    finish(true);
   }
 
   return (
@@ -85,9 +92,14 @@ export function WelcomeScreen() {
 
         <footer className="welcome-actions">
           <span className="screen-placeholder">{t("welcome.private")}</span>
-          <button type="submit" className="button button--primary" disabled={name.trim() === ""}>
-            {t("welcome.start")} <ArrowRight size={16} aria-hidden />
-          </button>
+          <span className="welcome-buttons">
+            <button type="button" className="button" disabled={name.trim() === ""} onClick={() => finish(false)}>
+              {t("welcome.skipTour")}
+            </button>
+            <button type="submit" className="button button--primary" disabled={name.trim() === ""}>
+              {t("welcome.showMe")} <ArrowRight size={16} aria-hidden />
+            </button>
+          </span>
         </footer>
       </form>
     </main>

@@ -24,7 +24,7 @@ import "./LibrariesScreen.css";
 import "../components/TagInput.css";
 import "./SettingsScreen.css";
 
-const SECTIONS = ["profile", "appearance", "recordTypes", "services", "myData", "about"] as const;
+const SECTIONS = ["profile", "appearance", "recordTypes", "services", "myData", "tutorial", "about"] as const;
 type Section = (typeof SECTIONS)[number];
 
 const REPOSITORY_URL = "https://github.com/dagarhi/Remedia";
@@ -33,7 +33,7 @@ const REPOSITORY_URL = "https://github.com/dagarhi/Remedia";
 const LANGUAGE_NAMES: Record<Language, string> = { en: "English", es: "Español" };
 
 /** Standard desktop settings: section menu on the left, content on the right, changes apply at once. */
-export function SettingsScreen() {
+export function SettingsScreen({ onStartTour }: { onStartTour: () => void }) {
   const { t } = useTranslation();
   const [section, setSection] = useState<Section>("profile");
 
@@ -60,6 +60,16 @@ export function SettingsScreen() {
           {section === "recordTypes" && <RecordTypeSettings />}
           {section === "services" && <ServicesSettings />}
           {section === "myData" && <MyDataSettings />}
+          {section === "tutorial" && (
+            <div className="settings-section">
+              <p>{t("settings.tutorial.description")}</p>
+              <div>
+                <button type="button" className="button button--primary" onClick={onStartTour}>
+                  {t("settings.tutorial.replay")}
+                </button>
+              </div>
+            </div>
+          )}
           {section === "about" && <AboutSettings />}
         </div>
       </div>
