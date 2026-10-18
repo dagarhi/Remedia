@@ -419,5 +419,22 @@
     "jikan": {
       "name": "MyAnimeList (Jikan)"
     }
+  },
+  "library": {
+    "search": "Search by title",
+    "sortBy": "Sort by",
+    "sorts": {
+      "modified": "Last modified",
+      "title": "Title",
+      "release": "Release date",
+      "rating": "Rating",
+      "added": "Date added"
+    },
+    "groupByType": "Group by type",
+    "view": "View",
+    "grid": "Grid",
+    "list": "List",
+    "allTypes": "All",
+    "noMatch": "Nothing matches these filters."
   }
 }

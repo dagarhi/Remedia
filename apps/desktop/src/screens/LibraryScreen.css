@@ -1,0 +1,108 @@
+.library-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.library-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 220px;
+  max-width: 360px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-control);
+  color: var(--text-secondary);
+}
+
+.library-search:focus-within {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.library-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.library-toolbar select {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+.library-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.library-toggle input {
+  accent-color: var(--accent);
+}
+
+.library-view-switch {
+  display: inline-flex;
+  margin-left: auto;
+}
+
+.library-view-switch .icon-button[aria-pressed="true"] {
+  background: var(--selected);
+  color: var(--text);
+}
+
+.library-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.library-chip {
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-tag);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.library-chip:hover {
+  background: var(--hover);
+}
+
+.library-chip[aria-pressed="true"] {
+  background: var(--selected);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.library-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.library-group h2 {
+  font-size: var(--text-lg);
+}
+
+.library-list {
+  display: flex;
+  flex-direction: column;
+}

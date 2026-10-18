@@ -63,3 +63,19 @@ button {
   text-transform: var(--label-case);
   color: var(--text-secondary);
 }
+
+/* Small square button with only an icon (history actions, view switches…). */
+.icon-button {
+  display: inline-flex;
+  padding: var(--space-1);
+  border: none;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: var(--hover);
+  color: var(--text);
+}

@@ -5,6 +5,7 @@ export * from "./template";
 export * from "./builtInTemplates";
 export * from "./effectiveTemplate";
 export * from "./fields";
+export * from "./libraryView";
 export * from "./progress";
 export * from "./rating";
 export * from "./settings";

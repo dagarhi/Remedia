@@ -420,5 +420,22 @@
     "jikan": {
       "name": "MyAnimeList (Jikan)"
     }
+  },
+  "library": {
+    "search": "Buscar por título",
+    "sortBy": "Ordenar por",
+    "sorts": {
+      "modified": "Última modificación",
+      "title": "Título",
+      "release": "Fecha de estreno",
+      "rating": "Valoración",
+      "added": "Fecha de alta"
+    },
+    "groupByType": "Agrupar por tipo",
+    "view": "Vista",
+    "grid": "Cuadrícula",
+    "list": "Lista",
+    "allTypes": "Todos",
+    "noMatch": "Nada coincide con estos filtros."
   }
 }

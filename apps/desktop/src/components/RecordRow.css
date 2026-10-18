@@ -1,0 +1,40 @@
+.record-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 110px 56px 160px 90px;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2);
+  border: none;
+  border-top: var(--border-width) solid var(--border);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.record-row:hover {
+  background: var(--hover);
+}
+
+.record-row-title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-row-meta {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.record-row-year {
+  font-variant-numeric: tabular-nums;
+}
+
+.record-row-rating {
+  font-size: var(--text-sm);
+  color: var(--accent-text);
+  text-align: right;
+}
